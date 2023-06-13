@@ -1,15 +1,33 @@
 project:
   type: website
   output-dir: docs/
+  
+execute: 
+  freeze: auto
 
 website:
   title: "dengue"
   navbar:
+    background: primary
+    search: true
     left:
-      - href: index.qmd
-        text: Home
+      - text: "Home"
+        file: index.qmd
+      - sidebar:data
       - about.qmd
-
+  
+  sidebar: 
+    - id: data
+      title: "Data"
+      style: docked
+      background: light
+      collapse-level: 2
+      contents: 
+        - dengue-data/raw_files.qmd
+        - dengue-data/missing_data.qmd
+        - dengue-data/imputation.qmd
+        - dengue-data/aggregated_database.qmd
+  
 format:
   html:
     theme: cosmo

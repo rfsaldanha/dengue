@@ -1,0 +1,137 @@
+---
+title: "Aggregated spatial-time database"
+author: Raphael Saldanha
+date: now
+---
+
+## Context
+
+This notebook aims to create an dengue aggregate spatial-time database. The aggreagation will be on municipalities and time will be date and epidemiological week.
+
+## Packages
+
+```{r}
+library(tidyverse)
+library(arrow)
+library(lubridate)
+```
+
+## Load data
+
+Lazy evaluation.
+
+```{r}
+dengue <- arrow::read_parquet(file = "parquet_improved/dengue_improved.parquet")
+
+tally(dengue)
+```
+
+## Filter valid dates
+
+```{r}
+valid_interval <- interval(ymd("2011-01-01"), ymd("2021-12-31"))
+
+dengue <- dengue %>%
+  mutate(DT_SIN_PRI = ymd(DT_SIN_PRI)) %>%
+  filter(DT_SIN_PRI %within% valid_interval)
+
+tally(dengue)
+```
+
+```{r}
+dengue_classifications <- c("Febre hemorrágica do dengue", "Síndrome do choque do dengue", "Dengue com sinais de alarme",
+  "Dengue clássico", "Dengue com complicações", "Dengue",
+  "Dengue grave")
+```
+
+```{r}
+dengue %>% 
+  mutate(CLASSI_FIN = case_when(
+    CLASSI_FIN %in% dengue_classifications ~ "Confirmed",
+    CLASSI_FIN == "Descartado" ~ "Discarded",
+    CLASSI_FIN == "Inconclusivo" ~ "Inconclusive",
+    CLASSI_FIN == 6 ~ "Invalid",
+    is.na(CLASSI_FIN) ~ "Missing",
+    .default = CLASSI_FIN
+  )) %>%
+  mutate(DT_SIN_PRI = lubridate::ceiling_date(x = DT_SIN_PRI, unit = "month")) %>%
+  group_by(DT_SIN_PRI, CLASSI_FIN) %>%
+  summarise(freq = n()) %>%
+  ungroup() %>%
+  ggplot(aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN)) +
+  geom_bar() +
+  scale_fill_hue(direction = 1) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(fill = "Classificação") +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(x = "Month of first symptom's onset", y = "Records", fill = "Classification")
+
+ggsave(filename = "dengue_cases_classification.pdf")
+```
+
+## Filter positive cases of dengue
+
+```{r}
+
+
+dengue <- dengue %>%
+  filter(CLASSI_FIN %in% dengue_classifications)
+
+tally(dengue)
+```
+
+## Aggregation
+
+### Municipality and date ("md")
+
+Including the step to fill the time series with zero values when certain dates do not have cases.
+
+```{r}
+dengue_md <- dengue %>%
+  group_by(mun = ID_MN_RESI, date = DT_SIN_PRI) %>%
+  summarise(freq = n()) %>%
+  arrange(date) %>%
+  complete(
+    date = seq.Date(min(date), max(date), by = "day"),
+    fill = list(freq = 0)
+  ) %>%
+  ungroup() %>%
+  collect()
+```
+
+```{r}
+glimpse(dengue_md)
+```
+
+```{r}
+dengue_md %>%
+  write_parquet(sink = "parquet_aggregated/dengue_md.parquet")
+```
+
+### Municipality and epidemiological week ("mw")
+
+```{r}
+dengue_mw <- dengue_md %>%
+  mutate(epi_week = paste0(epiyear(date), "-", str_pad(epiweek(date), 2, pad = "0"))) %>%
+  group_by(mun, epi_week) %>%
+  summarise(freq = n()) %>%
+  arrange(epi_week) %>%
+  ungroup() %>%
+  collect()
+```
+
+```{r}
+glimpse(dengue_mw)
+```
+
+```{r}
+dengue_mw %>%
+  write_parquet(sink = "parquet_aggregated/dengue_mw.parquet")
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```

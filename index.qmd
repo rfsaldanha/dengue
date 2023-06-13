@@ -1,5 +1,6 @@
 ---
 title: "Dengue and machine learning research"
+sidebar: false
 ---
 
 This website contains working in progress research on dengue and machine learning, as part of my postdoc at Inria Montpellier.

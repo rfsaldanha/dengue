@@ -1,0 +1,85 @@
+---
+title: "Raw files"
+author: Raphael Saldanha
+date: now
+---
+
+## Packages
+
+```{r}
+library(tidyverse)
+# remotes::install_github("rfsaldanha/microdatasus")
+library(microdatasus)
+library(arrow)
+```
+
+## Data download
+
+```{r}
+# for(a in 2011:2021){
+#   tmp <- fetch_datasus(
+#     year_start = a, year_end = a,
+#     information_system = "SINAN-DENGUE"
+#   )
+# 
+#   write_parquet(x = tmp, sink = paste0("parquets_raw/raw_dengue_", a, ".parquet"))
+#   
+#   tmp <- process_sinan_dengue(data = tmp)
+#   
+#   write_parquet(x = tmp, sink = paste0("parquets/dengue_", a, ".parquet"))
+#   
+#   rm(tmp)
+# }
+```
+
+## Load
+
+```{r}
+dengue <- open_dataset(sources = "parquets/")
+```
+
+```{r}
+dengue %>%
+  mutate(DT_SIN_PRI = as.Date(DT_SIN_PRI)) %>%
+  filter(DT_SIN_PRI >= as.Date("2011-01-01") & DT_SIN_PRI < as.Date("2022-01-01")) %>%
+  mutate(class2 = case_when(
+    CLASSI_FIN == "Descartado" ~ "Descartado/Inconclusivo",
+    CLASSI_FIN == "Inconclusivo" ~ "Descartado/Inconclusivo",
+    is.na(CLASSI_FIN) ~ "In analysis",
+    TRUE ~ "Dengue"
+  )) %>%
+  group_by(class2) %>%
+  summarise(freq = n()) %>%
+  ungroup() %>%
+  arrange(-freq) %>%
+  collect()
+```
+
+```{r}
+res <- dengue %>%
+  mutate(DT_SIN_PRI = as.Date(DT_SIN_PRI)) %>%
+  filter(DT_SIN_PRI >= as.Date("2011-01-01") & DT_SIN_PRI < as.Date("2022-01-01")) %>%
+  mutate(class2 = case_when(
+    CLASSI_FIN == "Descartado" ~ "Descartado/Inconclusivo",
+    CLASSI_FIN == "Inconclusivo" ~ "Descartado/Inconclusivo",
+    is.na(CLASSI_FIN) ~ "In analysis",
+    TRUE ~ "Dengue"
+  )) %>%
+  collect() %>%
+  mutate(DT_SIN_PRI = lubridate::ceiling_date(x = DT_SIN_PRI, unit = "month")) %>%
+  group_by(DT_SIN_PRI, class2) %>%
+  summarise(freq = n()) %>%
+  ungroup() %>%
+  arrange(-freq) %>%
+  collect()
+```
+
+```{r}
+ggplot(res) +
+  aes(x = DT_SIN_PRI, fill = class2, weight = freq) +
+  geom_bar() +
+  scale_fill_hue(direction = 1) +
+  labs(fill = "Classificação") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```

@@ -1,0 +1,131 @@
+---
+title: "Imputation and enrichment"
+author: Raphael Saldanha
+date: now
+---
+
+## Context
+
+This notebook aims to imputate some missing data and enrich the dataset prior to modelling.
+
+## Packages
+
+```{r}
+library(tidyverse)
+library(arrow)
+library(knitr)
+library(lubridate)
+```
+
+## Load data
+
+```{r}
+important_vars <- c("ID_AGRAVO", "DT_NOTIFIC", "ID_UNIDADE",
+                    "DT_SIN_PRI", "CS_SEXO", "CS_GESTANT",
+                    "CS_RACA", "CS_ESCOL_N", "ID_MN_RESI",
+                    "COUFINF", "COMUNINF", "ID_OCUPA_N",
+                    "DT_SORO", "RESUL_SORO", "SOROTIPO", 
+                    "CLASSI_FIN", "CRITERIO", "EVOLUCAO",
+                    "DT_OBITO", "HOSPITALIZ", "DT_INTERNA")
+
+dengue <- open_dataset(sources = "parquets/") %>%
+  select(all_of(important_vars)) %>%
+  collect()
+```
+
+### Residence municipality: ID_MN_RESI
+
+Task: If ID_MN_RESI is invalid or missing, inputate with valid COMUNINF information.
+
+#### Imputation
+
+```{r}
+dengue <- dengue %>%
+  mutate(
+    ID_MN_RESI_check = if_else(nchar(ID_MN_RESI) == 6, 
+                               false = FALSE,
+                               true = TRUE),
+    COMUNINF_check = if_else(nchar(COMUNINF) == 6, 
+                               false = FALSE,
+                               true = TRUE)
+  ) %>%
+  mutate(ID_MN_RESI = case_when(
+    ID_MN_RESI_check == FALSE & COMUNINF_check == TRUE ~ COMUNINF,
+    is.na(ID_MN_RESI) ~ COMUNINF,
+    TRUE ~ ID_MN_RESI
+  )) %>%
+  select(-ID_MN_RESI_check, -COMUNINF_check)
+```
+
+#### Check improval
+
+```{r}
+dengue %>%
+  mutate(
+    ID_MN_RESI_check = if_else(nchar(ID_MN_RESI) == 6, 
+                               false = FALSE,
+                               true = TRUE)
+  ) %>%
+  group_by(ID_MN_RESI_check) %>%
+  summarise(freq = n()) %>%
+  ungroup() %>%
+  kable(
+    format.args = list(big.mark = ".", decimal.mark = ",")
+  )
+```
+
+No improvement for invalid municipalities, improvement of 96 records with missing data.
+
+### Date of the first symptons onset: DT_SIN_PRI
+
+Task: If DT_SIN_PRI is invalid or missing, inputate with valid DT_NOTIFIC information.
+
+#### Imputation
+
+```{r}
+valid_interval <- interval(ymd("2011-01-01"), ymd("2021-12-31"))
+
+dengue <- dengue %>%
+  mutate(
+    DT_SIN_PRI_check = ymd(DT_SIN_PRI) %within% valid_interval,
+    DT_NOTIFIC_check = ymd(DT_NOTIFIC) %within% valid_interval,
+  ) %>%
+  mutate(DT_SIN_PRI = case_when(
+    DT_SIN_PRI_check == FALSE & DT_NOTIFIC_check == TRUE ~ DT_NOTIFIC,
+    is.na(DT_SIN_PRI) ~ DT_NOTIFIC,
+    TRUE ~ DT_SIN_PRI
+  )) %>%
+  select(-DT_SIN_PRI_check, -DT_NOTIFIC_check)
+```
+
+#### Check improval
+
+```{r}
+valid_interval <- interval(ymd("2011-01-01"), ymd("2021-12-31"))
+
+dengue %>%
+  mutate(
+    DT_SIN_PRI_check = ymd(DT_SIN_PRI) %within% valid_interval
+  ) %>%
+  group_by(DT_SIN_PRI_check) %>%
+  summarise(freq = n()) %>%
+  ungroup() %>%
+  kable(
+    format.args = list(big.mark = ".", decimal.mark = ",")
+  )
+```
+
+There was a improvement on 25,823 records with invalid dates and all missing records were imputate.
+
+## Export improved database
+
+```{r}
+dengue %>%
+  write_parquet(sink = "parquet_improved/dengue_improved.parquet")
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```
