@@ -1,7 +1,7 @@
 {
-  "hash": "01ef51a60cde29bc6b88bb25fa41587c",
+  "hash": "a2ec34313289e436a3a7456d6d5bce25",
   "result": {
-    "markdown": "---\ntitle: \"Building and Selecting Specialized AI Models for Predicting Dengue Disease\"\n---\n\n\n------------------------------------------------------------------------\n\nThis website presents working in progress research on dengue and machine learning, as part of my postdoc at Inria (Montpellier, France) and LNCC (Petrópolis, Brazil).\n\\\n\\\n\\\n\n\n::: {.cell layout-align=\"center\"}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-1-1.png){fig-align='center' width=672}\n:::\n:::\n\n\\\n\\\n\\\n\n![](images/inr_logo_rouge.png){fig-align=\"center\" width=\"200\"}\n\n![](images/MARCACOMPLETA_LNCC_HORIZONTAL_FINAL_PNG_azul.png){fig-align=\"center\" width=\"200\"}\n",
+    "markdown": "---\ntitle: \"Building and Selecting Specialized AI Models for Predicting Dengue Disease\"\n---\n\n\n------------------------------------------------------------------------\n\nThis website presents working in progress research on dengue and machine learning, as part of my postdoc at Inria (Montpellier, France) and LNCC (Petrópolis, Brazil).\\\n\\\n\\\n\n\n::: {.cell layout-align=\"center\"}\n::: {.cell-output-display}\n![](index_files/figure-html/unnamed-chunk-1-1.png){fig-align='center' width=672}\n:::\n:::\n\n\n\\\n\n![](images/inr_logo_rouge.png){fig-align=\"center\" width=\"200\"}\n\n![](images/MARCACOMPLETA_LNCC_HORIZONTAL_FINAL_PNG_azul.png){fig-align=\"center\" width=\"200\"}\n",
     "supporting": [
       "index_files"
     ],
