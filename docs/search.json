@@ -2,14 +2,7 @@
   {
     "objectID": "dengue_data.html",
     "href": "dengue_data.html",
-    "title": "Dengue data",
-    "section": "",
-    "text": "In this section there are notebooks for dengue notifications data download, pre-processing, missing data analysis, imputations and exportation."
-  },
-  {
-    "objectID": "dengue_data.html#overview",
-    "href": "dengue_data.html#overview",
-    "title": "Dengue data",
+    "title": "Overview",
     "section": "",
     "text": "In this section there are notebooks for dengue notifications data download, pre-processing, missing data analysis, imputations and exportation."
   },

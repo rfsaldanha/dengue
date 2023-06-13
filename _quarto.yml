@@ -7,6 +7,7 @@ execute:
 
 website:
   title: "Dengue AI"
+  page-navigation: true
   navbar:
     background: primary
     search: true
@@ -25,33 +26,28 @@ website:
         file: presentations.qmd
   
   sidebar:
-    - title: "Dengue data"
-      style: "docked"
+      collapse-level: 1
       contents: 
-        - dengue_data.qmd
-        - dengue-data/raw_files.qmd
-        - dengue-data/missing_data.qmd
-        - dengue-data/imputation.qmd
-        - dengue-data/aggregated_database.qmd
-    
-    - title: "Weather data"
-      contents: weather_data.qmd
-    
-    - title: "Cluster analysis"
-      contents: 
-          - cluster_analysis.qmd
-          - dengue-data/raw_files.qmd
-          - dengue-data/missing_data.qmd
-          - dengue-data/imputation.qmd
-          - dengue-data/aggregated_database.qmd
-        
-    - title: "Software"
-      contents: software.qmd
-    
-    - title: "Presentations"
-      contents: 
-          - presentations.qmd
-          - presentations/presentation_test.qmd
+        - section: "Dengue data"
+          contents: 
+            - dengue_data.qmd
+            - dengue-data/raw_files.qmd
+            - dengue-data/missing_data.qmd
+            - dengue-data/imputation.qmd
+            - dengue-data/aggregated_database.qmd
+        - weather_data.qmd
+        - section: "Cluster analysis"
+          contents: 
+              - cluster_analysis.qmd
+              - dengue-data/raw_files.qmd
+              - dengue-data/missing_data.qmd
+              - dengue-data/imputation.qmd
+              - dengue-data/aggregated_database.qmd
+        - software.qmd
+        - section: "Presentations"
+          contents: 
+              - presentations.qmd
+              - presentations/presentation_test.qmd
   
 format:
   html:

@@ -1,7 +1,5 @@
 ---
-title: "Dengue data"
+title: "Overview"
 ---
-
-## Overview
 
 In this section there are notebooks for dengue notifications data download, pre-processing, missing data analysis, imputations and exportation.
