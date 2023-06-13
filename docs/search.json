@@ -7,356 +7,6 @@
     "text": "This website presents working in progress research on dengue and machine learning, as part of my postdoc at Inria (Montpellier, France) and LNCC (Petrópolis, Brazil)."
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
-  },
-  {
-    "objectID": "dengue-data/dengue_aggregated_database.html",
-    "href": "dengue-data/dengue_aggregated_database.html",
-    "title": "Dengue aggregated spatial-time database",
-    "section": "",
-    "text": "This notebook aims to create an dengue aggregate spatial-time database. The aggreagation will be on municipalities and time will be date and epidemiological week."
-  },
-  {
-    "objectID": "dengue-data/dengue_aggregated_database.html#context",
-    "href": "dengue-data/dengue_aggregated_database.html#context",
-    "title": "Dengue aggregated spatial-time database",
-    "section": "",
-    "text": "This notebook aims to create an dengue aggregate spatial-time database. The aggreagation will be on municipalities and time will be date and epidemiological week."
-  },
-  {
-    "objectID": "dengue-data/dengue_aggregated_database.html#packages",
-    "href": "dengue-data/dengue_aggregated_database.html#packages",
-    "title": "Dengue aggregated spatial-time database",
-    "section": "Packages",
-    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(lubridate)"
-  },
-  {
-    "objectID": "dengue-data/dengue_aggregated_database.html#load-data",
-    "href": "dengue-data/dengue_aggregated_database.html#load-data",
-    "title": "Dengue aggregated spatial-time database",
-    "section": "Load data",
-    "text": "Load data\nLazy evaluation.\n\ndengue &lt;- arrow::read_parquet(file = \"parquet_improved/dengue_improved.parquet\")\n\ntally(dengue)\n\n         n\n1 19180457"
-  },
-  {
-    "objectID": "dengue-data/dengue_aggregated_database.html#filter-valid-dates",
-    "href": "dengue-data/dengue_aggregated_database.html#filter-valid-dates",
-    "title": "Dengue aggregated spatial-time database",
-    "section": "Filter valid dates",
-    "text": "Filter valid dates\n\nvalid_interval &lt;- interval(ymd(\"2011-01-01\"), ymd(\"2021-12-31\"))\n\ndengue &lt;- dengue %&gt;%\n  mutate(DT_SIN_PRI = ymd(DT_SIN_PRI)) %&gt;%\n  filter(DT_SIN_PRI %within% valid_interval)\n\ntally(dengue)\n\n         n\n1 15561929\n\n\n\ndengue_classifications &lt;- c(\"Febre hemorrágica do dengue\", \"Síndrome do choque do dengue\", \"Dengue com sinais de alarme\",\n  \"Dengue clássico\", \"Dengue com complicações\", \"Dengue\",\n  \"Dengue grave\")\n\n\ndengue %&gt;% \n  mutate(CLASSI_FIN = case_when(\n    CLASSI_FIN %in% dengue_classifications ~ \"Confirmed\",\n    CLASSI_FIN == \"Descartado\" ~ \"Discarded\",\n    CLASSI_FIN == \"Inconclusivo\" ~ \"Inconclusive\",\n    CLASSI_FIN == 6 ~ \"Invalid\",\n    is.na(CLASSI_FIN) ~ \"Missing\",\n    .default = CLASSI_FIN\n  )) %&gt;%\n  mutate(DT_SIN_PRI = lubridate::ceiling_date(x = DT_SIN_PRI, unit = \"month\")) %&gt;%\n  group_by(DT_SIN_PRI, CLASSI_FIN) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  ggplot(aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN)) +\n  geom_bar() +\n  scale_fill_hue(direction = 1) +\n  scale_y_continuous(labels = scales::comma) +\n  labs(fill = \"Classificação\") +\n  theme_minimal() +\n  theme(legend.position = \"bottom\") +\n  labs(x = \"Month of first symptom's onset\", y = \"Records\", fill = \"Classification\")\n\n`summarise()` has grouped output by 'DT_SIN_PRI'. You can override using the\n`.groups` argument.\n\n\n\n\nggsave(filename = \"dengue_cases_classification.pdf\")\n\nSaving 7 x 5 in image"
-  },
-  {
-    "objectID": "dengue-data/dengue_aggregated_database.html#filter-positive-cases-of-dengue",
-    "href": "dengue-data/dengue_aggregated_database.html#filter-positive-cases-of-dengue",
-    "title": "Dengue aggregated spatial-time database",
-    "section": "Filter positive cases of dengue",
-    "text": "Filter positive cases of dengue\n\ndengue &lt;- dengue %&gt;%\n  filter(CLASSI_FIN %in% dengue_classifications)\n\ntally(dengue)\n\n        n\n1 8125611"
-  },
-  {
-    "objectID": "dengue-data/dengue_aggregated_database.html#aggregation",
-    "href": "dengue-data/dengue_aggregated_database.html#aggregation",
-    "title": "Dengue aggregated spatial-time database",
-    "section": "Aggregation",
-    "text": "Aggregation\n\nMunicipality and date (“md”)\nIncluding the step to fill the time series with zero values when certain dates do not have cases.\n\ndengue_md &lt;- dengue %&gt;%\n  group_by(mun = ID_MN_RESI, date = DT_SIN_PRI) %&gt;%\n  summarise(freq = n()) %&gt;%\n  arrange(date) %&gt;%\n  complete(\n    date = seq.Date(min(date), max(date), by = \"day\"),\n    fill = list(freq = 0)\n  ) %&gt;%\n  ungroup() %&gt;%\n  collect()\n\n`summarise()` has grouped output by 'mun'. You can override using the `.groups`\nargument.\n\n\n\nglimpse(dengue_md)\n\nRows: 16,772,737\nColumns: 3\n$ mun  &lt;chr&gt; \"110000\", \"110000\", \"110000\", \"110000\", \"110000\", \"110000\", \"1100…\n$ date &lt;date&gt; 2015-12-29, 2015-12-30, 2015-12-31, 2016-01-01, 2016-01-02, 2016…\n$ freq &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…\n\n\n\ndengue_md %&gt;%\n  write_parquet(sink = \"parquet_aggregated/dengue_md.parquet\")\n\n\n\nMunicipality and epidemiological week (“mw”)\n\ndengue_mw &lt;- dengue_md %&gt;%\n  mutate(epi_week = paste0(epiyear(date), \"-\", str_pad(epiweek(date), 2, pad = \"0\"))) %&gt;%\n  group_by(mun, epi_week) %&gt;%\n  summarise(freq = n()) %&gt;%\n  arrange(epi_week) %&gt;%\n  ungroup() %&gt;%\n  collect()\n\n`summarise()` has grouped output by 'mun'. You can override using the `.groups`\nargument.\n\n\n\nglimpse(dengue_mw)\n\nRows: 2,400,687\nColumns: 3\n$ mun      &lt;chr&gt; \"110005\", \"110006\", \"110014\", \"110034\", \"110140\", \"120017\", \"…\n$ epi_week &lt;chr&gt; \"2010-52\", \"2010-52\", \"2010-52\", \"2010-52\", \"2010-52\", \"2010-…\n$ freq     &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…\n\n\n\ndengue_mw %&gt;%\n  write_parquet(sink = \"parquet_aggregated/dengue_mw.parquet\")"
-  },
-  {
-    "objectID": "dengue-data/dengue_aggregated_database.html#session-info",
-    "href": "dengue-data/dengue_aggregated_database.html#session-info",
-    "title": "Dengue aggregated spatial-time database",
-    "section": "Session info",
-    "text": "Session info\n\nsessionInfo()\n\nR version 4.1.2 (2021-11-01)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] arrow_12.0.0    lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0  \n [5] dplyr_1.1.2     purrr_1.0.1     readr_2.1.4     tidyr_1.3.0    \n [9] tibble_3.2.1    ggplot2_3.4.2   tidyverse_2.0.0\n\nloaded via a namespace (and not attached):\n [1] compiler_4.1.2    pillar_1.9.0      tools_4.1.2       bit_4.0.5        \n [5] digest_0.6.31     timechange_0.2.0  jsonlite_1.8.5    evaluate_0.21    \n [9] lifecycle_1.0.3   gtable_0.3.3      pkgconfig_2.0.3   rlang_1.1.1      \n[13] cli_3.6.1         rstudioapi_0.14   yaml_2.3.7        xfun_0.39        \n[17] fastmap_1.1.1     withr_2.5.0       knitr_1.43        systemfonts_1.0.4\n[21] generics_0.1.3    vctrs_0.6.2       htmlwidgets_1.6.2 hms_1.1.3        \n[25] bit64_4.0.5       grid_4.1.2        tidyselect_1.2.0  glue_1.6.2       \n[29] R6_2.5.1          textshaping_0.3.6 fansi_1.0.4       rmarkdown_2.22   \n[33] farver_2.1.1      tzdb_0.4.0        magrittr_2.0.3    scales_1.2.1     \n[37] htmltools_0.5.5   assertthat_0.2.1  colorspace_2.1-0  ragg_1.2.5       \n[41] labeling_0.4.2    utf8_1.2.3        stringi_1.7.12    munsell_0.5.0"
-  },
-  {
-    "objectID": "dengue-data/imputation_report.html",
-    "href": "dengue-data/imputation_report.html",
-    "title": "Dengue data imputation and enrichment",
-    "section": "",
-    "text": "This notebook aims to imputate some missing data and enrich the dataset prior to modelling."
-  },
-  {
-    "objectID": "dengue-data/imputation_report.html#context",
-    "href": "dengue-data/imputation_report.html#context",
-    "title": "Dengue data imputation and enrichment",
-    "section": "",
-    "text": "This notebook aims to imputate some missing data and enrich the dataset prior to modelling."
-  },
-  {
-    "objectID": "dengue-data/imputation_report.html#packages",
-    "href": "dengue-data/imputation_report.html#packages",
-    "title": "Dengue data imputation and enrichment",
-    "section": "Packages",
-    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(knitr)\nlibrary(lubridate)"
-  },
-  {
-    "objectID": "dengue-data/imputation_report.html#load-data",
-    "href": "dengue-data/imputation_report.html#load-data",
-    "title": "Dengue data imputation and enrichment",
-    "section": "Load data",
-    "text": "Load data\n\nimportant_vars &lt;- c(\"ID_AGRAVO\", \"DT_NOTIFIC\", \"ID_UNIDADE\",\n                    \"DT_SIN_PRI\", \"CS_SEXO\", \"CS_GESTANT\",\n                    \"CS_RACA\", \"CS_ESCOL_N\", \"ID_MN_RESI\",\n                    \"COUFINF\", \"COMUNINF\", \"ID_OCUPA_N\",\n                    \"DT_SORO\", \"RESUL_SORO\", \"SOROTIPO\", \n                    \"CLASSI_FIN\", \"CRITERIO\", \"EVOLUCAO\",\n                    \"DT_OBITO\", \"HOSPITALIZ\", \"DT_INTERNA\")\n\ndengue &lt;- open_dataset(sources = \"parquets/\") %&gt;%\n  select(all_of(important_vars)) %&gt;%\n  collect()\n\n\nResidence municipality: ID_MN_RESI\nTask: If ID_MN_RESI is invalid or missing, inputate with valid COMUNINF information.\n\nImputation\n\ndengue &lt;- dengue %&gt;%\n  mutate(\n    ID_MN_RESI_check = if_else(nchar(ID_MN_RESI) == 6, \n                               false = FALSE,\n                               true = TRUE),\n    COMUNINF_check = if_else(nchar(COMUNINF) == 6, \n                               false = FALSE,\n                               true = TRUE)\n  ) %&gt;%\n  mutate(ID_MN_RESI = case_when(\n    ID_MN_RESI_check == FALSE & COMUNINF_check == TRUE ~ COMUNINF,\n    is.na(ID_MN_RESI) ~ COMUNINF,\n    TRUE ~ ID_MN_RESI\n  )) %&gt;%\n  select(-ID_MN_RESI_check, -COMUNINF_check)\n\n\n\nCheck improval\n\ndengue %&gt;%\n  mutate(\n    ID_MN_RESI_check = if_else(nchar(ID_MN_RESI) == 6, \n                               false = FALSE,\n                               true = TRUE)\n  ) %&gt;%\n  group_by(ID_MN_RESI_check) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nID_MN_RESI_check\nfreq\n\n\n\n\nFALSE\n4\n\n\nTRUE\n19.177.930\n\n\nNA\n2.523\n\n\n\n\n\nNo improvement for invalid municipalities, improvement of 96 records with missing data.\n\n\n\nDate of the first symptons onset: DT_SIN_PRI\nTask: If DT_SIN_PRI is invalid or missing, inputate with valid DT_NOTIFIC information.\n\nImputation\n\nvalid_interval &lt;- interval(ymd(\"2011-01-01\"), ymd(\"2021-12-31\"))\n\ndengue &lt;- dengue %&gt;%\n  mutate(\n    DT_SIN_PRI_check = ymd(DT_SIN_PRI) %within% valid_interval,\n    DT_NOTIFIC_check = ymd(DT_NOTIFIC) %within% valid_interval,\n  ) %&gt;%\n  mutate(DT_SIN_PRI = case_when(\n    DT_SIN_PRI_check == FALSE & DT_NOTIFIC_check == TRUE ~ DT_NOTIFIC,\n    is.na(DT_SIN_PRI) ~ DT_NOTIFIC,\n    TRUE ~ DT_SIN_PRI\n  )) %&gt;%\n  select(-DT_SIN_PRI_check, -DT_NOTIFIC_check)\n\n\n\nCheck improval\n\nvalid_interval &lt;- interval(ymd(\"2011-01-01\"), ymd(\"2021-12-31\"))\n\ndengue %&gt;%\n  mutate(\n    DT_SIN_PRI_check = ymd(DT_SIN_PRI) %within% valid_interval\n  ) %&gt;%\n  group_by(DT_SIN_PRI_check) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nDT_SIN_PRI_check\nfreq\n\n\n\n\nFALSE\n3.618.528\n\n\nTRUE\n15.561.929\n\n\n\n\n\nThere was a improvement on 25,823 records with invalid dates and all missing records were imputate."
-  },
-  {
-    "objectID": "dengue-data/imputation_report.html#export-improved-database",
-    "href": "dengue-data/imputation_report.html#export-improved-database",
-    "title": "Dengue data imputation and enrichment",
-    "section": "Export improved database",
-    "text": "Export improved database\n\ndengue %&gt;%\n  write_parquet(sink = \"parquet_improved/dengue_improved.parquet\")"
-  },
-  {
-    "objectID": "dengue-data/imputation_report.html#session-info",
-    "href": "dengue-data/imputation_report.html#session-info",
-    "title": "Dengue data imputation and enrichment",
-    "section": "Session info",
-    "text": "Session info\n\nsessionInfo()\n\nR version 4.1.2 (2021-11-01)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] knitr_1.43      arrow_12.0.0    lubridate_1.9.2 forcats_1.0.0  \n [5] stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1     readr_2.1.4    \n [9] tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.2   tidyverse_2.0.0\n\nloaded via a namespace (and not attached):\n [1] compiler_4.1.2    pillar_1.9.0      tools_4.1.2       bit_4.0.5        \n [5] digest_0.6.31     timechange_0.2.0  jsonlite_1.8.5    evaluate_0.21    \n [9] lifecycle_1.0.3   gtable_0.3.3      pkgconfig_2.0.3   rlang_1.1.1      \n[13] cli_3.6.1         rstudioapi_0.14   yaml_2.3.7        xfun_0.39        \n[17] fastmap_1.1.1     withr_2.5.0       generics_0.1.3    vctrs_0.6.2      \n[21] htmlwidgets_1.6.2 hms_1.1.3         bit64_4.0.5       grid_4.1.2       \n[25] tidyselect_1.2.0  glue_1.6.2        R6_2.5.1          fansi_1.0.4      \n[29] rmarkdown_2.22    tzdb_0.4.0        magrittr_2.0.3    scales_1.2.1     \n[33] htmltools_0.5.5   assertthat_0.2.1  colorspace_2.1-0  utf8_1.2.3       \n[37] stringi_1.7.12    munsell_0.5.0"
-  },
-  {
-    "objectID": "dengue-data/dengue.html",
-    "href": "dengue-data/dengue.html",
-    "title": "Raw files",
-    "section": "",
-    "text": "library(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\n# remotes::install_github(\"rfsaldanha/microdatasus\")\nlibrary(microdatasus)\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp"
-  },
-  {
-    "objectID": "dengue-data/dengue.html#packages",
-    "href": "dengue-data/dengue.html#packages",
-    "title": "Raw files",
-    "section": "",
-    "text": "library(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\n# remotes::install_github(\"rfsaldanha/microdatasus\")\nlibrary(microdatasus)\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp"
-  },
-  {
-    "objectID": "dengue-data/dengue.html#data-download",
-    "href": "dengue-data/dengue.html#data-download",
-    "title": "Raw files",
-    "section": "Data download",
-    "text": "Data download\n\n# for(a in 2011:2021){\n#   tmp &lt;- fetch_datasus(\n#     year_start = a, year_end = a,\n#     information_system = \"SINAN-DENGUE\"\n#   )\n# \n#   write_parquet(x = tmp, sink = paste0(\"parquets_raw/raw_dengue_\", a, \".parquet\"))\n#   \n#   tmp &lt;- process_sinan_dengue(data = tmp)\n#   \n#   write_parquet(x = tmp, sink = paste0(\"parquets/dengue_\", a, \".parquet\"))\n#   \n#   rm(tmp)\n# }"
-  },
-  {
-    "objectID": "dengue-data/dengue.html#load",
-    "href": "dengue-data/dengue.html#load",
-    "title": "Raw files",
-    "section": "Load",
-    "text": "Load\n\ndengue &lt;- open_dataset(sources = \"parquets/\")\n\n\ndengue %&gt;%\n  mutate(DT_SIN_PRI = as.Date(DT_SIN_PRI)) %&gt;%\n  filter(DT_SIN_PRI &gt;= as.Date(\"2011-01-01\") & DT_SIN_PRI &lt; as.Date(\"2022-01-01\")) %&gt;%\n  mutate(class2 = case_when(\n    CLASSI_FIN == \"Descartado\" ~ \"Descartado/Inconclusivo\",\n    CLASSI_FIN == \"Inconclusivo\" ~ \"Descartado/Inconclusivo\",\n    is.na(CLASSI_FIN) ~ \"In analysis\",\n    TRUE ~ \"Dengue\"\n  )) %&gt;%\n  group_by(class2) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  arrange(-freq) %&gt;%\n  collect()\n\n# A tibble: 3 × 2\n  class2                     freq\n  &lt;chr&gt;                     &lt;int&gt;\n1 Dengue                  8105663\n2 Descartado/Inconclusivo 7345760\n3 In analysis               69492\n\n\n\nres &lt;- dengue %&gt;%\n  mutate(DT_SIN_PRI = as.Date(DT_SIN_PRI)) %&gt;%\n  filter(DT_SIN_PRI &gt;= as.Date(\"2011-01-01\") & DT_SIN_PRI &lt; as.Date(\"2022-01-01\")) %&gt;%\n  mutate(class2 = case_when(\n    CLASSI_FIN == \"Descartado\" ~ \"Descartado/Inconclusivo\",\n    CLASSI_FIN == \"Inconclusivo\" ~ \"Descartado/Inconclusivo\",\n    is.na(CLASSI_FIN) ~ \"In analysis\",\n    TRUE ~ \"Dengue\"\n  )) %&gt;%\n  collect() %&gt;%\n  mutate(DT_SIN_PRI = lubridate::ceiling_date(x = DT_SIN_PRI, unit = \"month\")) %&gt;%\n  group_by(DT_SIN_PRI, class2) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  arrange(-freq) %&gt;%\n  collect()\n\n`summarise()` has grouped output by 'DT_SIN_PRI'. You can override using the\n`.groups` argument.\n\n\n\nggplot(res) +\n  aes(x = DT_SIN_PRI, fill = class2, weight = freq) +\n  geom_bar() +\n  scale_fill_hue(direction = 1) +\n  labs(fill = \"Classificação\") +\n  theme_minimal() +\n  theme(legend.position = \"bottom\")"
-  },
-  {
-    "objectID": "data.html",
-    "href": "data.html",
-    "title": "Dengue data",
-    "section": "",
-    "text": "Something about dengue data…"
-  },
-  {
-    "objectID": "dengue-data/missing_data_report.html",
-    "href": "dengue-data/missing_data_report.html",
-    "title": "Dengue missing data report",
-    "section": "",
-    "text": "This report presents an missing data analysis for Brazilian dengue data, from the SINAN dataset, downloaded from the DataSUS FTP, covering the years from 2011 to 2021.\nAfter the download, the data was pre-processed by using the microdatasus package as presented on the dengue.qmd report.\nConsidering the high number of variables, this report will use a subset of the most relevant ones."
-  },
-  {
-    "objectID": "dengue-data/missing_data_report.html#context",
-    "href": "dengue-data/missing_data_report.html#context",
-    "title": "Dengue missing data report",
-    "section": "",
-    "text": "This report presents an missing data analysis for Brazilian dengue data, from the SINAN dataset, downloaded from the DataSUS FTP, covering the years from 2011 to 2021.\nAfter the download, the data was pre-processed by using the microdatasus package as presented on the dengue.qmd report.\nConsidering the high number of variables, this report will use a subset of the most relevant ones."
-  },
-  {
-    "objectID": "dengue-data/missing_data_report.html#packages",
-    "href": "dengue-data/missing_data_report.html#packages",
-    "title": "Dengue missing data report",
-    "section": "Packages",
-    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(naniar)\nlibrary(knitr)\nlibrary(lubridate)"
-  },
-  {
-    "objectID": "dengue-data/missing_data_report.html#load-data",
-    "href": "dengue-data/missing_data_report.html#load-data",
-    "title": "Dengue missing data report",
-    "section": "Load data",
-    "text": "Load data\n\nimportant_vars &lt;- c(\"ID_AGRAVO\", \"DT_NOTIFIC\", \"ID_UNIDADE\",\n                    \"DT_SIN_PRI\", \"CS_SEXO\", \"CS_GESTANT\",\n                    \"CS_RACA\", \"CS_ESCOL_N\", \"ID_MN_RESI\",\n                    \"COUFINF\", \"COMUNINF\", \"ID_OCUPA_N\",\n                    \"DT_SORO\", \"RESUL_SORO\", \"SOROTIPO\", \n                    \"CLASSI_FIN\", \"CRITERIO\", \"EVOLUCAO\",\n                    \"DT_OBITO\", \"HOSPITALIZ\", \"DT_INTERNA\")\n\ndengue &lt;- open_dataset(sources = \"parquets/\") %&gt;%\n  select(all_of(important_vars)) %&gt;%\n  collect()"
-  },
-  {
-    "objectID": "dengue-data/missing_data_report.html#overall",
-    "href": "dengue-data/missing_data_report.html#overall",
-    "title": "Dengue missing data report",
-    "section": "Overall",
-    "text": "Overall\nPlot with a 0.2% random sample (31,124 out from 15,562,124 records).\n\ndengue %&gt;%\n  slice_sample(prop = 0.002) %&gt;%\n  vis_miss()\n\n\n\n\nTable considering all records.\n\ndengue %&gt;% \n  miss_var_summary() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nvariable\nn_miss\npct_miss\n\n\n\n\nDT_OBITO\n19.153.998\n99,8620523\n\n\nSOROTIPO\n19.122.145\n99,6959822\n\n\nDT_INTERNA\n18.666.361\n97,3196885\n\n\nDT_SORO\n13.240.413\n69,0307483\n\n\nCOUFINF\n12.135.027\n63,2676635\n\n\nCOMUNINF\n11.092.216\n57,8308223\n\n\nHOSPITALIZ\n9.873.619\n51,4774961\n\n\nRESUL_SORO\n7.430.672\n38,7408496\n\n\nEVOLUCAO\n6.002.490\n31,2948226\n\n\nCS_ESCOL_N\n5.838.882\n30,4418294\n\n\nCRITERIO\n4.529.680\n23,6161213\n\n\nCS_RACA\n3.700.530\n19,2932316\n\n\nCLASSI_FIN\n2.402.459\n12,5255566\n\n\nCS_GESTANT\n2.304.926\n12,0170547\n\n\nCS_SEXO\n2.301.330\n11,9983064\n\n\nID_OCUPA_N\n720.520\n3,7565320\n\n\nID_UNIDADE\n3.471\n0,0180965\n\n\nID_MN_RESI\n2.627\n0,0136962\n\n\nDT_SIN_PRI\n176\n0,0009176\n\n\nDT_NOTIFIC\n1\n0,0000052\n\n\nID_AGRAVO\n0\n0,0000000\n\n\n\n\n\n\nVariables quality\n\nResidence municipality: ID_MN_RESI\nCheck var length. 6 characters are expected.\n\ndengue %&gt;%\n  mutate(\n    ID_MN_RESI_check = if_else(nchar(ID_MN_RESI) == 6, \n                               false = FALSE,\n                               true = TRUE)\n  ) %&gt;%\n  group_by(ID_MN_RESI_check) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nID_MN_RESI_check\nfreq\n\n\n\n\nFALSE\n4\n\n\nTRUE\n19.177.826\n\n\nNA\n2.627\n\n\n\n\n\n15.559.994 records on the database meets the criteria. 4 records have invalid municipalty codes and this information is missing for 2.126 records. Inputation from COMUNINF is a possibility.\n\n\nFinal classification of the notification: CLASSI_FIN\nIt is expected that the notifications final classification are labeled.\n\ndengue %&gt;%\n  group_by(CLASSI_FIN) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nCLASSI_FIN\nfreq\n\n\n\n\n1\n308.012\n\n\n2\n7.962\n\n\n3\n2.588\n\n\n4\n91\n\n\n5\n189.158\n\n\n6\n3\n\n\n8\n75.360\n\n\nDengue\n5.665.033\n\n\nDengue clássico\n2.686.548\n\n\nDengue com complicações\n23.073\n\n\nDengue com sinais de alarme\n82.408\n\n\nDengue grave\n7.391\n\n\nDescartado\n5.580.603\n\n\nFebre hemorrágica do dengue\n7.136\n\n\nInconclusivo\n2.142.252\n\n\nSíndrome do choque do dengue\n380\n\n\nNA\n2.402.459\n\n\n\n\n\n3 records have an invalid label and 69.866 are missing. This missing data may be from two causes: (1) the notification is being evaluated or (2) a real missing.\n\n\nDate of the first symptons onset: DT_SIN_PRI\nThis is the date most near to the infection date and more relevant to epidemiological analysis.\n\nvalid_interval &lt;- interval(ymd(\"2001-01-01\"), ymd(\"2021-12-31\"))\n\ndengue %&gt;%\n  mutate(\n    DT_SIN_PRI_check = ymd(DT_SIN_PRI) %within% valid_interval\n  ) %&gt;%\n  group_by(DT_SIN_PRI_check) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nDT_SIN_PRI_check\nfreq\n\n\n\n\nFALSE\n30.775\n\n\nTRUE\n19.149.506\n\n\nNA\n176\n\n\n\n\n\nThis variable is missing for 173 records. For 26.018 records, we have invalid dates (outside the period 2001-2021). It is possible to imputate with DT_NOTIFIC (date of notification), if valid."
-  },
-  {
-    "objectID": "dengue-data/missing_data_report.html#session-info",
-    "href": "dengue-data/missing_data_report.html#session-info",
-    "title": "Dengue missing data report",
-    "section": "Session info",
-    "text": "Session info\n\nsessionInfo()\n\nR version 4.1.2 (2021-11-01)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] knitr_1.43      naniar_1.0.0    arrow_12.0.0    lubridate_1.9.2\n [5] forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1    \n [9] readr_2.1.4     tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.2  \n[13] tidyverse_2.0.0\n\nloaded via a namespace (and not attached):\n [1] compiler_4.1.2    pillar_1.9.0      tools_4.1.2       bit_4.0.5        \n [5] digest_0.6.31     timechange_0.2.0  jsonlite_1.8.5    evaluate_0.21    \n [9] lifecycle_1.0.3   gtable_0.3.3      pkgconfig_2.0.3   rlang_1.1.1      \n[13] cli_3.6.1         rstudioapi_0.14   yaml_2.3.7        xfun_0.39        \n[17] fastmap_1.1.1     withr_2.5.0       generics_0.1.3    vctrs_0.6.2      \n[21] htmlwidgets_1.6.2 hms_1.1.3         bit64_4.0.5       grid_4.1.2       \n[25] tidyselect_1.2.0  glue_1.6.2        R6_2.5.1          fansi_1.0.4      \n[29] rmarkdown_2.22    farver_2.1.1      tzdb_0.4.0        magrittr_2.0.3   \n[33] scales_1.2.1      htmltools_0.5.5   visdat_0.6.0      assertthat_0.2.1 \n[37] colorspace_2.1-0  labeling_0.4.2    utf8_1.2.3        stringi_1.7.12   \n[41] munsell_0.5.0"
-  },
-  {
-    "objectID": "dengue-data/missing_data.html",
-    "href": "dengue-data/missing_data.html",
-    "title": "Missing data analysis",
-    "section": "",
-    "text": "This report presents an missing data analysis from the raw parquet files.\nConsidering the high number of variables, this report will use a subset of the most relevant ones."
-  },
-  {
-    "objectID": "dengue-data/missing_data.html#context",
-    "href": "dengue-data/missing_data.html#context",
-    "title": "Missing data analysis",
-    "section": "",
-    "text": "This report presents an missing data analysis from the raw parquet files.\nConsidering the high number of variables, this report will use a subset of the most relevant ones."
-  },
-  {
-    "objectID": "dengue-data/missing_data.html#packages",
-    "href": "dengue-data/missing_data.html#packages",
-    "title": "Missing data analysis",
-    "section": "Packages",
-    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(naniar)\nlibrary(knitr)\nlibrary(lubridate)"
-  },
-  {
-    "objectID": "dengue-data/missing_data.html#load-data",
-    "href": "dengue-data/missing_data.html#load-data",
-    "title": "Missing data analysis",
-    "section": "Load data",
-    "text": "Load data\n\nimportant_vars &lt;- c(\"ID_AGRAVO\", \"DT_NOTIFIC\", \"ID_UNIDADE\",\n                    \"DT_SIN_PRI\", \"CS_SEXO\", \"CS_GESTANT\",\n                    \"CS_RACA\", \"CS_ESCOL_N\", \"ID_MN_RESI\",\n                    \"COUFINF\", \"COMUNINF\", \"ID_OCUPA_N\",\n                    \"DT_SORO\", \"RESUL_SORO\", \"SOROTIPO\", \n                    \"CLASSI_FIN\", \"CRITERIO\", \"EVOLUCAO\",\n                    \"DT_OBITO\", \"HOSPITALIZ\", \"DT_INTERNA\")\n\ndengue &lt;- open_dataset(sources = \"parquets/\") %&gt;%\n  select(all_of(important_vars)) %&gt;%\n  collect()"
-  },
-  {
-    "objectID": "dengue-data/missing_data.html#overall",
-    "href": "dengue-data/missing_data.html#overall",
-    "title": "Missing data analysis",
-    "section": "Overall",
-    "text": "Overall\nTable considering all records.\n\ndengue %&gt;% \n  miss_var_summary() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nvariable\nn_miss\npct_miss\n\n\n\n\nDT_OBITO\n19.153.998\n99,8620523\n\n\nSOROTIPO\n19.122.145\n99,6959822\n\n\nDT_INTERNA\n18.666.361\n97,3196885\n\n\nDT_SORO\n13.240.413\n69,0307483\n\n\nCOUFINF\n12.135.027\n63,2676635\n\n\nCOMUNINF\n11.092.216\n57,8308223\n\n\nHOSPITALIZ\n9.873.619\n51,4774961\n\n\nRESUL_SORO\n7.430.672\n38,7408496\n\n\nEVOLUCAO\n6.002.490\n31,2948226\n\n\nCS_ESCOL_N\n5.838.882\n30,4418294\n\n\nCRITERIO\n4.529.680\n23,6161213\n\n\nCS_RACA\n3.700.530\n19,2932316\n\n\nCLASSI_FIN\n2.402.459\n12,5255566\n\n\nCS_GESTANT\n2.304.926\n12,0170547\n\n\nCS_SEXO\n2.301.330\n11,9983064\n\n\nID_OCUPA_N\n720.520\n3,7565320\n\n\nID_UNIDADE\n3.471\n0,0180965\n\n\nID_MN_RESI\n2.627\n0,0136962\n\n\nDT_SIN_PRI\n176\n0,0009176\n\n\nDT_NOTIFIC\n1\n0,0000052\n\n\nID_AGRAVO\n0\n0,0000000\n\n\n\n\n\n\nVariables quality\n\nResidence municipality: ID_MN_RESI\nCheck var length. 6 characters are expected.\n\ndengue %&gt;%\n  mutate(\n    ID_MN_RESI_check = if_else(nchar(ID_MN_RESI) == 6, \n                               false = FALSE,\n                               true = TRUE)\n  ) %&gt;%\n  group_by(ID_MN_RESI_check) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nID_MN_RESI_check\nfreq\n\n\n\n\nFALSE\n4\n\n\nTRUE\n19.177.826\n\n\nNA\n2.627\n\n\n\n\n\n15.559.994 records on the database meets the criteria. 4 records have invalid municipalty codes and this information is missing for 2.126 records. Inputation from COMUNINF is a possibility.\n\n\nFinal classification of the notification: CLASSI_FIN\nIt is expected that the notifications final classification are labeled.\n\ndengue %&gt;%\n  group_by(CLASSI_FIN) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nCLASSI_FIN\nfreq\n\n\n\n\n1\n308.012\n\n\n2\n7.962\n\n\n3\n2.588\n\n\n4\n91\n\n\n5\n189.158\n\n\n6\n3\n\n\n8\n75.360\n\n\nDengue\n5.665.033\n\n\nDengue clássico\n2.686.548\n\n\nDengue com complicações\n23.073\n\n\nDengue com sinais de alarme\n82.408\n\n\nDengue grave\n7.391\n\n\nDescartado\n5.580.603\n\n\nFebre hemorrágica do dengue\n7.136\n\n\nInconclusivo\n2.142.252\n\n\nSíndrome do choque do dengue\n380\n\n\nNA\n2.402.459\n\n\n\n\n\n3 records have an invalid label and 69.866 are missing. This missing data may be from two causes: (1) the notification is being evaluated or (2) a real missing.\n\n\nDate of the first symptons onset: DT_SIN_PRI\nThis is the date most near to the infection date and more relevant to epidemiological analysis.\n\nvalid_interval &lt;- interval(ymd(\"2001-01-01\"), ymd(\"2021-12-31\"))\n\ndengue %&gt;%\n  mutate(\n    DT_SIN_PRI_check = ymd(DT_SIN_PRI) %within% valid_interval\n  ) %&gt;%\n  group_by(DT_SIN_PRI_check) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nDT_SIN_PRI_check\nfreq\n\n\n\n\nFALSE\n30.775\n\n\nTRUE\n19.149.506\n\n\nNA\n176\n\n\n\n\n\nThis variable is missing for 173 records. For 26.018 records, we have invalid dates (outside the period 2001-2021). It is possible to imputate with DT_NOTIFIC (date of notification), if valid."
-  },
-  {
-    "objectID": "dengue-data/missing_data.html#session-info",
-    "href": "dengue-data/missing_data.html#session-info",
-    "title": "Missing data analysis",
-    "section": "Session info",
-    "text": "Session info\n\nsessionInfo()\n\nR version 4.1.2 (2021-11-01)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] knitr_1.43      naniar_1.0.0    arrow_12.0.0    lubridate_1.9.2\n [5] forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1    \n [9] readr_2.1.4     tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.2  \n[13] tidyverse_2.0.0\n\nloaded via a namespace (and not attached):\n [1] compiler_4.1.2    pillar_1.9.0      tools_4.1.2       bit_4.0.5        \n [5] digest_0.6.31     timechange_0.2.0  jsonlite_1.8.5    evaluate_0.21    \n [9] lifecycle_1.0.3   gtable_0.3.3      pkgconfig_2.0.3   rlang_1.1.1      \n[13] cli_3.6.1         rstudioapi_0.14   yaml_2.3.7        xfun_0.39        \n[17] fastmap_1.1.1     withr_2.5.0       generics_0.1.3    vctrs_0.6.2      \n[21] htmlwidgets_1.6.2 hms_1.1.3         bit64_4.0.5       grid_4.1.2       \n[25] tidyselect_1.2.0  glue_1.6.2        R6_2.5.1          fansi_1.0.4      \n[29] rmarkdown_2.22    tzdb_0.4.0        magrittr_2.0.3    scales_1.2.1     \n[33] htmltools_0.5.5   visdat_0.6.0      assertthat_0.2.1  colorspace_2.1-0 \n[37] utf8_1.2.3        stringi_1.7.12    munsell_0.5.0"
-  },
-  {
-    "objectID": "dengue-data/raw_files.html",
-    "href": "dengue-data/raw_files.html",
-    "title": "Raw files",
-    "section": "",
-    "text": "This notebook presents the process of downloading SINAN Dengue raw data files from DataSUS, preprocessing steps using the {microdatasus} package and exporting the raw files to parquet files."
-  },
-  {
-    "objectID": "dengue-data/raw_files.html#packages",
-    "href": "dengue-data/raw_files.html#packages",
-    "title": "Raw files",
-    "section": "Packages",
-    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\n# remotes::install_github(\"rfsaldanha/microdatasus\")\nlibrary(microdatasus)\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp"
-  },
-  {
-    "objectID": "dengue-data/raw_files.html#data-download",
-    "href": "dengue-data/raw_files.html#data-download",
-    "title": "Raw files",
-    "section": "Data download",
-    "text": "Data download\n\n# for(a in 2011:2021){\n#   tmp &lt;- fetch_datasus(\n#     year_start = a, year_end = a,\n#     information_system = \"SINAN-DENGUE\"\n#   )\n# \n#   write_parquet(x = tmp, sink = paste0(\"parquets_raw/raw_dengue_\", a, \".parquet\"))\n#   \n#   tmp &lt;- process_sinan_dengue(data = tmp)\n#   \n#   write_parquet(x = tmp, sink = paste0(\"parquets/dengue_\", a, \".parquet\"))\n#   \n#   rm(tmp)\n# }\n\nThis code chunk is commented to avoid unnecessary download again the raw DBC files from DataSUS."
-  },
-  {
-    "objectID": "dengue-data/raw_files.html#load",
-    "href": "dengue-data/raw_files.html#load",
-    "title": "Raw files",
-    "section": "Load",
-    "text": "Load\nAfter download, preprocessing and export, the parquet files are read to have a dimension of the size.\n\ndengue &lt;- open_dataset(sources = \"parquets/\")\n\n\ndengue %&gt;% glimpse()\n\nFileSystemDataset with 15 Parquet files\n19,180,457 rows x 75 columns\n$ TP_NOT       &lt;string&gt; \"Individual\", \"Individual\", \"Individual\", \"Individual\", …\n$ ID_AGRAVO    &lt;string&gt; \"A90\", \"A90\", \"A90\", \"A90\", \"A90\", \"A90\", \"A90\", \"A90\", …\n$ DT_NOTIFIC   &lt;string&gt; \"2007-02-12\", \"2007-02-12\", \"2007-02-26\", \"2007-02-12\", …\n$ SEM_NOT      &lt;string&gt; \"200707\", \"200707\", \"200709\", \"200707\", \"200706\", \"20070…\n$ NU_ANO       &lt;string&gt; \"2007\", \"2007\", \"2007\", \"2007\", \"2007\", \"2007\", \"2007\", …\n$ SG_UF_NOT    &lt;string&gt; \"Maranhão\", \"Maranhão\", \"Pernambuco\", \"Bahia\", \"Bahia\", …\n$ ID_MUNICIP   &lt;string&gt; \"210780\", \"210780\", \"260640\", \"292150\", \"292150\", \"29215…\n$ ID_REGIONA   &lt;string&gt; \"1577\", \"1577\", \"1499\", \"1410\", \"1410\", \"1410\", \"1410\", …\n$ ID_UNIDADE   &lt;string&gt; \"2454793\", \"2454793\", \"2436027\", \"3340392\", \"3340392\", \"…\n$ DT_SIN_PRI   &lt;string&gt; \"2007-02-09\", \"2007-02-10\", \"2007-02-21\", \"2007-01-28\", …\n$ SEM_PRI      &lt;string&gt; \"200706\", \"200706\", \"200708\", \"200705\", \"200703\", \"20070…\n$ CS_SEXO      &lt;string&gt; \"Feminino\", \"Feminino\", \"Masculino\", \"Feminino\", \"Mascul…\n$ CS_GESTANT   &lt;string&gt; \"Ignorado\", \"Ignorado\", \"Não se aplica\", \"Não se aplica\"…\n$ CS_RACA      &lt;string&gt; \"Parda\", \"Parda\", \"Branca\", \"Branca\", \"Parda\", \"Parda\", …\n$ CS_ESCOL_N   &lt;string&gt; \"5a à 8a série incompleta do EF (antigo ginásio ou 1o gr…\n$ SG_UF        &lt;string&gt; \"Maranhão\", \"Maranhão\", \"Pernambuco\", \"Bahia\", \"Bahia\", …\n$ ID_MN_RESI   &lt;string&gt; \"210780\", \"210780\", \"260640\", \"292150\", \"292150\", \"29215…\n$ ID_RG_RESI   &lt;string&gt; \"1577\", \"1577\", \"1499\", \"1410\", \"1410\", \"1410\", \"1410\", …\n$ ID_PAIS      &lt;string&gt; \"BRASIL\", \"BRASIL\", \"BRASIL\", \"BRASIL\", \"BRASIL\", \"BRASI…\n$ NDUPLIC_N    &lt;string&gt; \"Não identificado\", \"Não identificado\", NA, NA, NA, NA, …\n$ DT_DIGITA    &lt;string&gt; NA, NA, \"2007-03-08\", \"2007-05-22\", \"2007-05-02\", \"2007-…\n$ CS_FLXRET    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ FLXRECEBI    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ MIGRADO_W    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ DT_INVEST    &lt;string&gt; \"2007-02-12\", \"2007-02-12\", \"2007-02-26\", \"2007-02-12\", …\n$ ID_OCUPA_N   &lt;string&gt; \"Nao informada\", \"Nao informada\", NA, \"Nao informada\", \"…\n$ DT_SORO      &lt;string&gt; NA, NA, \"2007-02-26\", \"2007-02-01\", \"2007-02-09\", NA, NA…\n$ RESUL_SORO   &lt;string&gt; \"Não realizado\", \"Não realizado\", \"Não reagente\", \"Reage…\n$ HISTOPA_N    &lt;string&gt; \"Não realizado\", \"Não realizado\", \"Não realizado\", \"Não …\n$ DT_VIRAL     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, \"2007-02-14\", NA, NA, NA…\n$ RESUL_VI_N   &lt;string&gt; \"Não realizado\", \"Não realizado\", NA, \"Não realizado\", \"…\n$ SOROTIPO     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, \"DEN 3\", NA, NA, NA, NA,…\n$ IMUNOH_N     &lt;string&gt; \"Não realizado\", \"Não realizado\", \"Não realizado\", \"Não …\n$ DT_PCR       &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ RESUL_PCR_   &lt;string&gt; \"Não realizado\", \"Não realizado\", NA, \"Não realizado\", \"…\n$ CLASSI_FIN   &lt;string&gt; \"Dengue clássico\", \"Dengue clássico\", \"Descartado\", \"Den…\n$ CRITERIO     &lt;string&gt; \"Clínico epidemiológico\", \"Clínico epidemiológico\", \"Clí…\n$ TPAUTOCTO    &lt;string&gt; \"Sim\", \"Sim\", NA, \"Não\", \"Sim\", NA, NA, \"Não\", \"Sim\", NA…\n$ COUFINF      &lt;string&gt; \"Maranhão\", \"Maranhão\", NA, \"Bahia\", \"Bahia\", NA, NA, \"B…\n$ COPAISINF    &lt;string&gt; \"BRASIL\", \"BRASIL\", NA, \"BRASIL\", \"BRASIL\", NA, NA, \"BRA…\n$ COMUNINF     &lt;string&gt; \"210780\", \"210780\", NA, \"292150\", \"292150\", NA, NA, \"292…\n$ DOENCA_TRA   &lt;string&gt; \"Não\", \"Não\", NA, \"Não\", \"Não\", NA, NA, \"Não\", \"Não\", NA…\n$ EVOLUCAO     &lt;string&gt; \"Cura\", \"Cura\", NA, \"Cura\", \"Cura\", NA, NA, \"Cura\", \"Cur…\n$ DT_OBITO     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ DT_ENCERRA   &lt;string&gt; \"2007-05-08\", \"2007-05-08\", \"2007-04-19\", \"2007-05-28\", …\n$ MANI_HEMOR   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ EPISTAXE     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ GENGIVO      &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ METRO        &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ PETEQUIAS    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ HEMATURA     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ SANGRAM      &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ LACO_N       &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ PLASMATICO   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ EVIDENCIA    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ PLAQ_MENOR   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ CON_FHD      &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ COMPLICA     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ HOSPITALIZ   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ DT_INTERNA   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ UF           &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ MUNICIPIO    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ IDADEminutos &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ IDADEhoras   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ IDADEdias    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ IDADEmeses   &lt;string&gt; NA, NA, NA, \"0\", NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…\n$ IDADEanos    &lt;string&gt; \"3\", \"1\", \"3\", NA, \"0\", \"1\", \"3\", \"0\", \"3\", \"0\", \"1\", \"2…\n$ munResStatus &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResTipo   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResNome   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResUf     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResLat    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResLon    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResAlt    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResArea   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\nCall `print()` for full schema details"
-  },
-  {
-    "objectID": "dengue-data/imputation.html",
-    "href": "dengue-data/imputation.html",
-    "title": "Imputation",
-    "section": "",
-    "text": "This notebook aims to imputate some missing data and enrich the dataset."
-  },
-  {
-    "objectID": "dengue-data/imputation.html#context",
-    "href": "dengue-data/imputation.html#context",
-    "title": "Imputation",
-    "section": "",
-    "text": "This notebook aims to imputate some missing data and enrich the dataset."
-  },
-  {
-    "objectID": "dengue-data/imputation.html#packages",
-    "href": "dengue-data/imputation.html#packages",
-    "title": "Imputation",
-    "section": "Packages",
-    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(knitr)\nlibrary(lubridate)"
-  },
-  {
-    "objectID": "dengue-data/imputation.html#load-data",
-    "href": "dengue-data/imputation.html#load-data",
-    "title": "Imputation",
-    "section": "Load data",
-    "text": "Load data\n\nimportant_vars &lt;- c(\"ID_AGRAVO\", \"DT_NOTIFIC\", \"ID_UNIDADE\",\n                    \"DT_SIN_PRI\", \"CS_SEXO\", \"CS_GESTANT\",\n                    \"CS_RACA\", \"CS_ESCOL_N\", \"ID_MN_RESI\",\n                    \"COUFINF\", \"COMUNINF\", \"ID_OCUPA_N\",\n                    \"DT_SORO\", \"RESUL_SORO\", \"SOROTIPO\", \n                    \"CLASSI_FIN\", \"CRITERIO\", \"EVOLUCAO\",\n                    \"DT_OBITO\", \"HOSPITALIZ\", \"DT_INTERNA\")\n\ndengue &lt;- open_dataset(sources = \"parquets/\") %&gt;%\n  select(all_of(important_vars)) %&gt;%\n  collect()\n\n\nResidence municipality: ID_MN_RESI\nTask: If ID_MN_RESI is invalid or missing, imputate with valid COMUNINF information.\n\nImputation\n\ndengue &lt;- dengue %&gt;%\n  mutate(\n    ID_MN_RESI_check = if_else(nchar(ID_MN_RESI) == 6, \n                               false = FALSE,\n                               true = TRUE),\n    COMUNINF_check = if_else(nchar(COMUNINF) == 6, \n                               false = FALSE,\n                               true = TRUE)\n  ) %&gt;%\n  mutate(ID_MN_RESI = case_when(\n    ID_MN_RESI_check == FALSE & COMUNINF_check == TRUE ~ COMUNINF,\n    is.na(ID_MN_RESI) ~ COMUNINF,\n    TRUE ~ ID_MN_RESI\n  )) %&gt;%\n  select(-ID_MN_RESI_check, -COMUNINF_check)\n\n\n\nCheck improval\n\ndengue %&gt;%\n  mutate(\n    ID_MN_RESI_check = if_else(nchar(ID_MN_RESI) == 6, \n                               false = FALSE,\n                               true = TRUE)\n  ) %&gt;%\n  group_by(ID_MN_RESI_check) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nID_MN_RESI_check\nfreq\n\n\n\n\nFALSE\n4\n\n\nTRUE\n19.177.930\n\n\nNA\n2.523\n\n\n\n\n\nNo improvement for invalid municipalities, improvement of 96 records with missing data.\n\n\n\nDate of the first symptoms onset: DT_SIN_PRI\nTask: If DT_SIN_PRI is invalid or missing, imputate with valid DT_NOTIFIC information.\n\nImputation\n\nvalid_interval &lt;- interval(ymd(\"2011-01-01\"), ymd(\"2021-12-31\"))\n\ndengue &lt;- dengue %&gt;%\n  mutate(\n    DT_SIN_PRI_check = ymd(DT_SIN_PRI) %within% valid_interval,\n    DT_NOTIFIC_check = ymd(DT_NOTIFIC) %within% valid_interval,\n  ) %&gt;%\n  mutate(DT_SIN_PRI = case_when(\n    DT_SIN_PRI_check == FALSE & DT_NOTIFIC_check == TRUE ~ DT_NOTIFIC,\n    is.na(DT_SIN_PRI) ~ DT_NOTIFIC,\n    TRUE ~ DT_SIN_PRI\n  )) %&gt;%\n  select(-DT_SIN_PRI_check, -DT_NOTIFIC_check)\n\n\n\nCheck improval\n\nvalid_interval &lt;- interval(ymd(\"2011-01-01\"), ymd(\"2021-12-31\"))\n\ndengue %&gt;%\n  mutate(\n    DT_SIN_PRI_check = ymd(DT_SIN_PRI) %within% valid_interval\n  ) %&gt;%\n  group_by(DT_SIN_PRI_check) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nDT_SIN_PRI_check\nfreq\n\n\n\n\nFALSE\n3.618.528\n\n\nTRUE\n15.561.929\n\n\n\n\n\nThere was a improvement on 25,823 records with invalid dates and all missing records were imputate."
-  },
-  {
-    "objectID": "dengue-data/imputation.html#export-improved-database",
-    "href": "dengue-data/imputation.html#export-improved-database",
-    "title": "Imputation",
-    "section": "Export improved database",
-    "text": "Export improved database\n\ndengue %&gt;%\n  write_parquet(sink = \"parquet_improved/dengue_improved.parquet\")"
-  },
-  {
-    "objectID": "dengue-data/imputation.html#session-info",
-    "href": "dengue-data/imputation.html#session-info",
-    "title": "Imputation",
-    "section": "Session info",
-    "text": "Session info\n\nsessionInfo()\n\nR version 4.1.2 (2021-11-01)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] knitr_1.43      arrow_12.0.0    lubridate_1.9.2 forcats_1.0.0  \n [5] stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1     readr_2.1.4    \n [9] tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.2   tidyverse_2.0.0\n\nloaded via a namespace (and not attached):\n [1] compiler_4.1.2    pillar_1.9.0      tools_4.1.2       bit_4.0.5        \n [5] digest_0.6.31     timechange_0.2.0  jsonlite_1.8.5    evaluate_0.21    \n [9] lifecycle_1.0.3   gtable_0.3.3      pkgconfig_2.0.3   rlang_1.1.1      \n[13] cli_3.6.1         rstudioapi_0.14   yaml_2.3.7        xfun_0.39        \n[17] fastmap_1.1.1     withr_2.5.0       generics_0.1.3    vctrs_0.6.2      \n[21] htmlwidgets_1.6.2 hms_1.1.3         bit64_4.0.5       grid_4.1.2       \n[25] tidyselect_1.2.0  glue_1.6.2        R6_2.5.1          fansi_1.0.4      \n[29] rmarkdown_2.22    tzdb_0.4.0        magrittr_2.0.3    scales_1.2.1     \n[33] htmltools_0.5.5   assertthat_0.2.1  colorspace_2.1-0  utf8_1.2.3       \n[37] stringi_1.7.12    munsell_0.5.0"
-  },
-  {
-    "objectID": "dengue-data/aggregated_database.html",
-    "href": "dengue-data/aggregated_database.html",
-    "title": "Export aggregated database",
-    "section": "",
-    "text": "This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.\nThe aggregation will be on municipalities and time will be date and epidemiological week.\n\n\n\nAfter the steps of raw dataset download and imputation\nLoad the dengue_improved.parquet data\nFilter valid dates\nFilter positive cases\nAggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.\n\n\n\n\n\nflowchart LR\n  A[Raw dataset] --&gt; B(Imputation)\n  B --&gt; C[Improved dataset]\n  C --&gt; D{Filter valid dates}\n  C --&gt; E{Filter positive cases}\n  D --&gt; F(Aggregate)\n  E --&gt; F\n  F --&gt; G[Municipality and date dataset]\n  F --&gt; H[Municipality and epiweek dataset]"
-  },
-  {
-    "objectID": "dengue-data/aggregated_database.html#context",
-    "href": "dengue-data/aggregated_database.html#context",
-    "title": "Export aggregated database",
-    "section": "",
-    "text": "This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.\nThe aggregation will be on municipalities and time will be date and epidemiological week.\n\n\n\nAfter the steps of raw dataset download and imputation\nLoad the dengue_improved.parquet data\nFilter valid dates\nFilter positive cases\nAggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.\n\n\n\n\n\nflowchart LR\n  A[Raw dataset] --&gt; B(Imputation)\n  B --&gt; C[Improved dataset]\n  C --&gt; D{Filter valid dates}\n  C --&gt; E{Filter positive cases}\n  D --&gt; F(Aggregate)\n  E --&gt; F\n  F --&gt; G[Municipality and date dataset]\n  F --&gt; H[Municipality and epiweek dataset]"
-  },
-  {
-    "objectID": "dengue-data/aggregated_database.html#packages",
-    "href": "dengue-data/aggregated_database.html#packages",
-    "title": "Export aggregated database",
-    "section": "Packages",
-    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(lubridate)"
-  },
-  {
-    "objectID": "dengue-data/aggregated_database.html#load-data",
-    "href": "dengue-data/aggregated_database.html#load-data",
-    "title": "Export aggregated database",
-    "section": "Load data",
-    "text": "Load data\nLazy evaluation.\n\ndengue &lt;- arrow::read_parquet(file = \"parquet_improved/dengue_improved.parquet\")\n\ntally(dengue)\n\n         n\n1 19180457"
-  },
-  {
-    "objectID": "dengue-data/aggregated_database.html#filter-valid-dates",
-    "href": "dengue-data/aggregated_database.html#filter-valid-dates",
-    "title": "Export aggregated database",
-    "section": "Filter valid dates",
-    "text": "Filter valid dates\n\nvalid_interval &lt;- interval(ymd(\"2011-01-01\"), ymd(\"2021-12-31\"))\n\ndengue &lt;- dengue %&gt;%\n  mutate(DT_SIN_PRI = ymd(DT_SIN_PRI)) %&gt;%\n  filter(DT_SIN_PRI %within% valid_interval)\n\ntally(dengue)\n\n         n\n1 15561929"
-  },
-  {
-    "objectID": "dengue-data/aggregated_database.html#filter-positive-cases-of-dengue",
-    "href": "dengue-data/aggregated_database.html#filter-positive-cases-of-dengue",
-    "title": "Export aggregated database",
-    "section": "Filter positive cases of dengue",
-    "text": "Filter positive cases of dengue\n\ndengue &lt;- dengue %&gt;%\n  filter(CLASSI_FIN %in% dengue_classifications)\n\ntally(dengue)\n\n        n\n1 8125611"
-  },
-  {
-    "objectID": "dengue-data/aggregated_database.html#aggregation",
-    "href": "dengue-data/aggregated_database.html#aggregation",
-    "title": "Export aggregated database",
-    "section": "Aggregation",
-    "text": "Aggregation\n\nMunicipality and date (“md”)\nIncluding the step to fill the time series with zero values when certain dates do not have cases.\n\ndengue_md &lt;- dengue %&gt;%\n  group_by(mun = ID_MN_RESI, date = DT_SIN_PRI) %&gt;%\n  summarise(freq = n()) %&gt;%\n  arrange(date) %&gt;%\n  complete(\n    date = seq.Date(min(date), max(date), by = \"day\"),\n    fill = list(freq = 0)\n  ) %&gt;%\n  ungroup() %&gt;%\n  collect()\n\n`summarise()` has grouped output by 'mun'. You can override using the `.groups`\nargument.\n\n\n\nglimpse(dengue_md)\n\nRows: 16,772,737\nColumns: 3\n$ mun  &lt;chr&gt; \"110000\", \"110000\", \"110000\", \"110000\", \"110000\", \"110000\", \"1100…\n$ date &lt;date&gt; 2015-12-29, 2015-12-30, 2015-12-31, 2016-01-01, 2016-01-02, 2016…\n$ freq &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…\n\n\n\ndengue_md %&gt;%\n  write_parquet(sink = \"parquet_aggregated/dengue_md.parquet\")\n\n\n\nMunicipality and epidemiological week (“mw”)\n\ndengue_mw &lt;- dengue_md %&gt;%\n  mutate(epi_week = paste0(epiyear(date), \"-\", str_pad(epiweek(date), 2, pad = \"0\"))) %&gt;%\n  group_by(mun, epi_week) %&gt;%\n  summarise(freq = n()) %&gt;%\n  arrange(epi_week) %&gt;%\n  ungroup() %&gt;%\n  collect()\n\n`summarise()` has grouped output by 'mun'. You can override using the `.groups`\nargument.\n\n\n\nglimpse(dengue_mw)\n\nRows: 2,400,687\nColumns: 3\n$ mun      &lt;chr&gt; \"110005\", \"110006\", \"110014\", \"110034\", \"110140\", \"120017\", \"…\n$ epi_week &lt;chr&gt; \"2010-52\", \"2010-52\", \"2010-52\", \"2010-52\", \"2010-52\", \"2010-…\n$ freq     &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…\n\n\n\ndengue_mw %&gt;%\n  write_parquet(sink = \"parquet_aggregated/dengue_mw.parquet\")"
-  },
-  {
-    "objectID": "dengue-data/aggregated_database.html#session-info",
-    "href": "dengue-data/aggregated_database.html#session-info",
-    "title": "Export aggregated database",
-    "section": "Session info",
-    "text": "Session info\n\nsessionInfo()\n\nR version 4.1.2 (2021-11-01)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] arrow_12.0.0    lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0  \n [5] dplyr_1.1.2     purrr_1.0.1     readr_2.1.4     tidyr_1.3.0    \n [9] tibble_3.2.1    ggplot2_3.4.2   tidyverse_2.0.0\n\nloaded via a namespace (and not attached):\n [1] compiler_4.1.2    pillar_1.9.0      tools_4.1.2       bit_4.0.5        \n [5] digest_0.6.31     timechange_0.2.0  jsonlite_1.8.5    evaluate_0.21    \n [9] lifecycle_1.0.3   gtable_0.3.3      pkgconfig_2.0.3   rlang_1.1.1      \n[13] cli_3.6.1         rstudioapi_0.14   yaml_2.3.7        xfun_0.39        \n[17] fastmap_1.1.1     withr_2.5.0       knitr_1.43        systemfonts_1.0.4\n[21] generics_0.1.3    vctrs_0.6.2       htmlwidgets_1.6.2 hms_1.1.3        \n[25] bit64_4.0.5       grid_4.1.2        tidyselect_1.2.0  glue_1.6.2       \n[29] R6_2.5.1          textshaping_0.3.6 fansi_1.0.4       rmarkdown_2.22   \n[33] farver_2.1.1      tzdb_0.4.0        magrittr_2.0.3    scales_1.2.1     \n[37] htmltools_0.5.5   assertthat_0.2.1  colorspace_2.1-0  ragg_1.2.5       \n[41] labeling_0.4.2    utf8_1.2.3        stringi_1.7.12    munsell_0.5.0"
-  },
-  {
     "objectID": "dengue-cluster/cluster_long.html",
     "href": "dengue-cluster/cluster_long.html",
     "title": "Cluster long time series",
@@ -413,6 +63,181 @@
     "text": "Clustering\nSequence of k groups to be used.\n\nk_seq &lt;- 3:10\n\n\nSBD method\n\ntic()\nclust &lt;- tsclust(\n  series = tdengue, \n  type = \"partitional\", \n  k = k_seq,\n  distance = \"sbd\",\n  seed = 13\n)\ntoc()\n\n30.217 sec elapsed\n\n\n\n\nCluster Validity Indices (CVI)\n\nnames(clust) &lt;- paste0(\"k_\", k_seq)\nres_cvi &lt;- sapply(clust, cvi, type = \"internal\") %&gt;% \n  t() %&gt;%\n  as_tibble(rownames = \"k\") %&gt;%\n  arrange(-Sil)\n\nres_cvi %&gt;%\n  kbl() %&gt;%\n  kable_styling()\n\n\n\n\nk\nSil\nSF\nCH\nDB\nDBstar\nD\nCOP\n\n\n\n\nk_3\n0.1361517\n0.3215523\n301.2210\n3.692051\n4.316082\n0.0679378\n0.4052902\n\n\nk_5\n0.0868020\n0.2224752\n282.4503\n2.413023\n2.847291\n0.0280136\n0.3615501\n\n\nk_6\n0.0733088\n0.1578847\n154.6699\n4.988996\n6.309369\n0.0216979\n0.3660083\n\n\nk_4\n0.0610827\n0.2544475\n140.5981\n6.897833\n8.287407\n0.0216420\n0.3886784\n\n\nk_9\n0.0504672\n0.0626711\n124.3538\n3.532466\n4.849390\n0.0248858\n0.3501298\n\n\nk_10\n0.0466939\n0.0628349\n166.6916\n3.820877\n4.682205\n0.0135861\n0.3434336\n\n\nk_8\n0.0408157\n0.1107509\n164.5684\n3.780052\n4.964673\n0.0221248\n0.3432409\n\n\nk_7\n0.0380647\n0.1346238\n171.9309\n4.240165\n5.555059\n0.0219174\n0.3537959\n\n\n\n\n\n\n\n\n\nCluster with higher Silhouette statistic\n\nsel_clust &lt;- clust[[res_cvi[[1,1]]]]\n\n\nplot(sel_clust)\n\n\n\n\n\nplot(sel_clust, type = \"centroids\", lty = 1)"
   },
   {
+    "objectID": "dengue-data/imputation.html",
+    "href": "dengue-data/imputation.html",
+    "title": "Imputation",
+    "section": "",
+    "text": "This notebook aims to imputate some missing data and enrich the dataset."
+  },
+  {
+    "objectID": "dengue-data/imputation.html#context",
+    "href": "dengue-data/imputation.html#context",
+    "title": "Imputation",
+    "section": "",
+    "text": "This notebook aims to imputate some missing data and enrich the dataset."
+  },
+  {
+    "objectID": "dengue-data/imputation.html#packages",
+    "href": "dengue-data/imputation.html#packages",
+    "title": "Imputation",
+    "section": "Packages",
+    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(knitr)\nlibrary(lubridate)"
+  },
+  {
+    "objectID": "dengue-data/imputation.html#load-data",
+    "href": "dengue-data/imputation.html#load-data",
+    "title": "Imputation",
+    "section": "Load data",
+    "text": "Load data\n\nimportant_vars &lt;- c(\"ID_AGRAVO\", \"DT_NOTIFIC\", \"ID_UNIDADE\",\n                    \"DT_SIN_PRI\", \"CS_SEXO\", \"CS_GESTANT\",\n                    \"CS_RACA\", \"CS_ESCOL_N\", \"ID_MN_RESI\",\n                    \"COUFINF\", \"COMUNINF\", \"ID_OCUPA_N\",\n                    \"DT_SORO\", \"RESUL_SORO\", \"SOROTIPO\", \n                    \"CLASSI_FIN\", \"CRITERIO\", \"EVOLUCAO\",\n                    \"DT_OBITO\", \"HOSPITALIZ\", \"DT_INTERNA\")\n\ndengue &lt;- open_dataset(sources = \"parquets/\") %&gt;%\n  select(all_of(important_vars)) %&gt;%\n  collect()\n\n\nResidence municipality: ID_MN_RESI\nTask: If ID_MN_RESI is invalid or missing, imputate with valid COMUNINF information.\n\nImputation\n\ndengue &lt;- dengue %&gt;%\n  mutate(\n    ID_MN_RESI_check = if_else(nchar(ID_MN_RESI) == 6, \n                               false = FALSE,\n                               true = TRUE),\n    COMUNINF_check = if_else(nchar(COMUNINF) == 6, \n                               false = FALSE,\n                               true = TRUE)\n  ) %&gt;%\n  mutate(ID_MN_RESI = case_when(\n    ID_MN_RESI_check == FALSE & COMUNINF_check == TRUE ~ COMUNINF,\n    is.na(ID_MN_RESI) ~ COMUNINF,\n    TRUE ~ ID_MN_RESI\n  )) %&gt;%\n  select(-ID_MN_RESI_check, -COMUNINF_check)\n\n\n\nCheck improval\n\ndengue %&gt;%\n  mutate(\n    ID_MN_RESI_check = if_else(nchar(ID_MN_RESI) == 6, \n                               false = FALSE,\n                               true = TRUE)\n  ) %&gt;%\n  group_by(ID_MN_RESI_check) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nID_MN_RESI_check\nfreq\n\n\n\n\nFALSE\n4\n\n\nTRUE\n19.177.930\n\n\nNA\n2.523\n\n\n\n\n\nNo improvement for invalid municipalities, improvement of 96 records with missing data.\n\n\n\nDate of the first symptoms onset: DT_SIN_PRI\nTask: If DT_SIN_PRI is invalid or missing, imputate with valid DT_NOTIFIC information.\n\nImputation\n\nvalid_interval &lt;- interval(ymd(\"2011-01-01\"), ymd(\"2021-12-31\"))\n\ndengue &lt;- dengue %&gt;%\n  mutate(\n    DT_SIN_PRI_check = ymd(DT_SIN_PRI) %within% valid_interval,\n    DT_NOTIFIC_check = ymd(DT_NOTIFIC) %within% valid_interval,\n  ) %&gt;%\n  mutate(DT_SIN_PRI = case_when(\n    DT_SIN_PRI_check == FALSE & DT_NOTIFIC_check == TRUE ~ DT_NOTIFIC,\n    is.na(DT_SIN_PRI) ~ DT_NOTIFIC,\n    TRUE ~ DT_SIN_PRI\n  )) %&gt;%\n  select(-DT_SIN_PRI_check, -DT_NOTIFIC_check)\n\n\n\nCheck improval\n\nvalid_interval &lt;- interval(ymd(\"2011-01-01\"), ymd(\"2021-12-31\"))\n\ndengue %&gt;%\n  mutate(\n    DT_SIN_PRI_check = ymd(DT_SIN_PRI) %within% valid_interval\n  ) %&gt;%\n  group_by(DT_SIN_PRI_check) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nDT_SIN_PRI_check\nfreq\n\n\n\n\nFALSE\n3.618.528\n\n\nTRUE\n15.561.929\n\n\n\n\n\nThere was a improvement on 25,823 records with invalid dates and all missing records were imputate."
+  },
+  {
+    "objectID": "dengue-data/imputation.html#export-improved-database",
+    "href": "dengue-data/imputation.html#export-improved-database",
+    "title": "Imputation",
+    "section": "Export improved database",
+    "text": "Export improved database\n\ndengue %&gt;%\n  write_parquet(sink = \"parquet_improved/dengue_improved.parquet\")"
+  },
+  {
+    "objectID": "dengue-data/imputation.html#session-info",
+    "href": "dengue-data/imputation.html#session-info",
+    "title": "Imputation",
+    "section": "Session info",
+    "text": "Session info\n\nsessionInfo()\n\nR version 4.1.2 (2021-11-01)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] knitr_1.43      arrow_12.0.0    lubridate_1.9.2 forcats_1.0.0  \n [5] stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1     readr_2.1.4    \n [9] tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.2   tidyverse_2.0.0\n\nloaded via a namespace (and not attached):\n [1] compiler_4.1.2    pillar_1.9.0      tools_4.1.2       bit_4.0.5        \n [5] digest_0.6.31     timechange_0.2.0  jsonlite_1.8.5    evaluate_0.21    \n [9] lifecycle_1.0.3   gtable_0.3.3      pkgconfig_2.0.3   rlang_1.1.1      \n[13] cli_3.6.1         rstudioapi_0.14   yaml_2.3.7        xfun_0.39        \n[17] fastmap_1.1.1     withr_2.5.0       generics_0.1.3    vctrs_0.6.2      \n[21] htmlwidgets_1.6.2 hms_1.1.3         bit64_4.0.5       grid_4.1.2       \n[25] tidyselect_1.2.0  glue_1.6.2        R6_2.5.1          fansi_1.0.4      \n[29] rmarkdown_2.22    tzdb_0.4.0        magrittr_2.0.3    scales_1.2.1     \n[33] htmltools_0.5.5   assertthat_0.2.1  colorspace_2.1-0  utf8_1.2.3       \n[37] stringi_1.7.12    munsell_0.5.0"
+  },
+  {
+    "objectID": "dengue-data/raw_files.html",
+    "href": "dengue-data/raw_files.html",
+    "title": "Raw files",
+    "section": "",
+    "text": "This notebook presents the process of downloading SINAN Dengue raw data files from DataSUS, preprocessing steps using the {microdatasus} package and exporting the raw files to parquet files."
+  },
+  {
+    "objectID": "dengue-data/raw_files.html#packages",
+    "href": "dengue-data/raw_files.html#packages",
+    "title": "Raw files",
+    "section": "Packages",
+    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\n# remotes::install_github(\"rfsaldanha/microdatasus\")\nlibrary(microdatasus)\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp"
+  },
+  {
+    "objectID": "dengue-data/raw_files.html#data-download",
+    "href": "dengue-data/raw_files.html#data-download",
+    "title": "Raw files",
+    "section": "Data download",
+    "text": "Data download\n\n# for(a in 2011:2021){\n#   tmp &lt;- fetch_datasus(\n#     year_start = a, year_end = a,\n#     information_system = \"SINAN-DENGUE\"\n#   )\n# \n#   write_parquet(x = tmp, sink = paste0(\"parquets_raw/raw_dengue_\", a, \".parquet\"))\n#   \n#   tmp &lt;- process_sinan_dengue(data = tmp)\n#   \n#   write_parquet(x = tmp, sink = paste0(\"parquets/dengue_\", a, \".parquet\"))\n#   \n#   rm(tmp)\n# }\n\nThis code chunk is commented to avoid unnecessary download again the raw DBC files from DataSUS."
+  },
+  {
+    "objectID": "dengue-data/raw_files.html#load",
+    "href": "dengue-data/raw_files.html#load",
+    "title": "Raw files",
+    "section": "Load",
+    "text": "Load\nAfter download, preprocessing and export, the parquet files are read to have a dimension of the size.\n\ndengue &lt;- open_dataset(sources = \"parquets/\")\n\n\ndengue %&gt;% glimpse()\n\nFileSystemDataset with 15 Parquet files\n19,180,457 rows x 75 columns\n$ TP_NOT       &lt;string&gt; \"Individual\", \"Individual\", \"Individual\", \"Individual\", …\n$ ID_AGRAVO    &lt;string&gt; \"A90\", \"A90\", \"A90\", \"A90\", \"A90\", \"A90\", \"A90\", \"A90\", …\n$ DT_NOTIFIC   &lt;string&gt; \"2007-02-12\", \"2007-02-12\", \"2007-02-26\", \"2007-02-12\", …\n$ SEM_NOT      &lt;string&gt; \"200707\", \"200707\", \"200709\", \"200707\", \"200706\", \"20070…\n$ NU_ANO       &lt;string&gt; \"2007\", \"2007\", \"2007\", \"2007\", \"2007\", \"2007\", \"2007\", …\n$ SG_UF_NOT    &lt;string&gt; \"Maranhão\", \"Maranhão\", \"Pernambuco\", \"Bahia\", \"Bahia\", …\n$ ID_MUNICIP   &lt;string&gt; \"210780\", \"210780\", \"260640\", \"292150\", \"292150\", \"29215…\n$ ID_REGIONA   &lt;string&gt; \"1577\", \"1577\", \"1499\", \"1410\", \"1410\", \"1410\", \"1410\", …\n$ ID_UNIDADE   &lt;string&gt; \"2454793\", \"2454793\", \"2436027\", \"3340392\", \"3340392\", \"…\n$ DT_SIN_PRI   &lt;string&gt; \"2007-02-09\", \"2007-02-10\", \"2007-02-21\", \"2007-01-28\", …\n$ SEM_PRI      &lt;string&gt; \"200706\", \"200706\", \"200708\", \"200705\", \"200703\", \"20070…\n$ CS_SEXO      &lt;string&gt; \"Feminino\", \"Feminino\", \"Masculino\", \"Feminino\", \"Mascul…\n$ CS_GESTANT   &lt;string&gt; \"Ignorado\", \"Ignorado\", \"Não se aplica\", \"Não se aplica\"…\n$ CS_RACA      &lt;string&gt; \"Parda\", \"Parda\", \"Branca\", \"Branca\", \"Parda\", \"Parda\", …\n$ CS_ESCOL_N   &lt;string&gt; \"5a à 8a série incompleta do EF (antigo ginásio ou 1o gr…\n$ SG_UF        &lt;string&gt; \"Maranhão\", \"Maranhão\", \"Pernambuco\", \"Bahia\", \"Bahia\", …\n$ ID_MN_RESI   &lt;string&gt; \"210780\", \"210780\", \"260640\", \"292150\", \"292150\", \"29215…\n$ ID_RG_RESI   &lt;string&gt; \"1577\", \"1577\", \"1499\", \"1410\", \"1410\", \"1410\", \"1410\", …\n$ ID_PAIS      &lt;string&gt; \"BRASIL\", \"BRASIL\", \"BRASIL\", \"BRASIL\", \"BRASIL\", \"BRASI…\n$ NDUPLIC_N    &lt;string&gt; \"Não identificado\", \"Não identificado\", NA, NA, NA, NA, …\n$ DT_DIGITA    &lt;string&gt; NA, NA, \"2007-03-08\", \"2007-05-22\", \"2007-05-02\", \"2007-…\n$ CS_FLXRET    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ FLXRECEBI    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ MIGRADO_W    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ DT_INVEST    &lt;string&gt; \"2007-02-12\", \"2007-02-12\", \"2007-02-26\", \"2007-02-12\", …\n$ ID_OCUPA_N   &lt;string&gt; \"Nao informada\", \"Nao informada\", NA, \"Nao informada\", \"…\n$ DT_SORO      &lt;string&gt; NA, NA, \"2007-02-26\", \"2007-02-01\", \"2007-02-09\", NA, NA…\n$ RESUL_SORO   &lt;string&gt; \"Não realizado\", \"Não realizado\", \"Não reagente\", \"Reage…\n$ HISTOPA_N    &lt;string&gt; \"Não realizado\", \"Não realizado\", \"Não realizado\", \"Não …\n$ DT_VIRAL     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, \"2007-02-14\", NA, NA, NA…\n$ RESUL_VI_N   &lt;string&gt; \"Não realizado\", \"Não realizado\", NA, \"Não realizado\", \"…\n$ SOROTIPO     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, \"DEN 3\", NA, NA, NA, NA,…\n$ IMUNOH_N     &lt;string&gt; \"Não realizado\", \"Não realizado\", \"Não realizado\", \"Não …\n$ DT_PCR       &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ RESUL_PCR_   &lt;string&gt; \"Não realizado\", \"Não realizado\", NA, \"Não realizado\", \"…\n$ CLASSI_FIN   &lt;string&gt; \"Dengue clássico\", \"Dengue clássico\", \"Descartado\", \"Den…\n$ CRITERIO     &lt;string&gt; \"Clínico epidemiológico\", \"Clínico epidemiológico\", \"Clí…\n$ TPAUTOCTO    &lt;string&gt; \"Sim\", \"Sim\", NA, \"Não\", \"Sim\", NA, NA, \"Não\", \"Sim\", NA…\n$ COUFINF      &lt;string&gt; \"Maranhão\", \"Maranhão\", NA, \"Bahia\", \"Bahia\", NA, NA, \"B…\n$ COPAISINF    &lt;string&gt; \"BRASIL\", \"BRASIL\", NA, \"BRASIL\", \"BRASIL\", NA, NA, \"BRA…\n$ COMUNINF     &lt;string&gt; \"210780\", \"210780\", NA, \"292150\", \"292150\", NA, NA, \"292…\n$ DOENCA_TRA   &lt;string&gt; \"Não\", \"Não\", NA, \"Não\", \"Não\", NA, NA, \"Não\", \"Não\", NA…\n$ EVOLUCAO     &lt;string&gt; \"Cura\", \"Cura\", NA, \"Cura\", \"Cura\", NA, NA, \"Cura\", \"Cur…\n$ DT_OBITO     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ DT_ENCERRA   &lt;string&gt; \"2007-05-08\", \"2007-05-08\", \"2007-04-19\", \"2007-05-28\", …\n$ MANI_HEMOR   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ EPISTAXE     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ GENGIVO      &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ METRO        &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ PETEQUIAS    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ HEMATURA     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ SANGRAM      &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ LACO_N       &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ PLASMATICO   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ EVIDENCIA    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ PLAQ_MENOR   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ CON_FHD      &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ COMPLICA     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ HOSPITALIZ   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ DT_INTERNA   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ UF           &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ MUNICIPIO    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ IDADEminutos &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ IDADEhoras   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ IDADEdias    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ IDADEmeses   &lt;string&gt; NA, NA, NA, \"0\", NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…\n$ IDADEanos    &lt;string&gt; \"3\", \"1\", \"3\", NA, \"0\", \"1\", \"3\", \"0\", \"3\", \"0\", \"1\", \"2…\n$ munResStatus &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResTipo   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResNome   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResUf     &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResLat    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResLon    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResAlt    &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\n$ munResArea   &lt;string&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …\nCall `print()` for full schema details"
+  },
+  {
+    "objectID": "dengue-data/aggregated_database.html",
+    "href": "dengue-data/aggregated_database.html",
+    "title": "Export aggregated database",
+    "section": "",
+    "text": "This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.\nThe aggregation will be on municipalities and time will be date and epidemiological week.\n\n\n\nAfter the steps of raw dataset download and imputation\nLoad the dengue_improved.parquet data\nFilter valid dates\nFilter positive cases\nAggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.\n\n\n\n\n\nflowchart LR\n  A[Raw dataset] --&gt; B(Imputation)\n  B --&gt; C[Improved dataset]\n  C --&gt; D{Filter valid dates}\n  C --&gt; E{Filter positive cases}\n  D --&gt; F(Aggregate)\n  E --&gt; F\n  F --&gt; G[Municipality and date dataset]\n  F --&gt; H[Municipality and epiweek dataset]"
+  },
+  {
+    "objectID": "dengue-data/aggregated_database.html#context",
+    "href": "dengue-data/aggregated_database.html#context",
+    "title": "Export aggregated database",
+    "section": "",
+    "text": "This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.\nThe aggregation will be on municipalities and time will be date and epidemiological week.\n\n\n\nAfter the steps of raw dataset download and imputation\nLoad the dengue_improved.parquet data\nFilter valid dates\nFilter positive cases\nAggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.\n\n\n\n\n\nflowchart LR\n  A[Raw dataset] --&gt; B(Imputation)\n  B --&gt; C[Improved dataset]\n  C --&gt; D{Filter valid dates}\n  C --&gt; E{Filter positive cases}\n  D --&gt; F(Aggregate)\n  E --&gt; F\n  F --&gt; G[Municipality and date dataset]\n  F --&gt; H[Municipality and epiweek dataset]"
+  },
+  {
+    "objectID": "dengue-data/aggregated_database.html#packages",
+    "href": "dengue-data/aggregated_database.html#packages",
+    "title": "Export aggregated database",
+    "section": "Packages",
+    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(lubridate)"
+  },
+  {
+    "objectID": "dengue-data/aggregated_database.html#load-data",
+    "href": "dengue-data/aggregated_database.html#load-data",
+    "title": "Export aggregated database",
+    "section": "Load data",
+    "text": "Load data\nLazy evaluation.\n\ndengue &lt;- arrow::read_parquet(file = \"parquet_improved/dengue_improved.parquet\")\n\ntally(dengue)\n\n         n\n1 19180457"
+  },
+  {
+    "objectID": "dengue-data/aggregated_database.html#filter-valid-dates",
+    "href": "dengue-data/aggregated_database.html#filter-valid-dates",
+    "title": "Export aggregated database",
+    "section": "Filter valid dates",
+    "text": "Filter valid dates\n\nvalid_interval &lt;- interval(ymd(\"2011-01-01\"), ymd(\"2021-12-31\"))\n\ndengue &lt;- dengue %&gt;%\n  mutate(DT_SIN_PRI = ymd(DT_SIN_PRI)) %&gt;%\n  filter(DT_SIN_PRI %within% valid_interval)\n\ntally(dengue)\n\n         n\n1 15561929"
+  },
+  {
+    "objectID": "dengue-data/aggregated_database.html#cases-classification-data-export",
+    "href": "dengue-data/aggregated_database.html#cases-classification-data-export",
+    "title": "Export aggregated database",
+    "section": "Cases classification data export",
+    "text": "Cases classification data export\n\ndengue_classifications &lt;- c(\"Febre hemorrágica do dengue\", \"Síndrome do choque do dengue\", \"Dengue com sinais de alarme\",\n  \"Dengue clássico\", \"Dengue com complicações\", \"Dengue\",\n  \"Dengue grave\")\n\n\ndengue_cases_classification &lt;- dengue %&gt;% \n  mutate(CLASSI_FIN = case_when(\n    CLASSI_FIN %in% dengue_classifications ~ \"Confirmed\",\n    CLASSI_FIN == \"Descartado\" ~ \"Discarded\",\n    CLASSI_FIN == \"Inconclusivo\" ~ \"Inconclusive\",\n    CLASSI_FIN == 6 ~ \"Invalid\",\n    is.na(CLASSI_FIN) ~ \"Missing\",\n    .default = CLASSI_FIN\n  )) %&gt;%\n  mutate(DT_SIN_PRI = lubridate::ceiling_date(x = DT_SIN_PRI, unit = \"month\")) %&gt;%\n  group_by(DT_SIN_PRI, CLASSI_FIN) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() \n\n`summarise()` has grouped output by 'DT_SIN_PRI'. You can override using the\n`.groups` argument.\n\n\n\nwrite_parquet(x = dengue_cases_classification, sink = \"parquet_classification/dengue_cases_classification.parquet\")\n\n\nggplot(data =  dengue_cases_classification, aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN)) +\n  geom_bar() +\n  scale_fill_hue(direction = 1) +\n  scale_y_continuous(labels = scales::comma) +\n  labs(fill = \"Classificação\") +\n  theme_minimal() +\n  theme(legend.position = \"bottom\") +\n  labs(x = \"Month of first symptom's onset\", y = \"Records\", fill = \"Classification\")\n\n\n\nggsave(filename = \"dengue_cases_classification.pdf\")\n\nSaving 7 x 5 in image"
+  },
+  {
+    "objectID": "dengue-data/aggregated_database.html#filter-positive-cases-of-dengue",
+    "href": "dengue-data/aggregated_database.html#filter-positive-cases-of-dengue",
+    "title": "Export aggregated database",
+    "section": "Filter positive cases of dengue",
+    "text": "Filter positive cases of dengue\n\ndengue &lt;- dengue %&gt;%\n  filter(CLASSI_FIN %in% dengue_classifications)\n\ntally(dengue)\n\n        n\n1 8125611"
+  },
+  {
+    "objectID": "dengue-data/aggregated_database.html#aggregation",
+    "href": "dengue-data/aggregated_database.html#aggregation",
+    "title": "Export aggregated database",
+    "section": "Aggregation",
+    "text": "Aggregation\n\nMunicipality and date (“md”)\nIncluding the step to fill the time series with zero values when certain dates do not have cases.\n\ndengue_md &lt;- dengue %&gt;%\n  group_by(mun = ID_MN_RESI, date = DT_SIN_PRI) %&gt;%\n  summarise(freq = n()) %&gt;%\n  arrange(date) %&gt;%\n  complete(\n    date = seq.Date(min(date), max(date), by = \"day\"),\n    fill = list(freq = 0)\n  ) %&gt;%\n  ungroup() %&gt;%\n  collect()\n\n`summarise()` has grouped output by 'mun'. You can override using the `.groups`\nargument.\n\n\n\nglimpse(dengue_md)\n\nRows: 16,772,737\nColumns: 3\n$ mun  &lt;chr&gt; \"110000\", \"110000\", \"110000\", \"110000\", \"110000\", \"110000\", \"1100…\n$ date &lt;date&gt; 2015-12-29, 2015-12-30, 2015-12-31, 2016-01-01, 2016-01-02, 2016…\n$ freq &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…\n\n\n\ndengue_md %&gt;%\n  write_parquet(sink = \"parquet_aggregated/dengue_md.parquet\")\n\n\n\nMunicipality and epidemiological week (“mw”)\n\ndengue_mw &lt;- dengue_md %&gt;%\n  mutate(epi_week = paste0(epiyear(date), \"-\", str_pad(epiweek(date), 2, pad = \"0\"))) %&gt;%\n  group_by(mun, epi_week) %&gt;%\n  summarise(freq = n()) %&gt;%\n  arrange(epi_week) %&gt;%\n  ungroup() %&gt;%\n  collect()\n\n`summarise()` has grouped output by 'mun'. You can override using the `.groups`\nargument.\n\n\n\nglimpse(dengue_mw)\n\nRows: 2,400,687\nColumns: 3\n$ mun      &lt;chr&gt; \"110005\", \"110006\", \"110014\", \"110034\", \"110140\", \"120017\", \"…\n$ epi_week &lt;chr&gt; \"2010-52\", \"2010-52\", \"2010-52\", \"2010-52\", \"2010-52\", \"2010-…\n$ freq     &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…\n\n\n\ndengue_mw %&gt;%\n  write_parquet(sink = \"parquet_aggregated/dengue_mw.parquet\")"
+  },
+  {
+    "objectID": "dengue-data/aggregated_database.html#session-info",
+    "href": "dengue-data/aggregated_database.html#session-info",
+    "title": "Export aggregated database",
+    "section": "Session info",
+    "text": "Session info\n\nsessionInfo()\n\nR version 4.1.2 (2021-11-01)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] arrow_12.0.0    lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0  \n [5] dplyr_1.1.2     purrr_1.0.1     readr_2.1.4     tidyr_1.3.0    \n [9] tibble_3.2.1    ggplot2_3.4.2   tidyverse_2.0.0\n\nloaded via a namespace (and not attached):\n [1] compiler_4.1.2    pillar_1.9.0      tools_4.1.2       bit_4.0.5        \n [5] digest_0.6.31     timechange_0.2.0  jsonlite_1.8.5    evaluate_0.21    \n [9] lifecycle_1.0.3   gtable_0.3.3      pkgconfig_2.0.3   rlang_1.1.1      \n[13] cli_3.6.1         rstudioapi_0.14   yaml_2.3.7        xfun_0.39        \n[17] fastmap_1.1.1     withr_2.5.0       knitr_1.43        systemfonts_1.0.4\n[21] generics_0.1.3    vctrs_0.6.2       htmlwidgets_1.6.2 hms_1.1.3        \n[25] bit64_4.0.5       grid_4.1.2        tidyselect_1.2.0  glue_1.6.2       \n[29] R6_2.5.1          textshaping_0.3.6 fansi_1.0.4       rmarkdown_2.22   \n[33] farver_2.1.1      tzdb_0.4.0        magrittr_2.0.3    scales_1.2.1     \n[37] htmltools_0.5.5   assertthat_0.2.1  colorspace_2.1-0  ragg_1.2.5       \n[41] labeling_0.4.2    utf8_1.2.3        stringi_1.7.12    munsell_0.5.0"
+  },
+  {
+    "objectID": "dengue-data/missing_data.html",
+    "href": "dengue-data/missing_data.html",
+    "title": "Missing data analysis",
+    "section": "",
+    "text": "This report presents an missing data analysis from the raw parquet files.\nConsidering the high number of variables, this report will use a subset of the most relevant ones."
+  },
+  {
+    "objectID": "dengue-data/missing_data.html#context",
+    "href": "dengue-data/missing_data.html#context",
+    "title": "Missing data analysis",
+    "section": "",
+    "text": "This report presents an missing data analysis from the raw parquet files.\nConsidering the high number of variables, this report will use a subset of the most relevant ones."
+  },
+  {
+    "objectID": "dengue-data/missing_data.html#packages",
+    "href": "dengue-data/missing_data.html#packages",
+    "title": "Missing data analysis",
+    "section": "Packages",
+    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(naniar)\nlibrary(knitr)\nlibrary(lubridate)"
+  },
+  {
+    "objectID": "dengue-data/missing_data.html#load-data",
+    "href": "dengue-data/missing_data.html#load-data",
+    "title": "Missing data analysis",
+    "section": "Load data",
+    "text": "Load data\n\nimportant_vars &lt;- c(\"ID_AGRAVO\", \"DT_NOTIFIC\", \"ID_UNIDADE\",\n                    \"DT_SIN_PRI\", \"CS_SEXO\", \"CS_GESTANT\",\n                    \"CS_RACA\", \"CS_ESCOL_N\", \"ID_MN_RESI\",\n                    \"COUFINF\", \"COMUNINF\", \"ID_OCUPA_N\",\n                    \"DT_SORO\", \"RESUL_SORO\", \"SOROTIPO\", \n                    \"CLASSI_FIN\", \"CRITERIO\", \"EVOLUCAO\",\n                    \"DT_OBITO\", \"HOSPITALIZ\", \"DT_INTERNA\")\n\ndengue &lt;- open_dataset(sources = \"parquets/\") %&gt;%\n  select(all_of(important_vars)) %&gt;%\n  collect()"
+  },
+  {
+    "objectID": "dengue-data/missing_data.html#overall",
+    "href": "dengue-data/missing_data.html#overall",
+    "title": "Missing data analysis",
+    "section": "Overall",
+    "text": "Overall\nTable considering all records.\n\ndengue %&gt;% \n  miss_var_summary() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nvariable\nn_miss\npct_miss\n\n\n\n\nDT_OBITO\n19.153.998\n99,8620523\n\n\nSOROTIPO\n19.122.145\n99,6959822\n\n\nDT_INTERNA\n18.666.361\n97,3196885\n\n\nDT_SORO\n13.240.413\n69,0307483\n\n\nCOUFINF\n12.135.027\n63,2676635\n\n\nCOMUNINF\n11.092.216\n57,8308223\n\n\nHOSPITALIZ\n9.873.619\n51,4774961\n\n\nRESUL_SORO\n7.430.672\n38,7408496\n\n\nEVOLUCAO\n6.002.490\n31,2948226\n\n\nCS_ESCOL_N\n5.838.882\n30,4418294\n\n\nCRITERIO\n4.529.680\n23,6161213\n\n\nCS_RACA\n3.700.530\n19,2932316\n\n\nCLASSI_FIN\n2.402.459\n12,5255566\n\n\nCS_GESTANT\n2.304.926\n12,0170547\n\n\nCS_SEXO\n2.301.330\n11,9983064\n\n\nID_OCUPA_N\n720.520\n3,7565320\n\n\nID_UNIDADE\n3.471\n0,0180965\n\n\nID_MN_RESI\n2.627\n0,0136962\n\n\nDT_SIN_PRI\n176\n0,0009176\n\n\nDT_NOTIFIC\n1\n0,0000052\n\n\nID_AGRAVO\n0\n0,0000000\n\n\n\n\n\n\nVariables quality\n\nResidence municipality: ID_MN_RESI\nCheck var length. 6 characters are expected.\n\ndengue %&gt;%\n  mutate(\n    ID_MN_RESI_check = if_else(nchar(ID_MN_RESI) == 6, \n                               false = FALSE,\n                               true = TRUE)\n  ) %&gt;%\n  group_by(ID_MN_RESI_check) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nID_MN_RESI_check\nfreq\n\n\n\n\nFALSE\n4\n\n\nTRUE\n19.177.826\n\n\nNA\n2.627\n\n\n\n\n\n15.559.994 records on the database meets the criteria. 4 records have invalid municipalty codes and this information is missing for 2.126 records. Inputation from COMUNINF is a possibility.\n\n\nFinal classification of the notification: CLASSI_FIN\nIt is expected that the notifications final classification are labeled.\n\ndengue %&gt;%\n  group_by(CLASSI_FIN) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nCLASSI_FIN\nfreq\n\n\n\n\n1\n308.012\n\n\n2\n7.962\n\n\n3\n2.588\n\n\n4\n91\n\n\n5\n189.158\n\n\n6\n3\n\n\n8\n75.360\n\n\nDengue\n5.665.033\n\n\nDengue clássico\n2.686.548\n\n\nDengue com complicações\n23.073\n\n\nDengue com sinais de alarme\n82.408\n\n\nDengue grave\n7.391\n\n\nDescartado\n5.580.603\n\n\nFebre hemorrágica do dengue\n7.136\n\n\nInconclusivo\n2.142.252\n\n\nSíndrome do choque do dengue\n380\n\n\nNA\n2.402.459\n\n\n\n\n\n3 records have an invalid label and 69.866 are missing. This missing data may be from two causes: (1) the notification is being evaluated or (2) a real missing.\n\n\nDate of the first symptons onset: DT_SIN_PRI\nThis is the date most near to the infection date and more relevant to epidemiological analysis.\n\nvalid_interval &lt;- interval(ymd(\"2001-01-01\"), ymd(\"2021-12-31\"))\n\ndengue %&gt;%\n  mutate(\n    DT_SIN_PRI_check = ymd(DT_SIN_PRI) %within% valid_interval\n  ) %&gt;%\n  group_by(DT_SIN_PRI_check) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  kable(\n    format.args = list(big.mark = \".\", decimal.mark = \",\")\n  )\n\n\n\n\nDT_SIN_PRI_check\nfreq\n\n\n\n\nFALSE\n30.775\n\n\nTRUE\n19.149.506\n\n\nNA\n176\n\n\n\n\n\nThis variable is missing for 173 records. For 26.018 records, we have invalid dates (outside the period 2001-2021). It is possible to imputate with DT_NOTIFIC (date of notification), if valid."
+  },
+  {
+    "objectID": "dengue-data/missing_data.html#session-info",
+    "href": "dengue-data/missing_data.html#session-info",
+    "title": "Missing data analysis",
+    "section": "Session info",
+    "text": "Session info\n\nsessionInfo()\n\nR version 4.1.2 (2021-11-01)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] knitr_1.43      naniar_1.0.0    arrow_12.0.0    lubridate_1.9.2\n [5] forcats_1.0.0   stringr_1.5.0   dplyr_1.1.2     purrr_1.0.1    \n [9] readr_2.1.4     tidyr_1.3.0     tibble_3.2.1    ggplot2_3.4.2  \n[13] tidyverse_2.0.0\n\nloaded via a namespace (and not attached):\n [1] compiler_4.1.2    pillar_1.9.0      tools_4.1.2       bit_4.0.5        \n [5] digest_0.6.31     timechange_0.2.0  jsonlite_1.8.5    evaluate_0.21    \n [9] lifecycle_1.0.3   gtable_0.3.3      pkgconfig_2.0.3   rlang_1.1.1      \n[13] cli_3.6.1         rstudioapi_0.14   yaml_2.3.7        xfun_0.39        \n[17] fastmap_1.1.1     withr_2.5.0       generics_0.1.3    vctrs_0.6.2      \n[21] htmlwidgets_1.6.2 hms_1.1.3         bit64_4.0.5       grid_4.1.2       \n[25] tidyselect_1.2.0  glue_1.6.2        R6_2.5.1          fansi_1.0.4      \n[29] rmarkdown_2.22    tzdb_0.4.0        magrittr_2.0.3    scales_1.2.1     \n[33] htmltools_0.5.5   visdat_0.6.0      assertthat_0.2.1  colorspace_2.1-0 \n[37] utf8_1.2.3        stringi_1.7.12    munsell_0.5.0"
+  },
+  {
     "objectID": "weather_data.html",
     "href": "weather_data.html",
     "title": "Weather data",
@@ -460,75 +285,5 @@
     "title": "Software",
     "section": "",
     "text": "We created an R package to on-line zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.\nMore details on https://rfsaldanha.github.io/brclimr"
-  },
-  {
-    "objectID": "dengue-data/filter_valid_data.html",
-    "href": "dengue-data/filter_valid_data.html",
-    "title": "Filter valid data",
-    "section": "",
-    "text": "After the steps of raw dataset download and imputation\nLoad the dengue_improved.parquet data\nFilter valid dates\nFilter positive cases\nAggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.\n\n\n\n\n\nflowchart LR\n  A[Raw dataset] --&gt; B(Imputation)\n  B --&gt; C[Improved dataset]\n  C --&gt; D{Filter valid dates}\n  C --&gt; E{Filter positive cases}\n  D --&gt; F(Aggregate)\n  E --&gt; F\n  F --&gt; G[Municipality and date dataset]\n  F --&gt; H[Municipality and epiweek dataset]"
-  },
-  {
-    "objectID": "dengue-data/filter_valid_data.html#context",
-    "href": "dengue-data/filter_valid_data.html#context",
-    "title": "Filter valid data",
-    "section": "",
-    "text": "After the steps of raw dataset download and imputation\nLoad the dengue_improved.parquet data\nFilter valid dates\nFilter positive cases\nAggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.\n\n\n\n\n\nflowchart LR\n  A[Raw dataset] --&gt; B(Imputation)\n  B --&gt; C[Improved dataset]\n  C --&gt; D{Filter valid dates}\n  C --&gt; E{Filter positive cases}\n  D --&gt; F(Aggregate)\n  E --&gt; F\n  F --&gt; G[Municipality and date dataset]\n  F --&gt; H[Municipality and epiweek dataset]"
-  },
-  {
-    "objectID": "dengue-data/filter_valid_data.html#packages",
-    "href": "dengue-data/filter_valid_data.html#packages",
-    "title": "Filter valid data",
-    "section": "Packages",
-    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(lubridate)"
-  },
-  {
-    "objectID": "dengue-data/filter_valid_data.html#load-data",
-    "href": "dengue-data/filter_valid_data.html#load-data",
-    "title": "Filter valid data",
-    "section": "Load data",
-    "text": "Load data\nLazy evaluation.\n\ndengue &lt;- arrow::read_parquet(file = \"parquet_improved/dengue_improved.parquet\")\n\ntally(dengue)\n\n         n\n1 19180457"
-  },
-  {
-    "objectID": "dengue-data/filter_valid_data.html#filter-valid-dates",
-    "href": "dengue-data/filter_valid_data.html#filter-valid-dates",
-    "title": "Filter valid data",
-    "section": "Filter valid dates",
-    "text": "Filter valid dates\n\nvalid_interval &lt;- interval(ymd(\"2011-01-01\"), ymd(\"2021-12-31\"))\n\ndengue &lt;- dengue %&gt;%\n  mutate(DT_SIN_PRI = ymd(DT_SIN_PRI)) %&gt;%\n  filter(DT_SIN_PRI %within% valid_interval)\n\ntally(dengue)\n\n         n\n1 15561929"
-  },
-  {
-    "objectID": "dengue-data/filter_valid_data.html#cases-classification-data-export",
-    "href": "dengue-data/filter_valid_data.html#cases-classification-data-export",
-    "title": "Filter valid data",
-    "section": "Cases classification data export",
-    "text": "Cases classification data export\n\ndengue_classifications &lt;- c(\"Febre hemorrágica do dengue\", \"Síndrome do choque do dengue\", \"Dengue com sinais de alarme\",\n  \"Dengue clássico\", \"Dengue com complicações\", \"Dengue\",\n  \"Dengue grave\")\n\n\ndengue_cases_classification &lt;- dengue %&gt;% \n  mutate(CLASSI_FIN = case_when(\n    CLASSI_FIN %in% dengue_classifications ~ \"Confirmed\",\n    CLASSI_FIN == \"Descartado\" ~ \"Discarded\",\n    CLASSI_FIN == \"Inconclusivo\" ~ \"Inconclusive\",\n    CLASSI_FIN == 6 ~ \"Invalid\",\n    is.na(CLASSI_FIN) ~ \"Missing\",\n    .default = CLASSI_FIN\n  )) %&gt;%\n  mutate(DT_SIN_PRI = lubridate::ceiling_date(x = DT_SIN_PRI, unit = \"month\")) %&gt;%\n  group_by(DT_SIN_PRI, CLASSI_FIN) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() \n\n`summarise()` has grouped output by 'DT_SIN_PRI'. You can override using the\n`.groups` argument.\n\n\n\nwrite_parquet(x = dengue_cases_classification, sink = \"parquet_classification/dengue_cases_classification.parquet\")\n\n\nggplot(data =  dengue_cases_classification, aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN)) +\n  geom_bar() +\n  scale_fill_hue(direction = 1) +\n  scale_y_continuous(labels = scales::comma) +\n  labs(fill = \"Classificação\") +\n  theme_minimal() +\n  theme(legend.position = \"bottom\") +\n  labs(x = \"Month of first symptom's onset\", y = \"Records\", fill = \"Classification\")\n\n\n\nggsave(filename = \"dengue_cases_classification.pdf\")\n\nSaving 7 x 5 in image"
-  },
-  {
-    "objectID": "dengue-data/filter_valid_data.html#filter-positive-cases-of-dengue",
-    "href": "dengue-data/filter_valid_data.html#filter-positive-cases-of-dengue",
-    "title": "Filter valid data",
-    "section": "Filter positive cases of dengue",
-    "text": "Filter positive cases of dengue\n\ndengue &lt;- dengue %&gt;%\n  filter(CLASSI_FIN %in% dengue_classifications)\n\ntally(dengue)\n\n        n\n1 8125611"
-  },
-  {
-    "objectID": "dengue-data/filter_valid_data.html#aggregation",
-    "href": "dengue-data/filter_valid_data.html#aggregation",
-    "title": "Filter valid data",
-    "section": "Aggregation",
-    "text": "Aggregation\n\nMunicipality and date (“md”)\nIncluding the step to fill the time series with zero values when certain dates do not have cases.\n\ndengue_md &lt;- dengue %&gt;%\n  group_by(mun = ID_MN_RESI, date = DT_SIN_PRI) %&gt;%\n  summarise(freq = n()) %&gt;%\n  arrange(date) %&gt;%\n  complete(\n    date = seq.Date(min(date), max(date), by = \"day\"),\n    fill = list(freq = 0)\n  ) %&gt;%\n  ungroup() %&gt;%\n  collect()\n\n`summarise()` has grouped output by 'mun'. You can override using the `.groups`\nargument.\n\n\n\nglimpse(dengue_md)\n\nRows: 16,772,737\nColumns: 3\n$ mun  &lt;chr&gt; \"110000\", \"110000\", \"110000\", \"110000\", \"110000\", \"110000\", \"1100…\n$ date &lt;date&gt; 2015-12-29, 2015-12-30, 2015-12-31, 2016-01-01, 2016-01-02, 2016…\n$ freq &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…\n\n\n\ndengue_md %&gt;%\n  write_parquet(sink = \"parquet_aggregated/dengue_md.parquet\")\n\n\n\nMunicipality and epidemiological week (“mw”)\n\ndengue_mw &lt;- dengue_md %&gt;%\n  mutate(epi_week = paste0(epiyear(date), \"-\", str_pad(epiweek(date), 2, pad = \"0\"))) %&gt;%\n  group_by(mun, epi_week) %&gt;%\n  summarise(freq = n()) %&gt;%\n  arrange(epi_week) %&gt;%\n  ungroup() %&gt;%\n  collect()\n\n`summarise()` has grouped output by 'mun'. You can override using the `.groups`\nargument.\n\n\n\nglimpse(dengue_mw)\n\nRows: 2,400,687\nColumns: 3\n$ mun      &lt;chr&gt; \"110005\", \"110006\", \"110014\", \"110034\", \"110140\", \"120017\", \"…\n$ epi_week &lt;chr&gt; \"2010-52\", \"2010-52\", \"2010-52\", \"2010-52\", \"2010-52\", \"2010-…\n$ freq     &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…\n\n\n\ndengue_mw %&gt;%\n  write_parquet(sink = \"parquet_aggregated/dengue_mw.parquet\")"
-  },
-  {
-    "objectID": "dengue-data/filter_valid_data.html#session-info",
-    "href": "dengue-data/filter_valid_data.html#session-info",
-    "title": "Filter valid data",
-    "section": "Session info",
-    "text": "Session info\n\nsessionInfo()\n\nR version 4.1.2 (2021-11-01)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] arrow_12.0.0    lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0  \n [5] dplyr_1.1.2     purrr_1.0.1     readr_2.1.4     tidyr_1.3.0    \n [9] tibble_3.2.1    ggplot2_3.4.2   tidyverse_2.0.0\n\nloaded via a namespace (and not attached):\n [1] compiler_4.1.2    pillar_1.9.0      tools_4.1.2       bit_4.0.5        \n [5] digest_0.6.31     timechange_0.2.0  jsonlite_1.8.5    evaluate_0.21    \n [9] lifecycle_1.0.3   gtable_0.3.3      pkgconfig_2.0.3   rlang_1.1.1      \n[13] cli_3.6.1         rstudioapi_0.14   yaml_2.3.7        xfun_0.39        \n[17] fastmap_1.1.1     withr_2.5.0       knitr_1.43        systemfonts_1.0.4\n[21] generics_0.1.3    vctrs_0.6.2       htmlwidgets_1.6.2 hms_1.1.3        \n[25] bit64_4.0.5       grid_4.1.2        tidyselect_1.2.0  glue_1.6.2       \n[29] R6_2.5.1          textshaping_0.3.6 fansi_1.0.4       rmarkdown_2.22   \n[33] farver_2.1.1      tzdb_0.4.0        magrittr_2.0.3    scales_1.2.1     \n[37] htmltools_0.5.5   assertthat_0.2.1  colorspace_2.1-0  ragg_1.2.5       \n[41] labeling_0.4.2    utf8_1.2.3        stringi_1.7.12    munsell_0.5.0"
-  },
-  {
-    "objectID": "dengue-data/aggregated_database.html#cases-classification-data-export",
-    "href": "dengue-data/aggregated_database.html#cases-classification-data-export",
-    "title": "Export aggregated database",
-    "section": "Cases classification data export",
-    "text": "Cases classification data export\n\ndengue_classifications &lt;- c(\"Febre hemorrágica do dengue\", \"Síndrome do choque do dengue\", \"Dengue com sinais de alarme\",\n  \"Dengue clássico\", \"Dengue com complicações\", \"Dengue\",\n  \"Dengue grave\")\n\n\ndengue_cases_classification &lt;- dengue %&gt;% \n  mutate(CLASSI_FIN = case_when(\n    CLASSI_FIN %in% dengue_classifications ~ \"Confirmed\",\n    CLASSI_FIN == \"Descartado\" ~ \"Discarded\",\n    CLASSI_FIN == \"Inconclusivo\" ~ \"Inconclusive\",\n    CLASSI_FIN == 6 ~ \"Invalid\",\n    is.na(CLASSI_FIN) ~ \"Missing\",\n    .default = CLASSI_FIN\n  )) %&gt;%\n  mutate(DT_SIN_PRI = lubridate::ceiling_date(x = DT_SIN_PRI, unit = \"month\")) %&gt;%\n  group_by(DT_SIN_PRI, CLASSI_FIN) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() \n\n`summarise()` has grouped output by 'DT_SIN_PRI'. You can override using the\n`.groups` argument.\n\n\n\nwrite_parquet(x = dengue_cases_classification, sink = \"parquet_classification/dengue_cases_classification.parquet\")\n\n\nggplot(data =  dengue_cases_classification, aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN)) +\n  geom_bar() +\n  scale_fill_hue(direction = 1) +\n  scale_y_continuous(labels = scales::comma) +\n  labs(fill = \"Classificação\") +\n  theme_minimal() +\n  theme(legend.position = \"bottom\") +\n  labs(x = \"Month of first symptom's onset\", y = \"Records\", fill = \"Classification\")\n\n\n\nggsave(filename = \"dengue_cases_classification.pdf\")\n\nSaving 7 x 5 in image"
   }
 ]
