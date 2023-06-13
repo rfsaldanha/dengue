@@ -303,14 +303,7 @@
   {
     "objectID": "cluster_analysis.html",
     "href": "cluster_analysis.html",
-    "title": "Cluster analysis",
-    "section": "",
-    "text": "On this section there are notebooks that cluster municipalities time series of dengue cases with different strategies."
-  },
-  {
-    "objectID": "cluster_analysis.html#overview",
-    "href": "cluster_analysis.html#overview",
-    "title": "Cluster analysis",
+    "title": "Overview",
     "section": "",
     "text": "On this section there are notebooks that cluster municipalities time series of dengue cases with different strategies."
   }
