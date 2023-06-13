@@ -1,12 +1,12 @@
 ---
-title: "Imputation and enrichment"
+title: "Imputation"
 author: Raphael Saldanha
 date: now
 ---
 
 ## Context
 
-This notebook aims to imputate some missing data and enrich the dataset prior to modelling.
+This notebook aims to imputate some missing data and enrich the dataset.
 
 ## Packages
 
@@ -35,7 +35,7 @@ dengue <- open_dataset(sources = "parquets/") %>%
 
 ### Residence municipality: ID_MN_RESI
 
-Task: If ID_MN_RESI is invalid or missing, inputate with valid COMUNINF information.
+Task: If ID_MN_RESI is invalid or missing, imputate with valid COMUNINF information.
 
 #### Imputation
 
@@ -76,9 +76,9 @@ dengue %>%
 
 No improvement for invalid municipalities, improvement of 96 records with missing data.
 
-### Date of the first symptons onset: DT_SIN_PRI
+### Date of the first symptoms onset: DT_SIN_PRI
 
-Task: If DT_SIN_PRI is invalid or missing, inputate with valid DT_NOTIFIC information.
+Task: If DT_SIN_PRI is invalid or missing, imputate with valid DT_NOTIFIC information.
 
 #### Imputation
 

@@ -1,12 +1,38 @@
 ---
-title: "Aggregated spatial-time database"
+title: "Aggregated spatial-time cases database"
 author: Raphael Saldanha
 date: now
 ---
 
 ## Context
 
-This notebook aims to create an dengue aggregate spatial-time database. The aggreagation will be on municipalities and time will be date and epidemiological week.
+This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.
+
+The aggregation will be on municipalities and time will be date and epidemiological week.
+
+### Method
+
+-   After the steps of raw dataset download and imputation
+
+-   Load the `dengue_improved.parquet` data
+
+-   Filter valid dates
+
+-   Filter positive cases
+
+-   Aggregate by municipality and date of first symptom's unset and by municipality and the epidemiological week of the first symptom's unset.
+
+```{mermaid}
+flowchart LR
+  A[Raw dataset] --> B(Imputation)
+  B --> C[Improved dataset]
+  C --> D{Filter valid dates}
+  C --> E{Filter positive cases}
+  D --> F(Aggregate)
+  E --> F
+  F --> G[Municipality and date dataset]
+  F --> H[Municipality and epiweek dataset]
+```
 
 ## Packages
 
@@ -73,8 +99,6 @@ ggsave(filename = "dengue_cases_classification.pdf")
 ## Filter positive cases of dengue
 
 ```{r}
-
-
 dengue <- dengue %>%
   filter(CLASSI_FIN %in% dengue_classifications)
 

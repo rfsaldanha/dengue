@@ -6,9 +6,7 @@ date: now
 
 ## Context
 
-This report presents an missing data analysis for Brazilian dengue data, from the SINAN dataset, downloaded from the DataSUS FTP, covering the years from 2011 to 2021.
-
-After the download, the data was pre-processed by using the `microdatasus` package as presented on the `dengue.qmd` report.
+This report presents an missing data analysis from the raw parquet files.
 
 Considering the high number of variables, this report will use a subset of the most relevant ones.
 
@@ -39,14 +37,6 @@ dengue <- open_dataset(sources = "parquets/") %>%
 ```
 
 ## Overall
-
-Plot with a 0.2% random sample (31,124 out from 15,562,124 records).
-
-```{r}
-dengue %>%
-  slice_sample(prop = 0.002) %>%
-  vis_miss()
-```
 
 Table considering all records.
 

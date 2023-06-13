@@ -9,7 +9,7 @@
 <meta name="author" content="Raphael Saldanha">
 <meta name="dcterms.date" content="2023-06-13">
 
-<title>dengue - Aggregated spatial-time database</title>
+<title>Dengue AI - Aggregated spatial-time cases database</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -94,6 +94,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-submit-button-title": "Submit"
   }
 }</script>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="../styles.css">
@@ -107,7 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">dengue</span>
+    <span class="navbar-title">Dengue AI</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -135,11 +138,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../dengue-data/imputation.html" rel="" target="">
- <span class="dropdown-text">Imputation and enrichment</span></a>
+ <span class="dropdown-text">Imputation</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../dengue-data/aggregated_database.html" rel="" target="">
- <span class="dropdown-text">Aggregated spatial-time database</span></a>
+ <span class="dropdown-text">Aggregated spatial-time cases database</span></a>
   </li>  
     </ul>
   </li>
@@ -158,7 +161,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dengue-data/aggregated_database.html">Aggregated spatial-time database</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dengue-data/aggregated_database.html">Aggregated spatial-time cases database</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
     </div>
@@ -185,13 +188,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../dengue-data/imputation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Imputation and enrichment</span></a>
+ <span class="menu-text">Imputation</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../dengue-data/aggregated_database.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Aggregated spatial-time database</span></a>
+ <span class="menu-text">Aggregated spatial-time cases database</span></a>
   </div>
 </li>
     </ul>
@@ -204,7 +207,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#context" id="toc-context" class="nav-link active" data-scroll-target="#context">Context</a></li>
+  <li><a href="#context" id="toc-context" class="nav-link active" data-scroll-target="#context">Context</a>
+  <ul class="collapse">
+  <li><a href="#method" id="toc-method" class="nav-link" data-scroll-target="#method">Method</a></li>
+  </ul></li>
   <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages">Packages</a></li>
   <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data">Load data</a></li>
   <li><a href="#filter-valid-dates" id="toc-filter-valid-dates" class="nav-link" data-scroll-target="#filter-valid-dates">Filter valid dates</a></li>
@@ -223,7 +229,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Aggregated spatial-time database</h1>
+<h1 class="title">Aggregated spatial-time cases database</h1>
 </div>
 
 
@@ -238,7 +244,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
     <div>
-    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-heading">Last run</div>
     <div class="quarto-title-meta-contents">
       <p class="date">June 13, 2023</p>
     </div>
@@ -252,7 +258,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="context" class="level2">
 <h2 class="anchored" data-anchor-id="context">Context</h2>
-<p>This notebook aims to create an dengue aggregate spatial-time database. The aggreagation will be on municipalities and time will be date and epidemiological week.</p>
+<p>This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.</p>
+<p>The aggregation will be on municipalities and time will be date and epidemiological week.</p>
+<section id="method" class="level3">
+<h3 class="anchored" data-anchor-id="method">Method</h3>
+<ul>
+<li><p>After the steps of raw dataset download and imputation</p></li>
+<li><p>Load the <code>dengue_improved.parquet</code> data</p></li>
+<li><p>Filter valid dates</p></li>
+<li><p>Filter positive cases</p></li>
+<li><p>Aggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.</p></li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A[Raw dataset] --&gt; B(Imputation)
+  B --&gt; C[Improved dataset]
+  C --&gt; D{Filter valid dates}
+  C --&gt; E{Filter positive cases}
+  D --&gt; F(Aggregate)
+  E --&gt; F
+  F --&gt; G[Municipality and date dataset]
+  F --&gt; H[Municipality and epiweek dataset]
+</pre>
+</div>
+</div>
+</div>
+</div>
+</section>
 </section>
 <section id="packages" class="level2">
 <h2 class="anchored" data-anchor-id="packages">Packages</h2>
@@ -346,7 +381,7 @@ The following object is masked from 'package:utils':
 `.groups` argument.</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="aggregated_database_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+<p><img src="aggregated_database_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">"dengue_cases_classification.pdf"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">

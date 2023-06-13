@@ -9,7 +9,7 @@
 <meta name="author" content="Raphael Saldanha">
 <meta name="dcterms.date" content="2023-06-13">
 
-<title>dengue - Imputation and enrichment</title>
+<title>Dengue AI - Imputation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -107,7 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">dengue</span>
+    <span class="navbar-title">Dengue AI</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -131,15 +131,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../dengue-data/missing_data.html" rel="" target="">
- <span class="dropdown-text">Dengue missing</span></a>
+ <span class="dropdown-text">Missing data analysis</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../dengue-data/imputation.html" rel="" target="">
- <span class="dropdown-text">Imputation and enrichment</span></a>
+ <span class="dropdown-text">Imputation</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../dengue-data/aggregated_database.html" rel="" target="">
- <span class="dropdown-text">Aggregated spatial-time database</span></a>
+ <span class="dropdown-text">Aggregated spatial-time cases database</span></a>
   </li>  
     </ul>
   </li>
@@ -158,7 +158,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dengue-data/imputation.html">Imputation and enrichment</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dengue-data/imputation.html">Imputation</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
     </div>
@@ -179,19 +179,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../dengue-data/missing_data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Dengue missing</span></a>
+ <span class="menu-text">Missing data analysis</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../dengue-data/imputation.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Imputation and enrichment</span></a>
+ <span class="menu-text">Imputation</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../dengue-data/aggregated_database.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Aggregated spatial-time database</span></a>
+ <span class="menu-text">Aggregated spatial-time cases database</span></a>
   </div>
 </li>
     </ul>
@@ -209,7 +209,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data">Load data</a>
   <ul class="collapse">
   <li><a href="#residence-municipality-id_mn_resi" id="toc-residence-municipality-id_mn_resi" class="nav-link" data-scroll-target="#residence-municipality-id_mn_resi">Residence municipality: ID_MN_RESI</a></li>
-  <li><a href="#date-of-the-first-symptons-onset-dt_sin_pri" id="toc-date-of-the-first-symptons-onset-dt_sin_pri" class="nav-link" data-scroll-target="#date-of-the-first-symptons-onset-dt_sin_pri">Date of the first symptons onset: DT_SIN_PRI</a></li>
+  <li><a href="#date-of-the-first-symptoms-onset-dt_sin_pri" id="toc-date-of-the-first-symptoms-onset-dt_sin_pri" class="nav-link" data-scroll-target="#date-of-the-first-symptoms-onset-dt_sin_pri">Date of the first symptoms onset: DT_SIN_PRI</a></li>
   </ul></li>
   <li><a href="#export-improved-database" id="toc-export-improved-database" class="nav-link" data-scroll-target="#export-improved-database">Export improved database</a></li>
   <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info">Session info</a></li>
@@ -221,7 +221,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Imputation and enrichment</h1>
+<h1 class="title">Imputation</h1>
 </div>
 
 
@@ -236,7 +236,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
     
     <div>
-    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-heading">Last run</div>
     <div class="quarto-title-meta-contents">
       <p class="date">June 13, 2023</p>
     </div>
@@ -250,7 +250,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="context" class="level2">
 <h2 class="anchored" data-anchor-id="context">Context</h2>
-<p>This notebook aims to imputate some missing data and enrich the dataset prior to modelling.</p>
+<p>This notebook aims to imputate some missing data and enrich the dataset.</p>
 </section>
 <section id="packages" class="level2">
 <h2 class="anchored" data-anchor-id="packages">Packages</h2>
@@ -302,7 +302,7 @@ The following object is masked from 'package:utils':
 </div>
 <section id="residence-municipality-id_mn_resi" class="level3">
 <h3 class="anchored" data-anchor-id="residence-municipality-id_mn_resi">Residence municipality: ID_MN_RESI</h3>
-<p>Task: If ID_MN_RESI is invalid or missing, inputate with valid COMUNINF information.</p>
+<p>Task: If ID_MN_RESI is invalid or missing, imputate with valid COMUNINF information.</p>
 <section id="imputation" class="level4">
 <h4 class="anchored" data-anchor-id="imputation">Imputation</h4>
 <div class="cell">
@@ -366,9 +366,9 @@ The following object is masked from 'package:utils':
 <p>No improvement for invalid municipalities, improvement of 96 records with missing data.</p>
 </section>
 </section>
-<section id="date-of-the-first-symptons-onset-dt_sin_pri" class="level3">
-<h3 class="anchored" data-anchor-id="date-of-the-first-symptons-onset-dt_sin_pri">Date of the first symptons onset: DT_SIN_PRI</h3>
-<p>Task: If DT_SIN_PRI is invalid or missing, inputate with valid DT_NOTIFIC information.</p>
+<section id="date-of-the-first-symptoms-onset-dt_sin_pri" class="level3">
+<h3 class="anchored" data-anchor-id="date-of-the-first-symptoms-onset-dt_sin_pri">Date of the first symptoms onset: DT_SIN_PRI</h3>
+<p>Task: If DT_SIN_PRI is invalid or missing, imputate with valid DT_NOTIFIC information.</p>
 <section id="imputation-1" class="level4">
 <h4 class="anchored" data-anchor-id="imputation-1">Imputation</h4>
 <div class="cell">
