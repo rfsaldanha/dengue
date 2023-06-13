@@ -1,0 +1,7 @@
+---
+title: "Cluster analysis"
+---
+
+## Overview
+
+On this section there are notebooks that cluster municipalities time series of dengue cases with different strategies.

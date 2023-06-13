@@ -1,5 +1,19 @@
 [
   {
+    "objectID": "dengue_data.html",
+    "href": "dengue_data.html",
+    "title": "Dengue data",
+    "section": "",
+    "text": "In this section there are notebooks for dengue notifications data download, pre-processing, missing data analysis, imputations and exportation."
+  },
+  {
+    "objectID": "dengue_data.html#overview",
+    "href": "dengue_data.html#overview",
+    "title": "Dengue data",
+    "section": "",
+    "text": "In this section there are notebooks for dengue notifications data download, pre-processing, missing data analysis, imputations and exportation."
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Building and Selecting Specialized AI Models for Predicting Dengue Disease",
@@ -285,5 +299,26 @@
     "title": "Software",
     "section": "",
     "text": "We created an R package to on-line zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.\nMore details on https://rfsaldanha.github.io/brclimr"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#isso-é-um-teste",
+    "href": "presentations/presentation_test.html#isso-é-um-teste",
+    "title": "Teste de apresentação",
+    "section": "Isso é um teste",
+    "text": "Isso é um teste\n\nbla\nbla bla\nbla"
+  },
+  {
+    "objectID": "cluster_analysis.html",
+    "href": "cluster_analysis.html",
+    "title": "Cluster analysis",
+    "section": "",
+    "text": "On this section there are notebooks that cluster municipalities time series of dengue cases with different strategies."
+  },
+  {
+    "objectID": "cluster_analysis.html#overview",
+    "href": "cluster_analysis.html#overview",
+    "title": "Cluster analysis",
+    "section": "",
+    "text": "On this section there are notebooks that cluster municipalities time series of dengue cases with different strategies."
   }
 ]

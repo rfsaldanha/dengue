@@ -13,31 +13,45 @@ website:
     left:
       - text: "Home"
         file: index.qmd
-      - sidebar:dengue-data
-      - weather_data.qmd
-      - sidebar:cluster
-      - software.qmd
+      - text: "Dengue data"
+        file: dengue_data.qmd
+      - text: "Weather data"
+        file: weather_data.qmd
+      - text: "Cluster analyses"
+        file: cluster_analysis.qmd
+      - text: "Software"
+        file: software.qmd
+      - text: "Presentations"
+        file: presentations.qmd
   
-  sidebar: 
-    - id: dengue-data
-      title: "Dengue data"
-      style: docked
-      background: light
-      collapse-level: 2
+  sidebar:
+    - title: "Dengue data"
+      style: "docked"
       contents: 
+        - dengue_data.qmd
         - dengue-data/raw_files.qmd
         - dengue-data/missing_data.qmd
         - dengue-data/imputation.qmd
         - dengue-data/aggregated_database.qmd
-
-    - id: cluster
-      title: "Cluster analysis"
-      style: docked
-      background: light
-      collapse-level: 2
+    
+    - title: "Weather data"
+      contents: weather_data.qmd
+    
+    - title: "Cluster analysis"
       contents: 
-        - dengue-cluster/cluster_long.qmd
-        - dengue-cluster/cluster_long_scaled.qmd
+          - cluster_analysis.qmd
+          - dengue-data/raw_files.qmd
+          - dengue-data/missing_data.qmd
+          - dengue-data/imputation.qmd
+          - dengue-data/aggregated_database.qmd
+        
+    - title: "Software"
+      contents: software.qmd
+    
+    - title: "Presentations"
+      contents: 
+          - presentations.qmd
+          - presentations/presentation_test.qmd
   
 format:
   html:
