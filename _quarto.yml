@@ -14,6 +14,7 @@ website:
       - text: "Home"
         file: index.qmd
       - sidebar:data
+      - sidebar:cluster
       - about.qmd
   
   sidebar: 
@@ -27,6 +28,15 @@ website:
         - dengue-data/missing_data.qmd
         - dengue-data/imputation.qmd
         - dengue-data/aggregated_database.qmd
+
+    - id: cluster
+      title: "Cluster"
+      style: docked
+      background: light
+      collapse-level: 2
+      contents: 
+        - dengue-cluster/cluster_long.qmd
+        - dengue-cluster/cluster_long_scaled.qmd
   
 format:
   html:
