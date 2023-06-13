@@ -6,7 +6,7 @@ execute:
   freeze: auto
 
 website:
-  title: "dengue"
+  title: "Dengue AI"
   navbar:
     background: primary
     search: true

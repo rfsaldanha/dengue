@@ -1,6 +1,10 @@
 ---
-title: "Dengue and machine learning research"
+title: "Building and Selecting Specialized AI Models for Predicting Dengue Disease"
 sidebar: false
 ---
 
-This website contains working in progress research on dengue and machine learning, as part of my postdoc at Inria Montpellier.
+This website presents working in progress research on dengue and machine learning, as part of my postdoc at Inria (Montpellier, France) and LNCC (Petrópolis, Brazil).
+
+![](images/inr_logo_rouge.png){fig-align="center" width="200"}
+
+![](images/MARCACOMPLETA_LNCC_HORIZONTAL_FINAL_PNG_azul.png){fig-align="center" width="200"}

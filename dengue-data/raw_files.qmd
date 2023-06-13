@@ -4,6 +4,8 @@ author: Raphael Saldanha
 date: now
 ---
 
+This notebook presents the process of downloading SINAN Dengue raw data files from DataSUS, preprocessing steps using the `{microdatasus}` package and exporting the raw files to `parquet` files.
+
 ## Packages
 
 ```{r}
@@ -32,54 +34,16 @@ library(arrow)
 # }
 ```
 
+This code chunk is commented to avoid unnecessary download again the raw DBC files from DataSUS.
+
 ## Load
+
+After download, preprocessing and export, the parquet files are read to have a dimension of the size.
 
 ```{r}
 dengue <- open_dataset(sources = "parquets/")
 ```
 
 ```{r}
-dengue %>%
-  mutate(DT_SIN_PRI = as.Date(DT_SIN_PRI)) %>%
-  filter(DT_SIN_PRI >= as.Date("2011-01-01") & DT_SIN_PRI < as.Date("2022-01-01")) %>%
-  mutate(class2 = case_when(
-    CLASSI_FIN == "Descartado" ~ "Descartado/Inconclusivo",
-    CLASSI_FIN == "Inconclusivo" ~ "Descartado/Inconclusivo",
-    is.na(CLASSI_FIN) ~ "In analysis",
-    TRUE ~ "Dengue"
-  )) %>%
-  group_by(class2) %>%
-  summarise(freq = n()) %>%
-  ungroup() %>%
-  arrange(-freq) %>%
-  collect()
-```
-
-```{r}
-res <- dengue %>%
-  mutate(DT_SIN_PRI = as.Date(DT_SIN_PRI)) %>%
-  filter(DT_SIN_PRI >= as.Date("2011-01-01") & DT_SIN_PRI < as.Date("2022-01-01")) %>%
-  mutate(class2 = case_when(
-    CLASSI_FIN == "Descartado" ~ "Descartado/Inconclusivo",
-    CLASSI_FIN == "Inconclusivo" ~ "Descartado/Inconclusivo",
-    is.na(CLASSI_FIN) ~ "In analysis",
-    TRUE ~ "Dengue"
-  )) %>%
-  collect() %>%
-  mutate(DT_SIN_PRI = lubridate::ceiling_date(x = DT_SIN_PRI, unit = "month")) %>%
-  group_by(DT_SIN_PRI, class2) %>%
-  summarise(freq = n()) %>%
-  ungroup() %>%
-  arrange(-freq) %>%
-  collect()
-```
-
-```{r}
-ggplot(res) +
-  aes(x = DT_SIN_PRI, fill = class2, weight = freq) +
-  geom_bar() +
-  scale_fill_hue(direction = 1) +
-  labs(fill = "Classificação") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
+dengue %>% glimpse()
 ```
