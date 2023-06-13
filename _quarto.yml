@@ -13,13 +13,14 @@ website:
     left:
       - text: "Home"
         file: index.qmd
-      - sidebar:data
+      - sidebar:dengue-data
+      - weather_data.qmd
       - sidebar:cluster
-      - about.qmd
+      - software.qmd
   
   sidebar: 
-    - id: data
-      title: "Data"
+    - id: dengue-data
+      title: "Dengue data"
       style: docked
       background: light
       collapse-level: 2
@@ -30,7 +31,7 @@ website:
         - dengue-data/aggregated_database.qmd
 
     - id: cluster
-      title: "Cluster"
+      title: "Cluster analysis"
       style: docked
       background: light
       collapse-level: 2

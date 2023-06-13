@@ -9,7 +9,7 @@
 <meta name="author" content="Raphael Saldanha">
 <meta name="dcterms.date" content="2023-06-13">
 
-<title>Dengue AI - Export aggregated database</title>
+<title>Dengue AI - Filter valid data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -102,7 +102,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-sidebar docked nav-fixed">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -142,7 +142,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../dengue-data/aggregated_database.html" rel="" target="">
- <span class="dropdown-text">Export aggregated database</span></a>
+ <span class="dropdown-text">Aggregated spatial-time cases database</span></a>
   </li>  
     </ul>
   </li>
@@ -175,61 +175,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-        <i class="bi bi-layout-text-sidebar-reverse"></i>
-      </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dengue-data/aggregated_database.html">Export aggregated database</a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-    </div>
-  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation docked overflow-auto">
-    <div class="sidebar-menu-container"> 
-    <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../dengue-data/raw_files.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Raw files</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../dengue-data/missing_data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Missing data analysis</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../dengue-data/imputation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Imputation</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../dengue-data/aggregated_database.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Export aggregated database</span></a>
-  </div>
-</li>
-    </ul>
-    </div>
-</nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#context" id="toc-context" class="nav-link active" data-scroll-target="#context">Context</a>
-  <ul class="collapse">
-  <li><a href="#method" id="toc-method" class="nav-link" data-scroll-target="#method">Method</a></li>
-  </ul></li>
+  <li><a href="#context" id="toc-context" class="nav-link active" data-scroll-target="#context">Context</a></li>
   <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages">Packages</a></li>
   <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data">Load data</a></li>
   <li><a href="#filter-valid-dates" id="toc-filter-valid-dates" class="nav-link" data-scroll-target="#filter-valid-dates">Filter valid dates</a></li>
@@ -249,7 +205,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Export aggregated database</h1>
+<h1 class="title">Filter valid data</h1>
 </div>
 
 
@@ -278,16 +234,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="context" class="level2">
 <h2 class="anchored" data-anchor-id="context">Context</h2>
-<p>This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.</p>
-<p>The aggregation will be on municipalities and time will be date and epidemiological week.</p>
-<section id="method" class="level3">
-<h3 class="anchored" data-anchor-id="method">Method</h3>
 <ul>
-<li>After the steps of raw dataset download and imputation</li>
-<li>Load the <code>dengue_improved.parquet</code> data</li>
-<li>Filter valid dates</li>
-<li>Filter positive cases</li>
-<li>Aggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.</li>
+<li><p>After the steps of raw dataset download and imputation</p></li>
+<li><p>Load the <code>dengue_improved.parquet</code> data</p></li>
+<li><p>Filter valid dates</p></li>
+<li><p>Filter positive cases</p></li>
+<li><p>Aggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.</p></li>
 </ul>
 <div class="cell">
 <div class="cell-output-display">
@@ -307,7 +259,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</section>
 </section>
 <section id="packages" class="level2">
 <h2 class="anchored" data-anchor-id="packages">Packages</h2>
@@ -409,7 +360,7 @@ The following object is masked from 'package:utils':
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Month of first symptom's onset"</span>, <span class="at">y =</span> <span class="st">"Records"</span>, <span class="at">fill =</span> <span class="st">"Classification"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="aggregated_database_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+<p><img src="filter_valid_data_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">"dengue_cases_classification.pdf"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">

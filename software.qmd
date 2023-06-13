@@ -1,0 +1,9 @@
+---
+title: "Software"
+---
+
+## `brclimr`
+
+We created an R package to on-line zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.
+
+More details on <https://rfsaldanha.github.io/brclimr>

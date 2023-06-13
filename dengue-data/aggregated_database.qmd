@@ -1,5 +1,5 @@
 ---
-title: "Aggregated spatial-time cases database"
+title: "Export aggregated database"
 author: Raphael Saldanha
 date: now
 ---
@@ -13,13 +13,9 @@ The aggregation will be on municipalities and time will be date and epidemiologi
 ### Method
 
 -   After the steps of raw dataset download and imputation
-
 -   Load the `dengue_improved.parquet` data
-
 -   Filter valid dates
-
 -   Filter positive cases
-
 -   Aggregate by municipality and date of first symptom's unset and by municipality and the epidemiological week of the first symptom's unset.
 
 ```{mermaid}
@@ -64,6 +60,8 @@ dengue <- dengue %>%
 tally(dengue)
 ```
 
+## Cases classification data export
+
 ```{r}
 dengue_classifications <- c("Febre hemorrágica do dengue", "Síndrome do choque do dengue", "Dengue com sinais de alarme",
   "Dengue clássico", "Dengue com complicações", "Dengue",
@@ -71,7 +69,7 @@ dengue_classifications <- c("Febre hemorrágica do dengue", "Síndrome do choque
 ```
 
 ```{r}
-dengue %>% 
+dengue_cases_classification <- dengue %>% 
   mutate(CLASSI_FIN = case_when(
     CLASSI_FIN %in% dengue_classifications ~ "Confirmed",
     CLASSI_FIN == "Descartado" ~ "Discarded",
@@ -83,8 +81,17 @@ dengue %>%
   mutate(DT_SIN_PRI = lubridate::ceiling_date(x = DT_SIN_PRI, unit = "month")) %>%
   group_by(DT_SIN_PRI, CLASSI_FIN) %>%
   summarise(freq = n()) %>%
-  ungroup() %>%
-  ggplot(aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN)) +
+  ungroup() 
+
+
+```
+
+```{r}
+write_parquet(x = dengue_cases_classification, sink = "parquet_classification/dengue_cases_classification.parquet")
+```
+
+```{r}
+ggplot(data =  dengue_cases_classification, aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN)) +
   geom_bar() +
   scale_fill_hue(direction = 1) +
   scale_y_continuous(labels = scales::comma) +

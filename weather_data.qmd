@@ -1,0 +1,65 @@
+---
+title: "Weather data"
+---
+
+## Introduction
+
+Zonal statistics such as mean, maximum, minimum, standard deviation, and sum were computed by taking into account the data cells that intersect the boundaries of each municipality and stored in Parquet files.
+
+This procedure was carried out for all Brazilian municipalities, and for all available dates, for every indicator available in the weather products BR-DWGD and TerraClimate.
+
+## Methodology
+
+Zonal statistics are descriptive statistics calculated using a set of cells that spatially intersects a given spatial boundary. For each boundary in a map, statistics like average, maximum value, minimum value, standard deviation, and sum are obtained to represent the cell's values that intersect the boundary.
+
+The Brazilian municipality boundaries from 2010 were used as a reference, as provided by the [geobr](https://github.com/ipeaGIT/geobr) package.
+
+Thus, for each municipality, a set of zonal statistics of weather indicators is calculated, at the same time resolution of the source dataset.
+
+![](https://rfsaldanha.github.io/brclimr/articles/images/zonal_statistics.png){fig-align="center"}
+
+Those datasets are available as parquet files on S3 buckets and queried by this project functions to retrieve data for a given municipality, dates, weather indicators, and desired zonal statistics.
+
+## Results
+
+### Zonal BR-DWGD
+
+> Xavier, A. C., Scanlon, B. R., King, C. W., & Alves, A. I. (2022). New improved Brazilian daily weather gridded data (1961--2020). International Journal of Climatology. <https://doi.org/10.1002/joc.7731>
+
+The BR-DWGD dataset presents daily meteorological data interpolated to a grid with 0.1° × 0.1° of spatial resolution for the Brazilian territory, with daily data from January 1, 1961, to July 31, 2020. It used data from 1,252 weather stations and 11,473 rain gauges in its interpolation methods, cross-validated to the selection of the best method for each weather indicator.
+
+The following weather indicators are available from the BR-DWGD study: precipitation (mm), minimum temperature (°C), maximum temperature (°C), solar radiation (MJ⋅m−2), wind speed at 2m height (m⋅s−1) and relative humidity (%).
+
+```{r}
+brclimr::product_info(product = "brdwgd")
+```
+
+### Zonal TerraClimate
+
+> Abatzoglou, J. T., Dobrowski, S. Z., Parks, S. A., Hegewisch, K. C. (2018). TerraClimate, a high-resolution global dataset of monthly climate and climatic water balance from 1958-2015. Scientific Data, 5. https://doi.org/10.1038/sdata.2017.191
+
+The TerraClimate dataset presents monthly meteorological data interpolated to a grid with 0.04° × 0.04° (1/24th degree) of spatial resolution with world cover, with monthly data from January, 1958, to December, 2021.
+
+The following weather indicators are available from the TerraClimate study: Actual Evapotranspiration (mm), Climate Water Deficit (mm), Potential evapotranspiration(mm), Precipitation (mm), Runoff (mm), Soil Moisture (mm), Downward surface shortwave radiation (W/m2), Snow water equivalent (mm), Minimum temperature (°C), Maximum temperature (°C), Vapor pressure (kPa), Wind speed (m/s), Vapor Pressure Deficit (kpa) and Palmer Drought Severity Index.
+
+```{r}
+brclimr::product_info(product = "terraclimate")
+```
+
+## Availability
+
+### Parquet files
+
+The results are available to use as `parquet` format files. Access the following DOIs to access and download the files.
+
+#### Zonal BR-DWGD
+
+`r badger::badge_doi("https://doi.org/10.5281/zenodo.7824920", "green")`
+
+#### Zonal TerraClimate
+
+`r badger::badge_doi("https://doi.org/10.5281/zenodo.7825777", "green")`
+
+### R package `brclimr`
+
+We created an R package to on-line access those parquet files and download data for a user especified municipality. More details on <https://rfsaldanha.github.io/brclimr>

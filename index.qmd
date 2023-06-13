@@ -1,9 +1,25 @@
 ---
 title: "Building and Selecting Specialized AI Models for Predicting Dengue Disease"
-sidebar: false
 ---
 
 This website presents working in progress research on dengue and machine learning, as part of my postdoc at Inria (Montpellier, France) and LNCC (Petrópolis, Brazil).
+
+```{r}
+#| fig-align: center
+#| warning: false
+#| echo: false
+library(dplyr)
+library(ggplot2)
+arrow::read_parquet(file = "dengue-data/parquet_classification/dengue_cases_classification.parquet") %>%
+  ggplot(aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN)) +
+  geom_bar() +
+  scale_fill_hue(direction = 1) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(fill = "Classificação") +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(title = "Dengue suspected cases notification in Brazil", x = "Month of first symptom's onset", y = "Records", fill = "Classification")
+```
 
 ![](images/inr_logo_rouge.png){fig-align="center" width="200"}
 

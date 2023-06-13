@@ -303,56 +303,56 @@
   {
     "objectID": "dengue-data/aggregated_database.html",
     "href": "dengue-data/aggregated_database.html",
-    "title": "Aggregated spatial-time cases database",
+    "title": "Export aggregated database",
     "section": "",
     "text": "This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.\nThe aggregation will be on municipalities and time will be date and epidemiological week.\n\n\n\nAfter the steps of raw dataset download and imputation\nLoad the dengue_improved.parquet data\nFilter valid dates\nFilter positive cases\nAggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.\n\n\n\n\n\nflowchart LR\n  A[Raw dataset] --&gt; B(Imputation)\n  B --&gt; C[Improved dataset]\n  C --&gt; D{Filter valid dates}\n  C --&gt; E{Filter positive cases}\n  D --&gt; F(Aggregate)\n  E --&gt; F\n  F --&gt; G[Municipality and date dataset]\n  F --&gt; H[Municipality and epiweek dataset]"
   },
   {
     "objectID": "dengue-data/aggregated_database.html#context",
     "href": "dengue-data/aggregated_database.html#context",
-    "title": "Aggregated spatial-time cases database",
+    "title": "Export aggregated database",
     "section": "",
     "text": "This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.\nThe aggregation will be on municipalities and time will be date and epidemiological week.\n\n\n\nAfter the steps of raw dataset download and imputation\nLoad the dengue_improved.parquet data\nFilter valid dates\nFilter positive cases\nAggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.\n\n\n\n\n\nflowchart LR\n  A[Raw dataset] --&gt; B(Imputation)\n  B --&gt; C[Improved dataset]\n  C --&gt; D{Filter valid dates}\n  C --&gt; E{Filter positive cases}\n  D --&gt; F(Aggregate)\n  E --&gt; F\n  F --&gt; G[Municipality and date dataset]\n  F --&gt; H[Municipality and epiweek dataset]"
   },
   {
     "objectID": "dengue-data/aggregated_database.html#packages",
     "href": "dengue-data/aggregated_database.html#packages",
-    "title": "Aggregated spatial-time cases database",
+    "title": "Export aggregated database",
     "section": "Packages",
     "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(lubridate)"
   },
   {
     "objectID": "dengue-data/aggregated_database.html#load-data",
     "href": "dengue-data/aggregated_database.html#load-data",
-    "title": "Aggregated spatial-time cases database",
+    "title": "Export aggregated database",
     "section": "Load data",
     "text": "Load data\nLazy evaluation.\n\ndengue &lt;- arrow::read_parquet(file = \"parquet_improved/dengue_improved.parquet\")\n\ntally(dengue)\n\n         n\n1 19180457"
   },
   {
     "objectID": "dengue-data/aggregated_database.html#filter-valid-dates",
     "href": "dengue-data/aggregated_database.html#filter-valid-dates",
-    "title": "Aggregated spatial-time cases database",
+    "title": "Export aggregated database",
     "section": "Filter valid dates",
-    "text": "Filter valid dates\n\nvalid_interval &lt;- interval(ymd(\"2011-01-01\"), ymd(\"2021-12-31\"))\n\ndengue &lt;- dengue %&gt;%\n  mutate(DT_SIN_PRI = ymd(DT_SIN_PRI)) %&gt;%\n  filter(DT_SIN_PRI %within% valid_interval)\n\ntally(dengue)\n\n         n\n1 15561929\n\n\n\ndengue_classifications &lt;- c(\"Febre hemorrágica do dengue\", \"Síndrome do choque do dengue\", \"Dengue com sinais de alarme\",\n  \"Dengue clássico\", \"Dengue com complicações\", \"Dengue\",\n  \"Dengue grave\")\n\n\ndengue %&gt;% \n  mutate(CLASSI_FIN = case_when(\n    CLASSI_FIN %in% dengue_classifications ~ \"Confirmed\",\n    CLASSI_FIN == \"Descartado\" ~ \"Discarded\",\n    CLASSI_FIN == \"Inconclusivo\" ~ \"Inconclusive\",\n    CLASSI_FIN == 6 ~ \"Invalid\",\n    is.na(CLASSI_FIN) ~ \"Missing\",\n    .default = CLASSI_FIN\n  )) %&gt;%\n  mutate(DT_SIN_PRI = lubridate::ceiling_date(x = DT_SIN_PRI, unit = \"month\")) %&gt;%\n  group_by(DT_SIN_PRI, CLASSI_FIN) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() %&gt;%\n  ggplot(aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN)) +\n  geom_bar() +\n  scale_fill_hue(direction = 1) +\n  scale_y_continuous(labels = scales::comma) +\n  labs(fill = \"Classificação\") +\n  theme_minimal() +\n  theme(legend.position = \"bottom\") +\n  labs(x = \"Month of first symptom's onset\", y = \"Records\", fill = \"Classification\")\n\n`summarise()` has grouped output by 'DT_SIN_PRI'. You can override using the\n`.groups` argument.\n\n\n\n\nggsave(filename = \"dengue_cases_classification.pdf\")\n\nSaving 7 x 5 in image"
+    "text": "Filter valid dates\n\nvalid_interval &lt;- interval(ymd(\"2011-01-01\"), ymd(\"2021-12-31\"))\n\ndengue &lt;- dengue %&gt;%\n  mutate(DT_SIN_PRI = ymd(DT_SIN_PRI)) %&gt;%\n  filter(DT_SIN_PRI %within% valid_interval)\n\ntally(dengue)\n\n         n\n1 15561929"
   },
   {
     "objectID": "dengue-data/aggregated_database.html#filter-positive-cases-of-dengue",
     "href": "dengue-data/aggregated_database.html#filter-positive-cases-of-dengue",
-    "title": "Aggregated spatial-time cases database",
+    "title": "Export aggregated database",
     "section": "Filter positive cases of dengue",
     "text": "Filter positive cases of dengue\n\ndengue &lt;- dengue %&gt;%\n  filter(CLASSI_FIN %in% dengue_classifications)\n\ntally(dengue)\n\n        n\n1 8125611"
   },
   {
     "objectID": "dengue-data/aggregated_database.html#aggregation",
     "href": "dengue-data/aggregated_database.html#aggregation",
-    "title": "Aggregated spatial-time cases database",
+    "title": "Export aggregated database",
     "section": "Aggregation",
     "text": "Aggregation\n\nMunicipality and date (“md”)\nIncluding the step to fill the time series with zero values when certain dates do not have cases.\n\ndengue_md &lt;- dengue %&gt;%\n  group_by(mun = ID_MN_RESI, date = DT_SIN_PRI) %&gt;%\n  summarise(freq = n()) %&gt;%\n  arrange(date) %&gt;%\n  complete(\n    date = seq.Date(min(date), max(date), by = \"day\"),\n    fill = list(freq = 0)\n  ) %&gt;%\n  ungroup() %&gt;%\n  collect()\n\n`summarise()` has grouped output by 'mun'. You can override using the `.groups`\nargument.\n\n\n\nglimpse(dengue_md)\n\nRows: 16,772,737\nColumns: 3\n$ mun  &lt;chr&gt; \"110000\", \"110000\", \"110000\", \"110000\", \"110000\", \"110000\", \"1100…\n$ date &lt;date&gt; 2015-12-29, 2015-12-30, 2015-12-31, 2016-01-01, 2016-01-02, 2016…\n$ freq &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…\n\n\n\ndengue_md %&gt;%\n  write_parquet(sink = \"parquet_aggregated/dengue_md.parquet\")\n\n\n\nMunicipality and epidemiological week (“mw”)\n\ndengue_mw &lt;- dengue_md %&gt;%\n  mutate(epi_week = paste0(epiyear(date), \"-\", str_pad(epiweek(date), 2, pad = \"0\"))) %&gt;%\n  group_by(mun, epi_week) %&gt;%\n  summarise(freq = n()) %&gt;%\n  arrange(epi_week) %&gt;%\n  ungroup() %&gt;%\n  collect()\n\n`summarise()` has grouped output by 'mun'. You can override using the `.groups`\nargument.\n\n\n\nglimpse(dengue_mw)\n\nRows: 2,400,687\nColumns: 3\n$ mun      &lt;chr&gt; \"110005\", \"110006\", \"110014\", \"110034\", \"110140\", \"120017\", \"…\n$ epi_week &lt;chr&gt; \"2010-52\", \"2010-52\", \"2010-52\", \"2010-52\", \"2010-52\", \"2010-…\n$ freq     &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…\n\n\n\ndengue_mw %&gt;%\n  write_parquet(sink = \"parquet_aggregated/dengue_mw.parquet\")"
   },
   {
     "objectID": "dengue-data/aggregated_database.html#session-info",
     "href": "dengue-data/aggregated_database.html#session-info",
-    "title": "Aggregated spatial-time cases database",
+    "title": "Export aggregated database",
     "section": "Session info",
     "text": "Session info\n\nsessionInfo()\n\nR version 4.1.2 (2021-11-01)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] arrow_12.0.0    lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0  \n [5] dplyr_1.1.2     purrr_1.0.1     readr_2.1.4     tidyr_1.3.0    \n [9] tibble_3.2.1    ggplot2_3.4.2   tidyverse_2.0.0\n\nloaded via a namespace (and not attached):\n [1] compiler_4.1.2    pillar_1.9.0      tools_4.1.2       bit_4.0.5        \n [5] digest_0.6.31     timechange_0.2.0  jsonlite_1.8.5    evaluate_0.21    \n [9] lifecycle_1.0.3   gtable_0.3.3      pkgconfig_2.0.3   rlang_1.1.1      \n[13] cli_3.6.1         rstudioapi_0.14   yaml_2.3.7        xfun_0.39        \n[17] fastmap_1.1.1     withr_2.5.0       knitr_1.43        systemfonts_1.0.4\n[21] generics_0.1.3    vctrs_0.6.2       htmlwidgets_1.6.2 hms_1.1.3        \n[25] bit64_4.0.5       grid_4.1.2        tidyselect_1.2.0  glue_1.6.2       \n[29] R6_2.5.1          textshaping_0.3.6 fansi_1.0.4       rmarkdown_2.22   \n[33] farver_2.1.1      tzdb_0.4.0        magrittr_2.0.3    scales_1.2.1     \n[37] htmltools_0.5.5   assertthat_0.2.1  colorspace_2.1-0  ragg_1.2.5       \n[41] labeling_0.4.2    utf8_1.2.3        stringi_1.7.12    munsell_0.5.0"
   },
@@ -411,5 +411,124 @@
     "title": "Cluster long time series, scaled",
     "section": "Clustering",
     "text": "Clustering\nSequence of k groups to be used.\n\nk_seq &lt;- 3:10\n\n\nSBD method\n\ntic()\nclust &lt;- tsclust(\n  series = tdengue, \n  type = \"partitional\", \n  k = k_seq,\n  distance = \"sbd\",\n  seed = 13\n)\ntoc()\n\n30.217 sec elapsed\n\n\n\n\nCluster Validity Indices (CVI)\n\nnames(clust) &lt;- paste0(\"k_\", k_seq)\nres_cvi &lt;- sapply(clust, cvi, type = \"internal\") %&gt;% \n  t() %&gt;%\n  as_tibble(rownames = \"k\") %&gt;%\n  arrange(-Sil)\n\nres_cvi %&gt;%\n  kbl() %&gt;%\n  kable_styling()\n\n\n\n\nk\nSil\nSF\nCH\nDB\nDBstar\nD\nCOP\n\n\n\n\nk_3\n0.1361517\n0.3215523\n301.2210\n3.692051\n4.316082\n0.0679378\n0.4052902\n\n\nk_5\n0.0868020\n0.2224752\n282.4503\n2.413023\n2.847291\n0.0280136\n0.3615501\n\n\nk_6\n0.0733088\n0.1578847\n154.6699\n4.988996\n6.309369\n0.0216979\n0.3660083\n\n\nk_4\n0.0610827\n0.2544475\n140.5981\n6.897833\n8.287407\n0.0216420\n0.3886784\n\n\nk_9\n0.0504672\n0.0626711\n124.3538\n3.532466\n4.849390\n0.0248858\n0.3501298\n\n\nk_10\n0.0466939\n0.0628349\n166.6916\n3.820877\n4.682205\n0.0135861\n0.3434336\n\n\nk_8\n0.0408157\n0.1107509\n164.5684\n3.780052\n4.964673\n0.0221248\n0.3432409\n\n\nk_7\n0.0380647\n0.1346238\n171.9309\n4.240165\n5.555059\n0.0219174\n0.3537959\n\n\n\n\n\n\n\n\n\nCluster with higher Silhouette statistic\n\nsel_clust &lt;- clust[[res_cvi[[1,1]]]]\n\n\nplot(sel_clust)\n\n\n\n\n\nplot(sel_clust, type = \"centroids\", lty = 1)"
+  },
+  {
+    "objectID": "weather_data.html",
+    "href": "weather_data.html",
+    "title": "Weather data",
+    "section": "",
+    "text": "Zonal statistics such as mean, maximum, minimum, standard deviation, and sum were computed by taking into account the data cells that intersect the boundaries of each municipality and stored in Parquet files.\nThis procedure was carried out for all Brazilian municipalities, and for all available dates, for every indicator available in the weather products BR-DWGD and TerraClimate."
+  },
+  {
+    "objectID": "weather_data.html#introduction",
+    "href": "weather_data.html#introduction",
+    "title": "Weather data",
+    "section": "",
+    "text": "Zonal statistics such as mean, maximum, minimum, standard deviation, and sum were computed by taking into account the data cells that intersect the boundaries of each municipality and stored in Parquet files.\nThis procedure was carried out for all Brazilian municipalities, and for all available dates, for every indicator available in the weather products BR-DWGD and TerraClimate."
+  },
+  {
+    "objectID": "weather_data.html#methodology",
+    "href": "weather_data.html#methodology",
+    "title": "Weather data",
+    "section": "Methodology",
+    "text": "Methodology\nZonal statistics are descriptive statistics calculated using a set of cells that spatially intersects a given spatial boundary. For each boundary in a map, statistics like average, maximum value, minimum value, standard deviation, and sum are obtained to represent the cell’s values that intersect the boundary.\nThe Brazilian municipality boundaries from 2010 were used as a reference, as provided by the geobr package.\nThus, for each municipality, a set of zonal statistics of weather indicators is calculated, at the same time resolution of the source dataset.\n\n\n\n\n\nThose datasets are available as parquet files on S3 buckets and queried by this project functions to retrieve data for a given municipality, dates, weather indicators, and desired zonal statistics."
+  },
+  {
+    "objectID": "weather_data.html#results",
+    "href": "weather_data.html#results",
+    "title": "Weather data",
+    "section": "Results",
+    "text": "Results\n\nZonal BR-DWGD\n\nXavier, A. C., Scanlon, B. R., King, C. W., & Alves, A. I. (2022). New improved Brazilian daily weather gridded data (1961–2020). International Journal of Climatology. https://doi.org/10.1002/joc.7731\n\nThe BR-DWGD dataset presents daily meteorological data interpolated to a grid with 0.1° × 0.1° of spatial resolution for the Brazilian territory, with daily data from January 1, 1961, to July 31, 2020. It used data from 1,252 weather stations and 11,473 rain gauges in its interpolation methods, cross-validated to the selection of the best method for each weather indicator.\nThe following weather indicators are available from the BR-DWGD study: precipitation (mm), minimum temperature (°C), maximum temperature (°C), solar radiation (MJ⋅m−2), wind speed at 2m height (m⋅s−1) and relative humidity (%).\n\nbrclimr::product_info(product = \"brdwgd\")\n\n&lt;list&gt;\n├─tmax: &lt;list&gt;\n│ ├─name: \"Maximum temperature\"\n│ ├─unit: \"Degree Celsius\"\n│ ├─date_range: \"Daily, 1961-01-01 to 2020-07-31\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"Tmax_min\"\n│   ├─max: \"Tmax_max\"\n│   ├─mean: \"Tmax_mean\"\n│   └─sd: \"Tmax_sd\"\n├─tmin: &lt;list&gt;\n│ ├─name: \"Minimum temperature\"\n│ ├─unit: \"Degree Celsius\"\n│ ├─date_range: \"Daily, 1961-01-01 to 2020-07-31\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"Tmin_min\"\n│   ├─max: \"Tmin_max\"\n│   ├─mean: \"Tmin_mean\"\n│   └─sd: \"Tmin_sd\"\n├─pr: &lt;list&gt;\n│ ├─name: \"Precipitation\"\n│ ├─unit: \"mm\"\n│ ├─date_range: \"Daily, 1961-01-01 to 2020-07-31\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"pr_min\"\n│   ├─max: \"pr_max\"\n│   ├─mean: \"pr_mean\"\n│   ├─sd: \"pr_sd\"\n│   └─sum: \"pr_sum\"\n├─eto: &lt;list&gt;\n│ ├─name: \"Evapotranspiration\"\n│ ├─unit: \"mm\"\n│ ├─date_range: \"Daily, 1961-01-01 to 2020-07-31\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"ETo_min\"\n│   ├─max: \"ETo_max\"\n│   ├─mean: \"ETo_mean\"\n│   ├─sd: \"ETo_sd\"\n│   └─sum: \"ETo_sd\"\n├─rh: &lt;list&gt;\n│ ├─name: \"Relative humidity\"\n│ ├─unit: \"Percentage\"\n│ ├─date_range: \"Daily, 1961-01-01 to 2020-07-31\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"RH_min\"\n│   ├─max: \"RH_max\"\n│   ├─mean: \"RH_mean\"\n│   └─sd: \"RH_sd\"\n├─rs: &lt;list&gt;\n│ ├─name: \"Solar radiation\"\n│ ├─unit: \"MJ/m2\"\n│ ├─date_range: \"Daily, 1961-01-01 to 2020-07-31\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"Rs_min\"\n│   ├─max: \"Rs_max\"\n│   ├─mean: \"Rs_mean\"\n│   └─sd: \"Rs_sd\"\n└─u2: &lt;list&gt;\n  ├─name: \"Wind speed\"\n  ├─unit: \"m/2\"\n  ├─date_range: \"Daily, 1961-01-01 to 2020-07-31\"\n  └─stats: &lt;list&gt;\n    ├─min: \"u2_min\"\n    ├─max: \"u2_max\"\n    ├─mean: \"u2_mean\"\n    └─sd: \"u2_sd\"\n\n\n\n\nZonal TerraClimate\n\nAbatzoglou, J. T., Dobrowski, S. Z., Parks, S. A., Hegewisch, K. C. (2018). TerraClimate, a high-resolution global dataset of monthly climate and climatic water balance from 1958-2015. Scientific Data, 5. https://doi.org/10.1038/sdata.2017.191\n\nThe TerraClimate dataset presents monthly meteorological data interpolated to a grid with 0.04° × 0.04° (1/24th degree) of spatial resolution with world cover, with monthly data from January, 1958, to December, 2021.\nThe following weather indicators are available from the TerraClimate study: Actual Evapotranspiration (mm), Climate Water Deficit (mm), Potential evapotranspiration(mm), Precipitation (mm), Runoff (mm), Soil Moisture (mm), Downward surface shortwave radiation (W/m2), Snow water equivalent (mm), Minimum temperature (°C), Maximum temperature (°C), Vapor pressure (kPa), Wind speed (m/s), Vapor Pressure Deficit (kpa) and Palmer Drought Severity Index.\n\nbrclimr::product_info(product = \"terraclimate\")\n\n&lt;list&gt;\n├─tmax: &lt;list&gt;\n│ ├─name: \"Maximum temperature\"\n│ ├─detail: \"Average for month\"\n│ ├─unit: \"Degree Celsius\"\n│ ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"tmax_min\"\n│   ├─max: \"tmax_max\"\n│   ├─mean: \"tmax_mean\"\n│   └─sd: \"tmax_sd\"\n├─tmin: &lt;list&gt;\n│ ├─name: \"Minimum temperature\"\n│ ├─detail: \"Average for month\"\n│ ├─unit: \"Degree Celsius\"\n│ ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"tmin_min\"\n│   ├─max: \"tmin_max\"\n│   ├─mean: \"tmin_mean\"\n│   └─sd: \"tmin_sd\"\n├─ppt: &lt;list&gt;\n│ ├─name: \"Precipitation\"\n│ ├─detail: \"Monthly total\"\n│ ├─unit: \"mm\"\n│ ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"ppt_min\"\n│   ├─max: \"ppt_max\"\n│   ├─mean: \"ppt_mean\"\n│   ├─sd: \"ppt_sd\"\n│   └─sum: \"ppt_sum\"\n├─aet: &lt;list&gt;\n│ ├─name: \"Actual Evapotranspiration\"\n│ ├─detail: \"Monthly total\"\n│ ├─unit: \"mm\"\n│ ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"aet_min\"\n│   ├─max: \"aet_max\"\n│   ├─mean: \"aet_mean\"\n│   ├─sd: \"aet_sd\"\n│   └─sum: \"aet_sum\"\n├─def: &lt;list&gt;\n│ ├─name: \"Climate Water Deficit\"\n│ ├─detail: \"Monthly total\"\n│ ├─unit: \"mm\"\n│ ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"def_min\"\n│   ├─max: \"def_max\"\n│   ├─mean: \"def_mean\"\n│   ├─sd: \"def_sd\"\n│   └─sum: \"def_sum\"\n├─pdsi: &lt;list&gt;\n│ ├─name: \"Palmer Drought Severity Index\"\n│ ├─detail: \"At end of month\"\n│ ├─unit: \"unitless\"\n│ ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"PDSI_min\"\n│   ├─max: \"PDSI_max\"\n│   ├─mean: \"PDSI_mean\"\n│   └─sd: \"PDSI_sd\"\n├─pet: &lt;list&gt;\n│ ├─name: \"Potential evapotranspiration\"\n│ ├─detail: \"Monthly total\"\n│ ├─unit: \"mm\"\n│ ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"pet_min\"\n│   ├─max: \"pet_max\"\n│   ├─mean: \"pet_mean\"\n│   ├─sd: \"pet_sd\"\n│   └─sum: \"pet_sum\"\n├─q: &lt;list&gt;\n│ ├─name: \"Runoff\"\n│ ├─detail: \"Monthly total\"\n│ ├─unit: \"mm\"\n│ ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"q_min\"\n│   ├─max: \"q_max\"\n│   ├─mean: \"q_mean\"\n│   ├─sd: \"q_sd\"\n│   └─sum: \"q_sum\"\n├─soil: &lt;list&gt;\n│ ├─name: \"Soil Moisture\"\n│ ├─detail: \"Total column, at end of month\"\n│ ├─unit: \"mm\"\n│ ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"soil_min\"\n│   ├─max: \"soil_max\"\n│   ├─mean: \"soil_mean\"\n│   ├─sd: \"soil_sd\"\n│   └─sum: \"soil_sum\"\n├─srad: &lt;list&gt;\n│ ├─name: \"Downward surface shortwave radia...\"\n│ ├─unit: \"W/m2\"\n│ ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"srad_min\"\n│   ├─max: \"srad_max\"\n│   ├─mean: \"srad_mean\"\n│   ├─sd: \"srad_sd\"\n│   └─sum: \"srad_sum\"\n├─swe: &lt;list&gt;\n│ ├─name: \"Snow water equivalent\"\n│ ├─detail: \"At end of month\"\n│ ├─unit: \"mm\"\n│ ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"swe_min\"\n│   ├─max: \"swe_max\"\n│   ├─mean: \"swe_mean\"\n│   ├─sd: \"swe_sd\"\n│   └─sum: \"swe_sum\"\n├─vap: &lt;list&gt;\n│ ├─name: \"Vapor pressure\"\n│ ├─detail: \"Average for month\"\n│ ├─unit: \"kPa\"\n│ ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"vap_min\"\n│   ├─max: \"vap_max\"\n│   ├─mean: \"vap_mean\"\n│   └─sd: \"vap_sd\"\n├─vpd: &lt;list&gt;\n│ ├─name: \"Vapor Pressure Deficit\"\n│ ├─detail: \"Average for month\"\n│ ├─unit: \"kPa\"\n│ ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n│ └─stats: &lt;list&gt;\n│   ├─min: \"vpd_min\"\n│   ├─max: \"vpd_max\"\n│   ├─mean: \"vpd_mean\"\n│   └─sd: \"vpd_sd\"\n└─ws: &lt;list&gt;\n  ├─name: \"Wind speed\"\n  ├─detail: \"Average for month\"\n  ├─unit: \"m/s\"\n  ├─date_range: \"Monthly, 1958-01 to 2021-12\"\n  └─stats: &lt;list&gt;\n    ├─min: \"ws_min\"\n    ├─max: \"ws_max\"\n    ├─mean: \"ws_mean\"\n    └─sd: \"ws_sd\""
+  },
+  {
+    "objectID": "weather_data.html#availability",
+    "href": "weather_data.html#availability",
+    "title": "Weather data",
+    "section": "Availability",
+    "text": "Availability\n\nParquet files\nThe results are available to use as parquet format files. Access the following DOIs to access and download the files.\n\nZonal BR-DWGD\n\n\n\n\n\n\n\nZonal TerraClimate\n\n\n\n\n\n\n\n\nR package brclimr\nWe created an R package to on-line access those parquet files and download data for a user especified municipality. More details on https://rfsaldanha.github.io/brclimr"
+  },
+  {
+    "objectID": "software.html",
+    "href": "software.html",
+    "title": "Software",
+    "section": "",
+    "text": "We created an R package to on-line zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.\nMore details on https://rfsaldanha.github.io/brclimr"
+  },
+  {
+    "objectID": "software.html#brclimr",
+    "href": "software.html#brclimr",
+    "title": "Software",
+    "section": "",
+    "text": "We created an R package to on-line zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.\nMore details on https://rfsaldanha.github.io/brclimr"
+  },
+  {
+    "objectID": "dengue-data/filter_valid_data.html",
+    "href": "dengue-data/filter_valid_data.html",
+    "title": "Filter valid data",
+    "section": "",
+    "text": "After the steps of raw dataset download and imputation\nLoad the dengue_improved.parquet data\nFilter valid dates\nFilter positive cases\nAggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.\n\n\n\n\n\nflowchart LR\n  A[Raw dataset] --&gt; B(Imputation)\n  B --&gt; C[Improved dataset]\n  C --&gt; D{Filter valid dates}\n  C --&gt; E{Filter positive cases}\n  D --&gt; F(Aggregate)\n  E --&gt; F\n  F --&gt; G[Municipality and date dataset]\n  F --&gt; H[Municipality and epiweek dataset]"
+  },
+  {
+    "objectID": "dengue-data/filter_valid_data.html#context",
+    "href": "dengue-data/filter_valid_data.html#context",
+    "title": "Filter valid data",
+    "section": "",
+    "text": "After the steps of raw dataset download and imputation\nLoad the dengue_improved.parquet data\nFilter valid dates\nFilter positive cases\nAggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.\n\n\n\n\n\nflowchart LR\n  A[Raw dataset] --&gt; B(Imputation)\n  B --&gt; C[Improved dataset]\n  C --&gt; D{Filter valid dates}\n  C --&gt; E{Filter positive cases}\n  D --&gt; F(Aggregate)\n  E --&gt; F\n  F --&gt; G[Municipality and date dataset]\n  F --&gt; H[Municipality and epiweek dataset]"
+  },
+  {
+    "objectID": "dengue-data/filter_valid_data.html#packages",
+    "href": "dengue-data/filter_valid_data.html#packages",
+    "title": "Filter valid data",
+    "section": "Packages",
+    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(lubridate)"
+  },
+  {
+    "objectID": "dengue-data/filter_valid_data.html#load-data",
+    "href": "dengue-data/filter_valid_data.html#load-data",
+    "title": "Filter valid data",
+    "section": "Load data",
+    "text": "Load data\nLazy evaluation.\n\ndengue &lt;- arrow::read_parquet(file = \"parquet_improved/dengue_improved.parquet\")\n\ntally(dengue)\n\n         n\n1 19180457"
+  },
+  {
+    "objectID": "dengue-data/filter_valid_data.html#filter-valid-dates",
+    "href": "dengue-data/filter_valid_data.html#filter-valid-dates",
+    "title": "Filter valid data",
+    "section": "Filter valid dates",
+    "text": "Filter valid dates\n\nvalid_interval &lt;- interval(ymd(\"2011-01-01\"), ymd(\"2021-12-31\"))\n\ndengue &lt;- dengue %&gt;%\n  mutate(DT_SIN_PRI = ymd(DT_SIN_PRI)) %&gt;%\n  filter(DT_SIN_PRI %within% valid_interval)\n\ntally(dengue)\n\n         n\n1 15561929"
+  },
+  {
+    "objectID": "dengue-data/filter_valid_data.html#cases-classification-data-export",
+    "href": "dengue-data/filter_valid_data.html#cases-classification-data-export",
+    "title": "Filter valid data",
+    "section": "Cases classification data export",
+    "text": "Cases classification data export\n\ndengue_classifications &lt;- c(\"Febre hemorrágica do dengue\", \"Síndrome do choque do dengue\", \"Dengue com sinais de alarme\",\n  \"Dengue clássico\", \"Dengue com complicações\", \"Dengue\",\n  \"Dengue grave\")\n\n\ndengue_cases_classification &lt;- dengue %&gt;% \n  mutate(CLASSI_FIN = case_when(\n    CLASSI_FIN %in% dengue_classifications ~ \"Confirmed\",\n    CLASSI_FIN == \"Descartado\" ~ \"Discarded\",\n    CLASSI_FIN == \"Inconclusivo\" ~ \"Inconclusive\",\n    CLASSI_FIN == 6 ~ \"Invalid\",\n    is.na(CLASSI_FIN) ~ \"Missing\",\n    .default = CLASSI_FIN\n  )) %&gt;%\n  mutate(DT_SIN_PRI = lubridate::ceiling_date(x = DT_SIN_PRI, unit = \"month\")) %&gt;%\n  group_by(DT_SIN_PRI, CLASSI_FIN) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() \n\n`summarise()` has grouped output by 'DT_SIN_PRI'. You can override using the\n`.groups` argument.\n\n\n\nwrite_parquet(x = dengue_cases_classification, sink = \"parquet_classification/dengue_cases_classification.parquet\")\n\n\nggplot(data =  dengue_cases_classification, aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN)) +\n  geom_bar() +\n  scale_fill_hue(direction = 1) +\n  scale_y_continuous(labels = scales::comma) +\n  labs(fill = \"Classificação\") +\n  theme_minimal() +\n  theme(legend.position = \"bottom\") +\n  labs(x = \"Month of first symptom's onset\", y = \"Records\", fill = \"Classification\")\n\n\n\nggsave(filename = \"dengue_cases_classification.pdf\")\n\nSaving 7 x 5 in image"
+  },
+  {
+    "objectID": "dengue-data/filter_valid_data.html#filter-positive-cases-of-dengue",
+    "href": "dengue-data/filter_valid_data.html#filter-positive-cases-of-dengue",
+    "title": "Filter valid data",
+    "section": "Filter positive cases of dengue",
+    "text": "Filter positive cases of dengue\n\ndengue &lt;- dengue %&gt;%\n  filter(CLASSI_FIN %in% dengue_classifications)\n\ntally(dengue)\n\n        n\n1 8125611"
+  },
+  {
+    "objectID": "dengue-data/filter_valid_data.html#aggregation",
+    "href": "dengue-data/filter_valid_data.html#aggregation",
+    "title": "Filter valid data",
+    "section": "Aggregation",
+    "text": "Aggregation\n\nMunicipality and date (“md”)\nIncluding the step to fill the time series with zero values when certain dates do not have cases.\n\ndengue_md &lt;- dengue %&gt;%\n  group_by(mun = ID_MN_RESI, date = DT_SIN_PRI) %&gt;%\n  summarise(freq = n()) %&gt;%\n  arrange(date) %&gt;%\n  complete(\n    date = seq.Date(min(date), max(date), by = \"day\"),\n    fill = list(freq = 0)\n  ) %&gt;%\n  ungroup() %&gt;%\n  collect()\n\n`summarise()` has grouped output by 'mun'. You can override using the `.groups`\nargument.\n\n\n\nglimpse(dengue_md)\n\nRows: 16,772,737\nColumns: 3\n$ mun  &lt;chr&gt; \"110000\", \"110000\", \"110000\", \"110000\", \"110000\", \"110000\", \"1100…\n$ date &lt;date&gt; 2015-12-29, 2015-12-30, 2015-12-31, 2016-01-01, 2016-01-02, 2016…\n$ freq &lt;int&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…\n\n\n\ndengue_md %&gt;%\n  write_parquet(sink = \"parquet_aggregated/dengue_md.parquet\")\n\n\n\nMunicipality and epidemiological week (“mw”)\n\ndengue_mw &lt;- dengue_md %&gt;%\n  mutate(epi_week = paste0(epiyear(date), \"-\", str_pad(epiweek(date), 2, pad = \"0\"))) %&gt;%\n  group_by(mun, epi_week) %&gt;%\n  summarise(freq = n()) %&gt;%\n  arrange(epi_week) %&gt;%\n  ungroup() %&gt;%\n  collect()\n\n`summarise()` has grouped output by 'mun'. You can override using the `.groups`\nargument.\n\n\n\nglimpse(dengue_mw)\n\nRows: 2,400,687\nColumns: 3\n$ mun      &lt;chr&gt; \"110005\", \"110006\", \"110014\", \"110034\", \"110140\", \"120017\", \"…\n$ epi_week &lt;chr&gt; \"2010-52\", \"2010-52\", \"2010-52\", \"2010-52\", \"2010-52\", \"2010-…\n$ freq     &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…\n\n\n\ndengue_mw %&gt;%\n  write_parquet(sink = \"parquet_aggregated/dengue_mw.parquet\")"
+  },
+  {
+    "objectID": "dengue-data/filter_valid_data.html#session-info",
+    "href": "dengue-data/filter_valid_data.html#session-info",
+    "title": "Filter valid data",
+    "section": "Session info",
+    "text": "Session info\n\nsessionInfo()\n\nR version 4.1.2 (2021-11-01)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] arrow_12.0.0    lubridate_1.9.2 forcats_1.0.0   stringr_1.5.0  \n [5] dplyr_1.1.2     purrr_1.0.1     readr_2.1.4     tidyr_1.3.0    \n [9] tibble_3.2.1    ggplot2_3.4.2   tidyverse_2.0.0\n\nloaded via a namespace (and not attached):\n [1] compiler_4.1.2    pillar_1.9.0      tools_4.1.2       bit_4.0.5        \n [5] digest_0.6.31     timechange_0.2.0  jsonlite_1.8.5    evaluate_0.21    \n [9] lifecycle_1.0.3   gtable_0.3.3      pkgconfig_2.0.3   rlang_1.1.1      \n[13] cli_3.6.1         rstudioapi_0.14   yaml_2.3.7        xfun_0.39        \n[17] fastmap_1.1.1     withr_2.5.0       knitr_1.43        systemfonts_1.0.4\n[21] generics_0.1.3    vctrs_0.6.2       htmlwidgets_1.6.2 hms_1.1.3        \n[25] bit64_4.0.5       grid_4.1.2        tidyselect_1.2.0  glue_1.6.2       \n[29] R6_2.5.1          textshaping_0.3.6 fansi_1.0.4       rmarkdown_2.22   \n[33] farver_2.1.1      tzdb_0.4.0        magrittr_2.0.3    scales_1.2.1     \n[37] htmltools_0.5.5   assertthat_0.2.1  colorspace_2.1-0  ragg_1.2.5       \n[41] labeling_0.4.2    utf8_1.2.3        stringi_1.7.12    munsell_0.5.0"
+  },
+  {
+    "objectID": "dengue-data/aggregated_database.html#cases-classification-data-export",
+    "href": "dengue-data/aggregated_database.html#cases-classification-data-export",
+    "title": "Export aggregated database",
+    "section": "Cases classification data export",
+    "text": "Cases classification data export\n\ndengue_classifications &lt;- c(\"Febre hemorrágica do dengue\", \"Síndrome do choque do dengue\", \"Dengue com sinais de alarme\",\n  \"Dengue clássico\", \"Dengue com complicações\", \"Dengue\",\n  \"Dengue grave\")\n\n\ndengue_cases_classification &lt;- dengue %&gt;% \n  mutate(CLASSI_FIN = case_when(\n    CLASSI_FIN %in% dengue_classifications ~ \"Confirmed\",\n    CLASSI_FIN == \"Descartado\" ~ \"Discarded\",\n    CLASSI_FIN == \"Inconclusivo\" ~ \"Inconclusive\",\n    CLASSI_FIN == 6 ~ \"Invalid\",\n    is.na(CLASSI_FIN) ~ \"Missing\",\n    .default = CLASSI_FIN\n  )) %&gt;%\n  mutate(DT_SIN_PRI = lubridate::ceiling_date(x = DT_SIN_PRI, unit = \"month\")) %&gt;%\n  group_by(DT_SIN_PRI, CLASSI_FIN) %&gt;%\n  summarise(freq = n()) %&gt;%\n  ungroup() \n\n`summarise()` has grouped output by 'DT_SIN_PRI'. You can override using the\n`.groups` argument.\n\n\n\nwrite_parquet(x = dengue_cases_classification, sink = \"parquet_classification/dengue_cases_classification.parquet\")\n\n\nggplot(data =  dengue_cases_classification, aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN)) +\n  geom_bar() +\n  scale_fill_hue(direction = 1) +\n  scale_y_continuous(labels = scales::comma) +\n  labs(fill = \"Classificação\") +\n  theme_minimal() +\n  theme(legend.position = \"bottom\") +\n  labs(x = \"Month of first symptom's onset\", y = \"Records\", fill = \"Classification\")\n\n\n\nggsave(filename = \"dengue_cases_classification.pdf\")\n\nSaving 7 x 5 in image"
   }
 ]
