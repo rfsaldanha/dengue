@@ -1,0 +1,82 @@
+---
+title: "Dengue case classification and symptons"
+author: Raphael Saldanha
+date: now
+---
+
+## Packages
+
+```{r}
+library(tidyverse)
+library(arrow)
+library(knitr)
+library(lubridate)
+library(tidymodels)
+library(rpart.plot)
+library(vip)
+```
+
+## Data
+
+```{r}
+files_list <- c(
+  "../dengue-data/parquets/dengue_2016.parquet",
+  "../dengue-data/parquets/dengue_2017.parquet",
+  "../dengue-data/parquets/dengue_2018.parquet",
+  "../dengue-data/parquets/dengue_2019.parquet",
+  "../dengue-data/parquets/dengue_2020.parquet",
+  "../dengue-data/parquets/dengue_2021.parquet"
+)
+
+x_vars <- c("FEBRE", "MIALGIA", "CEFALEIA", "EXANTEMA",
+         "VOMITO", "NAUSEA", "DOR_COSTAS", "CONJUNTVIT", 
+         "ARTRITE", "ARTRALGIA", "PETEQUIA_N", "LEUCOPENIA", 
+         "LACO", "DOR_RETRO", "DIABETES", "HEMATOLOG", "HEPATOPAT",
+         "HEPATOPAT", "RENAL", "HIPERTENSA", "ACIDO_PEPT",
+         "AUTO_IMUNE")
+
+dengue <- arrow::open_dataset(sources = files_list) %>%
+  select(all_of(c("CLASSI_FIN", x_vars))) %>%
+  filter(CLASSI_FIN != "Inconclusivo") %>%
+  collect() %>%
+  mutate(CLASSI_FIN = as.factor(CLASSI_FIN)) %>%
+  mutate_at(.vars = x_vars, .funs = ~ . == "Sim")
+```
+
+## Model
+
+### Parameters
+
+```{r}
+tree_spec <- decision_tree() %>%
+  set_engine("rpart") %>%
+  set_mode("classification")
+```
+
+### Fit model
+
+```{r}
+fit1 <- tree_spec %>%
+  fit(CLASSI_FIN ~ ., data = sample_n(dengue, 10000) , model = TRUE)
+```
+
+```{r}
+fit1 %>% extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+```
+
+```{r}
+# augment(fit1, new_data = res_prep) %>%
+#     conf_mat(truth = anomaly, estimate = .pred_class)
+```
+
+```{r}
+# augment(fit1, new_data = res_prep) %>%
+#     accuracy(truth = anomaly, estimate = .pred_class)
+```
+
+```{r}
+# fit1 %>% 
+#   extract_fit_engine() %>% 
+#   vip()
+```

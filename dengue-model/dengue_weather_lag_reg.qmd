@@ -166,3 +166,9 @@ fit1 %>%
   extract_fit_engine() %>% 
   vip()
 ```
+
+## Session info
+
+```{r}
+sessionInfo()
+```

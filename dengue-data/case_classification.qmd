@@ -84,6 +84,17 @@ ggplot(data =  dengue_cases_classification, aes(x = DT_SIN_PRI, weight = freq, f
 ggsave(filename = "dengue_cases_classification.pdf")
 ```
 
+## Sorological examination
+
+```{r}
+dengue %>%
+  filter(CLASSI_FIN %in% dengue_classifications) %>%
+  group_by(SOROTIPO) %>%
+  summarise(freq = n()) %>%
+  ungroup()
+```
+
+
 
 ## Session info
 
