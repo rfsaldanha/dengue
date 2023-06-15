@@ -35,6 +35,7 @@ website:
           contents: 
             - dengue_data.qmd
             - dengue-data/raw_files.qmd
+            - dengue-data/case_classification.qmd
             - dengue-data/missing_data.qmd
             - dengue-data/imputation.qmd
             - dengue-data/aggregated_database.qmd

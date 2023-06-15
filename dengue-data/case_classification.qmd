@@ -1,0 +1,92 @@
+---
+title: "Case classification analysis"
+author: Raphael Saldanha
+date: now
+---
+
+## Context
+
+This report presents a description report about dengue case classification and criteria.
+
+## Packages
+
+```{r}
+library(tidyverse)
+library(arrow)
+library(knitr)
+library(lubridate)
+```
+
+## Load data
+
+```{r}
+important_vars <- c("DT_SIN_PRI", "RESUL_SORO", "SOROTIPO", "CLASSI_FIN", "CRITERIO")
+
+valid_interval <- interval(ymd("2011-01-01"), ymd("2021-12-31"))
+
+dengue <- open_dataset(sources = "parquets/") %>%
+  select(all_of(important_vars)) %>%
+  collect() %>%
+  mutate(DT_SIN_PRI = ymd(DT_SIN_PRI)) %>%
+  filter(DT_SIN_PRI %within% valid_interval) %>%
+  filter(CLASSI_FIN != "6")
+```
+
+## Final classification and criteria
+
+```{r}
+dengue %>%
+  group_by(CLASSI_FIN, CRITERIO) %>%
+  summarise(freq = n()) %>%
+  ungroup() %>%
+  kable(
+    format.args = list(big.mark = ".", decimal.mark = ",")
+  )
+```
+
+```{r}
+dengue_classifications <- c("Febre hemorrágica do dengue", "Síndrome do choque do dengue", "Dengue com sinais de alarme",
+  "Dengue clássico", "Dengue com complicações", "Dengue",
+  "Dengue grave")
+```
+
+
+```{r}
+dengue_cases_classification <- dengue %>% 
+  mutate(CLASSI_FIN = case_when(
+    CLASSI_FIN %in% dengue_classifications ~ "Confirmed",
+    CLASSI_FIN == "Descartado" ~ "Discarded",
+    CLASSI_FIN == "Inconclusivo" ~ "Inconclusive",
+    CLASSI_FIN == 6 ~ "Invalid",
+    is.na(CLASSI_FIN) ~ "Missing",
+    .default = CLASSI_FIN
+  )) %>%
+  mutate(DT_SIN_PRI = lubridate::ceiling_date(x = DT_SIN_PRI, unit = "month")) %>%
+  group_by(DT_SIN_PRI, CLASSI_FIN) %>%
+  summarise(freq = n()) %>%
+  ungroup() 
+```
+
+```{r}
+write_parquet(x = dengue_cases_classification, sink = "parquet_classification/dengue_cases_classification.parquet")
+```
+
+```{r}
+ggplot(data =  dengue_cases_classification, aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN)) +
+  geom_bar() +
+  scale_fill_hue(direction = 1) +
+  scale_y_continuous(labels = scales::comma) +
+  labs(fill = "Classificação") +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  labs(x = "Month of first symptom's onset", y = "Records", fill = "Classification")
+
+ggsave(filename = "dengue_cases_classification.pdf")
+```
+
+
+## Session info
+
+```{r}
+sessionInfo()
+```

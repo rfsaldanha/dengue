@@ -23,7 +23,7 @@ arrow::read_parquet(file = "dengue-data/parquet_classification/dengue_cases_clas
   labs(fill = "Classificação") +
   theme_minimal() +
   theme(legend.position = "bottom") +
-  labs(title = "Dengue suspected cases notification in Brazil", x = "Month of first symptom's onset", y = "Records", fill = "Classification")
+  labs(title = "Suspected dengue cases notification in Brazil", x = "Month of first symptom's onset", y = "Records", fill = "Classification")
 ```
 
 \

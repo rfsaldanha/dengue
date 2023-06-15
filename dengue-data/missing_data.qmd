@@ -6,9 +6,9 @@ date: now
 
 ## Context
 
-This report presents an missing data analysis from the raw parquet files.
+This report presents a missing data analysis from the raw parquet files.
 
-Considering the high number of variables, this report will use a subset of the most relevant ones.
+Considering the high number of variables, this report will use a subset of the most relevant ones for this research.
 
 ## Packages
 
@@ -38,7 +38,7 @@ dengue <- open_dataset(sources = "parquets/") %>%
 
 ## Overall
 
-Table considering all records.
+Considering all records.
 
 ```{r}
 dengue %>% 
@@ -109,6 +109,21 @@ dengue %>%
 ```
 
 This variable is missing for 173 records. For 26.018 records, we have invalid dates (outside the period 2001-2021). It is possible to imputate with DT_NOTIFIC (date of notification), if valid.
+
+## Positive cases
+
+```{r}
+dengue_classifications <- c("Febre hemorrágica do dengue", "Síndrome do choque do dengue", "Dengue com sinais de alarme",
+  "Dengue clássico", "Dengue com complicações", "Dengue",
+  "Dengue grave")
+
+dengue %>% 
+  filter(CLASSI_FIN %in% dengue_classifications) %>%
+  miss_var_summary() %>%
+  kable(
+    format.args = list(big.mark = ".", decimal.mark = ",")
+  )
+```
 
 ## Session info
 
