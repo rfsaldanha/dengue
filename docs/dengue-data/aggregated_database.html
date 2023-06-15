@@ -96,9 +96,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-submit-button-title": "Submit"
   }
 }</script>
-<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="../styles.css">
@@ -308,10 +305,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#context" id="toc-context" class="nav-link active" data-scroll-target="#context">Context</a>
-  <ul class="collapse">
-  <li><a href="#method" id="toc-method" class="nav-link" data-scroll-target="#method">Method</a></li>
-  </ul></li>
+  <li><a href="#context" id="toc-context" class="nav-link active" data-scroll-target="#context">Context</a></li>
   <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages">Packages</a></li>
   <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data">Load data</a></li>
   <li><a href="#filter-valid-dates" id="toc-filter-valid-dates" class="nav-link" data-scroll-target="#filter-valid-dates">Filter valid dates</a></li>
@@ -361,34 +355,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="context">Context</h2>
 <p>This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.</p>
 <p>The aggregation will be on municipalities and time will be date and epidemiological week.</p>
-<section id="method" class="level3">
-<h3 class="anchored" data-anchor-id="method">Method</h3>
-<ul>
-<li>After the steps of raw dataset download and imputation</li>
-<li>Load the <code>dengue_improved.parquet</code> data</li>
-<li>Filter valid dates</li>
-<li>Filter positive cases</li>
-<li>Aggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.</li>
-</ul>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<div>
-<pre class="mermaid mermaid-js">flowchart LR
-  A[Raw dataset] --&gt; B(Imputation)
-  B --&gt; C[Improved dataset]
-  C --&gt; D{Filter valid dates}
-  C --&gt; E{Filter positive cases}
-  D --&gt; F(Aggregate)
-  E --&gt; F
-  F --&gt; G[Municipality and date dataset]
-  F --&gt; H[Municipality and epiweek dataset]
-</pre>
-</div>
-</div>
-</div>
-</div>
-</section>
 </section>
 <section id="packages" class="level2">
 <h2 class="anchored" data-anchor-id="packages">Packages</h2>
@@ -582,7 +548,7 @@ loaded via a namespace (and not attached):
 
 </section>
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -829,6 +795,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Website made with <a href="https://quarto.org/">Quarto</a>, by Raphael Saldanha.</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">Inria | LNCC</div>
+  </div>
+</footer>
 
 
 

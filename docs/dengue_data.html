@@ -59,6 +59,9 @@ ul.task-list li input[type="checkbox"] {
     "search-submit-button-title": "Submit"
   }
 }</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="styles.css">
@@ -287,10 +290,28 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 <p>In this section there are notebooks for dengue notifications data download, pre-processing, missing data analysis, imputations and exportation.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A[Raw dataset] --&gt; B(Imputation)
+  B --&gt; C[Improved dataset]
+  C --&gt; D{Filter valid dates}
+  C --&gt; E{Filter positive cases}
+  D --&gt; F(Aggregate)
+  E --&gt; F
+  F --&gt; G[Municipality and date dataset]
+  F --&gt; H[Municipality and epiweek dataset]
+</pre>
+</div>
+</div>
+</div>
+</div>
 
 
 
-</main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -534,6 +555,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
 </nav>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Website made with <a href="https://quarto.org/">Quarto</a>, by Raphael Saldanha.</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">Inria | LNCC</div>
+  </div>
+</footer>
 
 
 

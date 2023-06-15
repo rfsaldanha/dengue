@@ -4,7 +4,7 @@
     "href": "dengue_data.html",
     "title": "Overview",
     "section": "",
-    "text": "In this section there are notebooks for dengue notifications data download, pre-processing, missing data analysis, imputations and exportation."
+    "text": "In this section there are notebooks for dengue notifications data download, pre-processing, missing data analysis, imputations and exportation.\n\n\n\n\nflowchart LR\n  A[Raw dataset] --&gt; B(Imputation)\n  B --&gt; C[Improved dataset]\n  C --&gt; D{Filter valid dates}\n  C --&gt; E{Filter positive cases}\n  D --&gt; F(Aggregate)\n  E --&gt; F\n  F --&gt; G[Municipality and date dataset]\n  F --&gt; H[Municipality and epiweek dataset]\n\n\n\n\n\n\n\n\n Back to top"
   },
   {
     "objectID": "index.html",
@@ -228,14 +228,14 @@
     "href": "dengue-data/aggregated_database.html",
     "title": "Export aggregated database",
     "section": "",
-    "text": "This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.\nThe aggregation will be on municipalities and time will be date and epidemiological week.\n\n\n\nAfter the steps of raw dataset download and imputation\nLoad the dengue_improved.parquet data\nFilter valid dates\nFilter positive cases\nAggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.\n\n\n\n\n\nflowchart LR\n  A[Raw dataset] --&gt; B(Imputation)\n  B --&gt; C[Improved dataset]\n  C --&gt; D{Filter valid dates}\n  C --&gt; E{Filter positive cases}\n  D --&gt; F(Aggregate)\n  E --&gt; F\n  F --&gt; G[Municipality and date dataset]\n  F --&gt; H[Municipality and epiweek dataset]"
+    "text": "This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.\nThe aggregation will be on municipalities and time will be date and epidemiological week."
   },
   {
     "objectID": "dengue-data/aggregated_database.html#context",
     "href": "dengue-data/aggregated_database.html#context",
     "title": "Export aggregated database",
     "section": "",
-    "text": "This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.\nThe aggregation will be on municipalities and time will be date and epidemiological week.\n\n\n\nAfter the steps of raw dataset download and imputation\nLoad the dengue_improved.parquet data\nFilter valid dates\nFilter positive cases\nAggregate by municipality and date of first symptom’s unset and by municipality and the epidemiological week of the first symptom’s unset.\n\n\n\n\n\nflowchart LR\n  A[Raw dataset] --&gt; B(Imputation)\n  B --&gt; C[Improved dataset]\n  C --&gt; D{Filter valid dates}\n  C --&gt; E{Filter positive cases}\n  D --&gt; F(Aggregate)\n  E --&gt; F\n  F --&gt; G[Municipality and date dataset]\n  F --&gt; H[Municipality and epiweek dataset]"
+    "text": "This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.\nThe aggregation will be on municipalities and time will be date and epidemiological week."
   },
   {
     "objectID": "dengue-data/aggregated_database.html#packages",
@@ -406,6 +406,13 @@
     "text": "Availability\n\nParquet files\nThe results are available to use as parquet format files. Access the following DOIs to access and download the files.\n\nZonal BR-DWGD\n\n\n\n\n\n\n\nZonal TerraClimate\n\n\n\n\n\n\n\n\nR package brclimr\nWe created an R package to on-line access those parquet files and download data for a user especified municipality. More details on https://rfsaldanha.github.io/brclimr"
   },
   {
+    "objectID": "presentations.html",
+    "href": "presentations.html",
+    "title": "Overview",
+    "section": "",
+    "text": "Back to top"
+  },
+  {
     "objectID": "software.html",
     "href": "software.html",
     "title": "Software",
@@ -438,6 +445,6 @@
     "href": "cluster_analysis.html",
     "title": "Overview",
     "section": "",
-    "text": "On this section there are notebooks that cluster municipalities time series of dengue cases with different strategies."
+    "text": "On this section there are notebooks that cluster municipalities time series of dengue cases with different strategies.\n\n\n\n Back to top"
   }
 ]

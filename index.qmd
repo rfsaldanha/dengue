@@ -1,6 +1,7 @@
 ---
 title: "Building and Selecting Specialized AI Models for Predicting Dengue Disease"
 sidebar: false
+back-to-top-navigation: false
 ---
 
 ------------------------------------------------------------------------
