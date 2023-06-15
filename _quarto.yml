@@ -9,6 +9,7 @@ website:
   title: "Dengue AI"
   page-navigation: true
   back-to-top-navigation: true
+  google-analytics: "G-ZMP18L536K"
   page-footer: 
     left: "Website made with [Quarto](https://quarto.org/), by Raphael Saldanha."
     right: "Inria | LNCC"
