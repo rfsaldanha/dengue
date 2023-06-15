@@ -11,6 +11,9 @@ website:
   navbar:
     background: primary
     search: true
+    tools:
+      - icon: github
+        href: https://github.com/rfsaldanha/dengue
     left:
       - text: "Home"
         file: index.qmd
