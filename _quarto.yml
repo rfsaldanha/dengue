@@ -12,7 +12,7 @@ website:
   google-analytics: "G-ZMP18L536K"
   page-footer: 
     left: "Website made with [Quarto](https://quarto.org/), by Raphael Saldanha."
-    right: "Inria | LNCC"
+    right: "Inria | LNCC | PCDaS"
   navbar:
     background: primary
     search: true
@@ -30,10 +30,11 @@ website:
         file: cluster_analysis.qmd
       - text: "Software"
         file: software.qmd
-      - text: "Presentations"
-        file: presentations.qmd
       - text: "Publications"
         file: publications.qmd
+      - text: "Presentations"
+        file: presentations.qmd
+
   
   sidebar:
       collapse-level: 1
