@@ -14,60 +14,144 @@
     "text": "This website presents working in progress research on dengue and machine learning, as part of my postdoc at Inria (Montpellier, France) and LNCC (Petrópolis, Brazil)."
   },
   {
+    "objectID": "dengue-cluster/cluster_mun_year.html",
+    "href": "dengue-cluster/cluster_mun_year.html",
+    "title": "Mun/year time series",
+    "section": "",
+    "text": "This notebook aims to cluster the Brazilian municipalities considering dengue cases time-series similarities."
+  },
+  {
+    "objectID": "dengue-cluster/cluster_mun_year.html#packages",
+    "href": "dengue-cluster/cluster_mun_year.html#packages",
+    "title": "Mun/year time series",
+    "section": "Packages",
+    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(lubridate)\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(timetk)\nlibrary(dtwclust)\n\nLoading required package: proxy\n\nAttaching package: 'proxy'\n\nThe following objects are masked from 'package:stats':\n\n    as.dist, dist\n\nThe following object is masked from 'package:base':\n\n    as.matrix\n\nLoading required package: dtw\nLoaded dtw v1.23-1. See ?dtw for help, citation(\"dtw\") for use in publication.\n\ndtwclust:\nSetting random number generator to L'Ecuyer-CMRG (see RNGkind()).\nTo read the included vignettes type: browseVignettes(\"dtwclust\").\nSee news(package = \"dtwclust\") after package updates.\n\nlibrary(kableExtra)\n\n\nAttaching package: 'kableExtra'\n\nThe following object is masked from 'package:dplyr':\n\n    group_rows\n\nlibrary(tictoc)"
+  },
+  {
+    "objectID": "dengue-cluster/cluster_mun_year.html#load-data",
+    "href": "dengue-cluster/cluster_mun_year.html#load-data",
+    "title": "Mun/year time series",
+    "section": "Load data",
+    "text": "Load data\nLoad the aggregated data.\n\ndengue &lt;- read_parquet(\"../dengue-data/parquet_aggregated/dengue_md.parquet\")\n\ndim(dengue)\n\n[1] 16772737        3\n\n\n\nPrepare data\nThe chunk bellow executes various steps to prepare the data for clustering.\n\ntdengue &lt;- dengue %&gt;%\n  # Filter out dates after 2020-01-01, as this year is not complete\n  filter(date &lt;= as.Date(\"2020-01-01\")) %&gt;%\n  # Pad days with zero cases\n  group_by(mun) %&gt;%\n  pad_by_time(date, .by = \"day\", .pad_value = 0, .start_date = min(dengue$date), .end_date = max(dengue$date)) %&gt;%\n  ungroup() %&gt;%\n  # Aggregate by week\n  mutate(\n    week = str_pad(epiweek(date), pad = 0, width = 2),\n    year = year(date)\n  ) %&gt;%\n  group_by(mun, year, week) %&gt;%\n  summarise(freq = sum(freq, na.rm = TRUE)) %&gt;%\n  ungroup() %&gt;%\n  # Keep only municipalities/year series with more than 1,000 cases total\n  group_by(mun, year) %&gt;%\n  mutate(total = sum(freq, na.rm = TRUE)) %&gt;%\n  ungroup() %&gt;%\n  filter(total &gt;= 100) %&gt;%\n  select(-total) %&gt;%\n  # Scale cases by mun and year\n  group_by(mun, year) %&gt;%\n  arrange(week) %&gt;%\n  mutate(freq = scale(freq)) %&gt;%\n  ungroup() %&gt;%\n  arrange(mun, year, week) %&gt;%\n  # Isolate municipality and year\n  mutate(mun = paste0(mun, \"_\", year)) %&gt;%\n  select(-year, week) %&gt;%\n  # Prepare time series of municipalities by year\n  mutate(mun = paste0(\"m_\", mun)) %&gt;%\n  arrange(mun) %&gt;%\n  pivot_wider(names_from = mun, values_from = freq) %&gt;%\n  select(-week) %&gt;%\n  t() %&gt;%\n  # Convert object\n  tslist()\n\n`summarise()` has grouped output by 'mun', 'year'. You can override using the\n`.groups` argument.\n\n# Remove missing values created by leap years (week 53)\ntdengue &lt;- lapply(tdengue, na.omit)"
+  },
+  {
+    "objectID": "dengue-cluster/cluster_mun_year.html#clustering",
+    "href": "dengue-cluster/cluster_mun_year.html#clustering",
+    "title": "Mun/year time series",
+    "section": "Clustering",
+    "text": "Clustering\nSequence of k groups to be used.\n\nk_seq &lt;- 3:10\n\n\nSBD method\n\ntic()\nclust &lt;- tsclust(\n  series = tdengue, \n  type = \"partitional\", \n  k = k_seq,\n  distance = \"sbd\",\n  seed = 13\n)\ntoc()\n\n10.25 sec elapsed\n\n\n\n\nCluster Validity Indices (CVI)\n\nnames(clust) &lt;- paste0(\"k_\", k_seq)\nres_cvi &lt;- sapply(clust, cvi, type = \"internal\") %&gt;% \n  t() %&gt;%\n  as_tibble(rownames = \"k\") %&gt;%\n  arrange(-Sil)\n\nres_cvi %&gt;%\n  kbl() %&gt;%\n  kable_styling()\n\n\n\n\nk\nSil\nSF\nCH\nDB\nDBstar\nD\nCOP\n\n\n\n\nk_3\n0.1799898\n0.4600699\n1615.6227\n1.808332\n2.176731\n0.0107715\n0.2197241\n\n\nk_6\n0.0893704\n0.2658658\n636.5185\n2.950530\n5.019164\n0.0102939\n0.2146694\n\n\nk_4\n0.0880023\n0.3914649\n880.8181\n2.742671\n3.950231\n0.0088136\n0.2199024\n\n\nk_5\n0.0523091\n0.3553609\n874.9466\n2.905408\n4.787980\n0.0118592\n0.2039666\n\n\nk_7\n0.0493956\n0.2508976\n644.2339\n3.110343\n4.808484\n0.0084627\n0.2052782\n\n\nk_8\n0.0161030\n0.2628680\n451.9170\n4.862096\n7.169066\n0.0070094\n0.1972874\n\n\nk_10\n0.0139549\n0.2003374\n469.7019\n4.056141\n6.254832\n0.0092263\n0.1866359\n\n\nk_9\n0.0070017\n0.1981565\n445.0204\n3.658878\n6.053719\n0.0095809\n0.2005665\n\n\n\n\n\n\n\n\n\nCluster with higher Silhouette statistic\n\nsel_clust &lt;- clust[[res_cvi[[1,1]]]]\n\n\nplot(sel_clust)\n\n\n\n\n\nplot(sel_clust, type = \"centroids\", lty = 1)"
+  },
+  {
     "objectID": "dengue-cluster/cluster_long.html",
     "href": "dengue-cluster/cluster_long.html",
-    "title": "Cluster long time series",
+    "title": "Long time series (not scaled)",
     "section": "",
     "text": "This notebook aims to cluster the Brazilian municipalities considering dengue cases time-series similarities."
   },
   {
     "objectID": "dengue-cluster/cluster_long.html#packages",
     "href": "dengue-cluster/cluster_long.html#packages",
-    "title": "Cluster long time series",
+    "title": "Long time series (not scaled)",
     "section": "Packages",
     "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(lubridate)\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(timetk)\nlibrary(dtwclust)\n\nLoading required package: proxy\n\nAttaching package: 'proxy'\n\nThe following objects are masked from 'package:stats':\n\n    as.dist, dist\n\nThe following object is masked from 'package:base':\n\n    as.matrix\n\nLoading required package: dtw\nLoaded dtw v1.23-1. See ?dtw for help, citation(\"dtw\") for use in publication.\n\ndtwclust:\nSetting random number generator to L'Ecuyer-CMRG (see RNGkind()).\nTo read the included vignettes type: browseVignettes(\"dtwclust\").\nSee news(package = \"dtwclust\") after package updates.\n\nlibrary(kableExtra)\n\n\nAttaching package: 'kableExtra'\n\nThe following object is masked from 'package:dplyr':\n\n    group_rows\n\nlibrary(tictoc)"
   },
   {
     "objectID": "dengue-cluster/cluster_long.html#load-data",
     "href": "dengue-cluster/cluster_long.html#load-data",
-    "title": "Cluster long time series",
+    "title": "Long time series (not scaled)",
     "section": "Load data",
     "text": "Load data\nLoad the aggregated data.\n\ndengue &lt;- read_parquet(\"../dengue-data/parquet_aggregated/dengue_md.parquet\")\n\ndim(dengue)\n\n[1] 16772737        3\n\n\n\nPrepare data\nThe chunk bellow executes various steps to prepare the data for clustering.\n\ntdengue &lt;- dengue %&gt;%\n  # Filter out dates after 2020-01-01, as this year is not complete\n  filter(date &lt;= as.Date(\"2020-01-01\")) %&gt;%\n  # Pad days with zero cases\n  group_by(mun) %&gt;%\n  pad_by_time(date, .by = \"day\", .pad_value = 0, .start_date = min(dengue$date), .end_date = max(dengue$date)) %&gt;%\n  ungroup() %&gt;%\n  # Aggregate by week\n  mutate(\n    week = str_pad(epiweek(date), pad = 0, width = 2),\n    year = year(date)\n  ) %&gt;%\n  group_by(mun, year, week) %&gt;%\n  summarise(freq = sum(freq, na.rm = TRUE)) %&gt;%\n  ungroup() %&gt;%\n  # Keep only municipalities series with more than 100 cases total\n  group_by(mun) %&gt;%\n  mutate(total = sum(freq, na.rm = TRUE)) %&gt;%\n  ungroup() %&gt;%\n  filter(total &gt;= 100) %&gt;%\n  select(-total) %&gt;%\n  # Prepare time series\n  arrange(mun) %&gt;%\n  pivot_wider(names_from = mun, values_from = freq) %&gt;%\n  select(-week) %&gt;%\n  t() %&gt;%\n  # Convert object\n  tslist()\n\n`summarise()` has grouped output by 'mun', 'year'. You can override using the\n`.groups` argument."
   },
   {
     "objectID": "dengue-cluster/cluster_long.html#clustering",
     "href": "dengue-cluster/cluster_long.html#clustering",
-    "title": "Cluster long time series",
+    "title": "Long time series (not scaled)",
     "section": "Clustering",
-    "text": "Clustering\nSequence of k groups to be used.\n\nk_seq &lt;- 3:10\n\n\nSBD method\n\ntic()\nclust &lt;- tsclust(\n  series = tdengue, \n  type = \"partitional\", \n  k = k_seq,\n  distance = \"sbd\",\n  seed = 13\n)\ntoc()\n\n30.357 sec elapsed\n\n\n\n\nCluster Validity Indices (CVI)\n\nnames(clust) &lt;- paste0(\"k_\", k_seq)\nres_cvi &lt;- sapply(clust, cvi, type = \"internal\") %&gt;% \n  t() %&gt;%\n  as_tibble(rownames = \"k\") %&gt;%\n  arrange(-Sil)\n\nres_cvi %&gt;%\n  kbl() %&gt;%\n  kable_styling()\n\n\n\n\nk\nSil\nSF\nCH\nDB\nDBstar\nD\nCOP\n\n\n\n\nk_4\n0.0791379\n0.2942586\n306.7187\n4.320184\n5.211837\n0.0233990\n0.3677273\n\n\nk_9\n0.0692345\n0.0706509\n175.8912\n4.509069\n6.067606\n0.0141304\n0.3513956\n\n\nk_7\n0.0496968\n0.1391306\n195.6647\n3.600487\n4.740779\n0.0181748\n0.3502974\n\n\nk_10\n0.0459831\n0.0883332\n135.2412\n3.542252\n4.435284\n0.0143742\n0.3398674\n\n\nk_5\n0.0458740\n0.2229537\n232.7183\n3.748572\n5.009317\n0.0270760\n0.3632605\n\n\nk_8\n0.0425873\n0.1217603\n193.0773\n3.450881\n4.358744\n0.0222442\n0.3502011\n\n\nk_6\n0.0420105\n0.2472877\n252.7502\n5.282233\n6.591471\n0.0254406\n0.3569795\n\n\nk_3\n0.0353830\n0.3659076\n319.9928\n5.148414\n5.829406\n0.0139628\n0.3936799\n\n\n\n\n\n\n\n\n\nCluster with higher Silhouette statistic\n\nsel_clust &lt;- clust[[res_cvi[[1,1]]]]\n\n\nplot(sel_clust)\n\n\n\n\n\nplot(sel_clust, type = \"centroids\", lty = 1)"
+    "text": "Clustering\nSequence of k groups to be used.\n\nk_seq &lt;- 3:10\n\n\nSBD method\n\ntic()\nclust &lt;- tsclust(\n  series = tdengue, \n  type = \"partitional\", \n  k = k_seq,\n  distance = \"sbd\",\n  seed = 13\n)\ntoc()\n\n30.77 sec elapsed\n\n\n\n\nCluster Validity Indices (CVI)\n\nnames(clust) &lt;- paste0(\"k_\", k_seq)\nres_cvi &lt;- sapply(clust, cvi, type = \"internal\") %&gt;% \n  t() %&gt;%\n  as_tibble(rownames = \"k\") %&gt;%\n  arrange(-Sil)\n\nres_cvi %&gt;%\n  kbl() %&gt;%\n  kable_styling()\n\n\n\n\nk\nSil\nSF\nCH\nDB\nDBstar\nD\nCOP\n\n\n\n\nk_4\n0.0791379\n0.2942586\n306.7187\n4.320184\n5.211837\n0.0233990\n0.3677273\n\n\nk_9\n0.0692345\n0.0706509\n175.8912\n4.509069\n6.067606\n0.0141304\n0.3513956\n\n\nk_7\n0.0496968\n0.1391306\n195.6647\n3.600487\n4.740779\n0.0181748\n0.3502974\n\n\nk_10\n0.0459831\n0.0883332\n135.2412\n3.542252\n4.435284\n0.0143742\n0.3398674\n\n\nk_5\n0.0458740\n0.2229537\n232.7183\n3.748572\n5.009317\n0.0270760\n0.3632605\n\n\nk_8\n0.0425873\n0.1217603\n193.0773\n3.450881\n4.358744\n0.0222442\n0.3502011\n\n\nk_6\n0.0420105\n0.2472877\n252.7502\n5.282233\n6.591471\n0.0254406\n0.3569795\n\n\nk_3\n0.0353830\n0.3659076\n319.9928\n5.148414\n5.829406\n0.0139628\n0.3936799\n\n\n\n\n\n\n\n\n\nCluster with higher Silhouette statistic\n\nsel_clust &lt;- clust[[res_cvi[[1,1]]]]\n\n\nplot(sel_clust)\n\n\n\n\n\nplot(sel_clust, type = \"centroids\", lty = 1)"
   },
   {
     "objectID": "dengue-cluster/cluster_long_scaled.html",
     "href": "dengue-cluster/cluster_long_scaled.html",
-    "title": "Cluster long time series, scaled",
+    "title": "Long time series (scaled)",
     "section": "",
     "text": "This notebook aims to cluster the Brazilian municipalities considering dengue cases time-series similarities."
   },
   {
     "objectID": "dengue-cluster/cluster_long_scaled.html#packages",
     "href": "dengue-cluster/cluster_long_scaled.html#packages",
-    "title": "Cluster long time series, scaled",
+    "title": "Long time series (scaled)",
     "section": "Packages",
     "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(lubridate)\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(timetk)\nlibrary(dtwclust)\n\nLoading required package: proxy\n\nAttaching package: 'proxy'\n\nThe following objects are masked from 'package:stats':\n\n    as.dist, dist\n\nThe following object is masked from 'package:base':\n\n    as.matrix\n\nLoading required package: dtw\nLoaded dtw v1.23-1. See ?dtw for help, citation(\"dtw\") for use in publication.\n\ndtwclust:\nSetting random number generator to L'Ecuyer-CMRG (see RNGkind()).\nTo read the included vignettes type: browseVignettes(\"dtwclust\").\nSee news(package = \"dtwclust\") after package updates.\n\nlibrary(kableExtra)\n\n\nAttaching package: 'kableExtra'\n\nThe following object is masked from 'package:dplyr':\n\n    group_rows\n\nlibrary(tictoc)"
   },
   {
     "objectID": "dengue-cluster/cluster_long_scaled.html#load-data",
     "href": "dengue-cluster/cluster_long_scaled.html#load-data",
-    "title": "Cluster long time series, scaled",
+    "title": "Long time series (scaled)",
     "section": "Load data",
     "text": "Load data\nLoad the aggregated data.\n\ndengue &lt;- read_parquet(\"../dengue-data/parquet_aggregated/dengue_md.parquet\")\n\ndim(dengue)\n\n[1] 16772737        3\n\n\n\nPrepare data\nThe chunk bellow executes various steps to prepare the data for clustering.\n\ntdengue &lt;- dengue %&gt;%\n  # Filter out dates after 2020-01-01, as this year is not complete\n  filter(date &lt;= as.Date(\"2020-01-01\")) %&gt;%\n  # Pad days with zero cases\n  group_by(mun) %&gt;%\n  pad_by_time(date, .by = \"day\", .pad_value = 0, .start_date = min(dengue$date), .end_date = max(dengue$date)) %&gt;%\n  ungroup() %&gt;%\n  # Aggregate by week\n  mutate(date = floor_date(date, \"week\")) %&gt;%\n  group_by(mun, date) %&gt;%\n  summarise(freq = sum(freq, na.rm = TRUE)) %&gt;%\n  ungroup() %&gt;%\n  # Keep only municipalities series with more than 100 cases total\n  group_by(mun) %&gt;%\n  mutate(total = sum(freq, na.rm = TRUE)) %&gt;%\n  ungroup() %&gt;%\n  filter(total &gt;= 100) %&gt;%\n  select(-total) %&gt;%\n  # Scale cases by mun\n  group_by(mun) %&gt;%\n  arrange(date) %&gt;%\n  mutate(freq = scale(freq)) %&gt;%\n  ungroup() %&gt;%\n  arrange(mun, date) %&gt;%\n  # Prepare time series\n  mutate(mun = paste0(\"m_\", mun)) %&gt;%\n  arrange(mun, date) %&gt;%\n  pivot_wider(names_from = mun, values_from = freq) %&gt;%\n  select(-date) %&gt;%\n  t() %&gt;%\n  tslist()\n\n`summarise()` has grouped output by 'mun'. You can override using the `.groups`\nargument."
   },
   {
     "objectID": "dengue-cluster/cluster_long_scaled.html#clustering",
     "href": "dengue-cluster/cluster_long_scaled.html#clustering",
-    "title": "Cluster long time series, scaled",
+    "title": "Long time series (scaled)",
     "section": "Clustering",
-    "text": "Clustering\nSequence of k groups to be used.\n\nk_seq &lt;- 3:10\n\n\nSBD method\n\ntic()\nclust &lt;- tsclust(\n  series = tdengue, \n  type = \"partitional\", \n  k = k_seq,\n  distance = \"sbd\",\n  seed = 13\n)\ntoc()\n\n30.217 sec elapsed\n\n\n\n\nCluster Validity Indices (CVI)\n\nnames(clust) &lt;- paste0(\"k_\", k_seq)\nres_cvi &lt;- sapply(clust, cvi, type = \"internal\") %&gt;% \n  t() %&gt;%\n  as_tibble(rownames = \"k\") %&gt;%\n  arrange(-Sil)\n\nres_cvi %&gt;%\n  kbl() %&gt;%\n  kable_styling()\n\n\n\n\nk\nSil\nSF\nCH\nDB\nDBstar\nD\nCOP\n\n\n\n\nk_3\n0.1361517\n0.3215523\n301.2210\n3.692051\n4.316082\n0.0679378\n0.4052902\n\n\nk_5\n0.0868020\n0.2224752\n282.4503\n2.413023\n2.847291\n0.0280136\n0.3615501\n\n\nk_6\n0.0733088\n0.1578847\n154.6699\n4.988996\n6.309369\n0.0216979\n0.3660083\n\n\nk_4\n0.0610827\n0.2544475\n140.5981\n6.897833\n8.287407\n0.0216420\n0.3886784\n\n\nk_9\n0.0504672\n0.0626711\n124.3538\n3.532466\n4.849390\n0.0248858\n0.3501298\n\n\nk_10\n0.0466939\n0.0628349\n166.6916\n3.820877\n4.682205\n0.0135861\n0.3434336\n\n\nk_8\n0.0408157\n0.1107509\n164.5684\n3.780052\n4.964673\n0.0221248\n0.3432409\n\n\nk_7\n0.0380647\n0.1346238\n171.9309\n4.240165\n5.555059\n0.0219174\n0.3537959\n\n\n\n\n\n\n\n\n\nCluster with higher Silhouette statistic\n\nsel_clust &lt;- clust[[res_cvi[[1,1]]]]\n\n\nplot(sel_clust)\n\n\n\n\n\nplot(sel_clust, type = \"centroids\", lty = 1)"
+    "text": "Clustering\nSequence of k groups to be used.\n\nk_seq &lt;- 3:10\n\n\nSBD method\n\ntic()\nclust &lt;- tsclust(\n  series = tdengue, \n  type = \"partitional\", \n  k = k_seq,\n  distance = \"sbd\",\n  seed = 13\n)\ntoc()\n\n29.499 sec elapsed\n\n\n\n\nCluster Validity Indices (CVI)\n\nnames(clust) &lt;- paste0(\"k_\", k_seq)\nres_cvi &lt;- sapply(clust, cvi, type = \"internal\") %&gt;% \n  t() %&gt;%\n  as_tibble(rownames = \"k\") %&gt;%\n  arrange(-Sil)\n\nres_cvi %&gt;%\n  kbl() %&gt;%\n  kable_styling()\n\n\n\n\nk\nSil\nSF\nCH\nDB\nDBstar\nD\nCOP\n\n\n\n\nk_3\n0.1361517\n0.3215523\n301.2210\n3.692051\n4.316082\n0.0679378\n0.4052902\n\n\nk_5\n0.0868020\n0.2224752\n282.4503\n2.413023\n2.847291\n0.0280136\n0.3615501\n\n\nk_6\n0.0733088\n0.1578847\n154.6699\n4.988996\n6.309369\n0.0216979\n0.3660083\n\n\nk_4\n0.0610827\n0.2544475\n140.5981\n6.897833\n8.287407\n0.0216420\n0.3886784\n\n\nk_9\n0.0504672\n0.0626711\n124.3538\n3.532466\n4.849390\n0.0248858\n0.3501298\n\n\nk_10\n0.0466939\n0.0628349\n166.6916\n3.820877\n4.682205\n0.0135861\n0.3434336\n\n\nk_8\n0.0408157\n0.1107509\n164.5684\n3.780052\n4.964673\n0.0221248\n0.3432409\n\n\nk_7\n0.0380647\n0.1346238\n171.9309\n4.240165\n5.555059\n0.0219174\n0.3537959\n\n\n\n\n\n\n\n\n\nCluster with higher Silhouette statistic\n\nsel_clust &lt;- clust[[res_cvi[[1,1]]]]\n\n\nplot(sel_clust)\n\n\n\n\n\nplot(sel_clust, type = \"centroids\", lty = 1)"
+  },
+  {
+    "objectID": "dengue-cluster/cluster_mun_year_epi_year.html",
+    "href": "dengue-cluster/cluster_mun_year_epi_year.html",
+    "title": "Mun/epi year time series",
+    "section": "",
+    "text": "This notebook aims to cluster the Brazilian municipalities cumulative dengue cases time-series yearly (starting on September) by its similarities."
+  },
+  {
+    "objectID": "dengue-cluster/cluster_mun_year_epi_year.html#packages",
+    "href": "dengue-cluster/cluster_mun_year_epi_year.html#packages",
+    "title": "Mun/epi year time series",
+    "section": "Packages",
+    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(lubridate)\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(timetk)\nlibrary(dtwclust)\n\nLoading required package: proxy\n\nAttaching package: 'proxy'\n\nThe following objects are masked from 'package:stats':\n\n    as.dist, dist\n\nThe following object is masked from 'package:base':\n\n    as.matrix\n\nLoading required package: dtw\nLoaded dtw v1.23-1. See ?dtw for help, citation(\"dtw\") for use in publication.\n\ndtwclust:\nSetting random number generator to L'Ecuyer-CMRG (see RNGkind()).\nTo read the included vignettes type: browseVignettes(\"dtwclust\").\nSee news(package = \"dtwclust\") after package updates.\n\nlibrary(kableExtra)\n\n\nAttaching package: 'kableExtra'\n\nThe following object is masked from 'package:dplyr':\n\n    group_rows\n\nlibrary(tictoc)"
+  },
+  {
+    "objectID": "dengue-cluster/cluster_mun_year_epi_year.html#load-data",
+    "href": "dengue-cluster/cluster_mun_year_epi_year.html#load-data",
+    "title": "Mun/epi year time series",
+    "section": "Load data",
+    "text": "Load data\nLoad the aggregated data.\n\ndengue &lt;- read_parquet(\"../dengue-data/parquet_aggregated/dengue_md.parquet\")\n\ndim(dengue)\n\n[1] 16772737        3\n\n\n\nPrepare data\nThe chunk bellow executes various steps to prepare the data for clustering.\n\ntdengue &lt;- dengue %&gt;%\n  # Filter out dates after 2020-01-01, as this year is not complete\n  filter(date &lt; as.Date(\"2020-01-01\")) %&gt;%\n  # Pad days with zero cases\n  group_by(mun) %&gt;%\n  pad_by_time(date, .by = \"day\", .pad_value = 0, .start_date = min(dengue$date), .end_date = max(dengue$date)) %&gt;%\n  ungroup() %&gt;%\n  # Aggregate by week\n  mutate(\n    week = str_pad(isoweek(date), pad = 0, width = 2),\n    year = year(date)\n  ) %&gt;%\n  group_by(mun, year, week) %&gt;%\n  summarise(freq = sum(freq, na.rm = TRUE)) %&gt;%\n  ungroup() %&gt;%\n  # Center year on September\n  group_by(mun) %&gt;%\n  mutate(year = case_when(\n    week &lt; 40 ~ year -1,\n    .default = year\n  )) %&gt;%\n  ungroup() %&gt;% \n  # Keep only municipalities/year series with more than 100 cases total\n  group_by(mun, year) %&gt;%\n  mutate(total = sum(freq, na.rm = TRUE)) %&gt;%\n  ungroup() %&gt;%\n  filter(total &gt;= 100) %&gt;%\n  select(-total) %&gt;%\n  # Scale cases by mun and year\n  group_by(mun, year) %&gt;%\n  arrange(week) %&gt;%\n  mutate(freq = scale(freq)) %&gt;%\n  ungroup() %&gt;%\n  arrange(mun, year, week) %&gt;%\n  # Isolate municipality and year\n  mutate(mun = paste0(mun, \"_\", year)) %&gt;%\n  select(-year, week) %&gt;%\n  # Prepare time series of municipalities by year\n  mutate(mun = paste0(\"m_\", mun)) %&gt;%\n  arrange(mun) %&gt;%\n  pivot_wider(names_from = mun, values_from = freq) %&gt;%\n  select(-week) %&gt;%\n  t() %&gt;%\n  # Convert object\n  tslist()\n\n`summarise()` has grouped output by 'mun', 'year'. You can override using the\n`.groups` argument.\n\n# Remove missing values created by leap years (week 53)\ntdengue &lt;- lapply(tdengue, na.omit)"
+  },
+  {
+    "objectID": "dengue-cluster/cluster_mun_year_epi_year.html#clustering",
+    "href": "dengue-cluster/cluster_mun_year_epi_year.html#clustering",
+    "title": "Mun/epi year time series",
+    "section": "Clustering",
+    "text": "Clustering\nSequence of k groups to be used.\n\nk_seq &lt;- 3:10\n\n\nSBD method\n\ntic()\nclust &lt;- tsclust(\n  series = tdengue, \n  type = \"partitional\", \n  k = k_seq,\n  distance = \"sbd\",\n  seed = 13\n)\ntoc()\n\n10.08 sec elapsed\n\n\n\n\nCluster Validity Indices (CVI)\n\nnames(clust) &lt;- paste0(\"k_\", k_seq)\nres_cvi &lt;- sapply(clust, cvi, type = \"internal\") %&gt;% \n  t() %&gt;%\n  as_tibble(rownames = \"k\") %&gt;%\n  arrange(-Sil)\n\nres_cvi %&gt;%\n  kbl() %&gt;%\n  kable_styling()\n\n\n\n\nk\nSil\nSF\nCH\nDB\nDBstar\nD\nCOP\n\n\n\n\nk_4\n0.1460031\n0.3901889\n1221.4732\n1.729571\n2.355575\n0.0144472\n0.2148113\n\n\nk_3\n0.1073370\n0.4371917\n1617.9353\n2.098333\n2.810307\n0.0057479\n0.2360803\n\n\nk_5\n0.0829643\n0.3474048\n777.9166\n4.742646\n6.109333\n0.0060501\n0.2178480\n\n\nk_7\n0.0447668\n0.2792414\n620.1160\n3.894731\n6.159100\n0.0059028\n0.2063219\n\n\nk_9\n0.0408667\n0.1378384\n520.9820\n4.006004\n7.405060\n0.0069375\n0.2034521\n\n\nk_6\n0.0306821\n0.2620188\n642.5254\n3.478077\n6.350471\n0.0077663\n0.2178271\n\n\nk_10\n0.0300852\n0.1493126\n471.9434\n3.197318\n5.172398\n0.0106935\n0.2003746\n\n\nk_8\n0.0298938\n0.1695255\n510.7171\n3.721259\n7.713016\n0.0097268\n0.2056778\n\n\n\n\n\n\n\n\n\nCluster with higher Silhouette statistic\n\nsel_clust &lt;- clust[[res_cvi[[1,1]]]]\n\n\nplot(sel_clust)\n\n\n\n\n\nplot(sel_clust, type = \"centroids\", lty = 1)\n\n\n\n\n\n\nCluster sizes\n\ntable(sel_clust@cluster)\n\n\n   1    2    3    4 \n1439  176 1361 3288"
+  },
+  {
+    "objectID": "dengue-cluster/cluster_mun_year_cumulative.html",
+    "href": "dengue-cluster/cluster_mun_year_cumulative.html",
+    "title": "Mun/year time series, cumulative",
+    "section": "",
+    "text": "This notebook aims to cluster the Brazilian municipalities cumulative dengue cases time-series yearly by its similarities."
+  },
+  {
+    "objectID": "dengue-cluster/cluster_mun_year_cumulative.html#packages",
+    "href": "dengue-cluster/cluster_mun_year_cumulative.html#packages",
+    "title": "Mun/year time series, cumulative",
+    "section": "Packages",
+    "text": "Packages\n\nlibrary(tidyverse)\n\n── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n✔ dplyr     1.1.2     ✔ readr     2.1.4\n✔ forcats   1.0.0     ✔ stringr   1.5.0\n✔ ggplot2   3.4.2     ✔ tibble    3.2.1\n✔ lubridate 1.9.2     ✔ tidyr     1.3.0\n✔ purrr     1.0.1     \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\nℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(lubridate)\nlibrary(arrow)\n\n\nAttaching package: 'arrow'\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\nlibrary(timetk)\nlibrary(dtwclust)\n\nLoading required package: proxy\n\nAttaching package: 'proxy'\n\nThe following objects are masked from 'package:stats':\n\n    as.dist, dist\n\nThe following object is masked from 'package:base':\n\n    as.matrix\n\nLoading required package: dtw\nLoaded dtw v1.23-1. See ?dtw for help, citation(\"dtw\") for use in publication.\n\ndtwclust:\nSetting random number generator to L'Ecuyer-CMRG (see RNGkind()).\nTo read the included vignettes type: browseVignettes(\"dtwclust\").\nSee news(package = \"dtwclust\") after package updates.\n\nlibrary(kableExtra)\n\n\nAttaching package: 'kableExtra'\n\nThe following object is masked from 'package:dplyr':\n\n    group_rows\n\nlibrary(tictoc)"
+  },
+  {
+    "objectID": "dengue-cluster/cluster_mun_year_cumulative.html#load-data",
+    "href": "dengue-cluster/cluster_mun_year_cumulative.html#load-data",
+    "title": "Mun/year time series, cumulative",
+    "section": "Load data",
+    "text": "Load data\nLoad the aggregated data.\n\ndengue &lt;- read_parquet(\"../dengue-data/parquet_aggregated/dengue_md.parquet\")\n\ndim(dengue)\n\n[1] 16772737        3\n\n\n\nPrepare data\nThe chunk bellow executes various steps to prepare the data for clustering.\n\ntdengue &lt;- dengue %&gt;%\n  # Filter out dates after 2020-01-01, as this year is not complete\n  filter(date &lt;= as.Date(\"2020-01-01\")) %&gt;%\n  # Pad days with zero cases\n  group_by(mun) %&gt;%\n  pad_by_time(date, .by = \"day\", .pad_value = 0, .start_date = min(dengue$date), .end_date = max(dengue$date)) %&gt;%\n  ungroup() %&gt;%\n  # Aggregate by week\n  mutate(\n    week = str_pad(epiweek(date), pad = 0, width = 2),\n    year = year(date)\n  ) %&gt;%\n  group_by(mun, year, week) %&gt;%\n  summarise(freq = sum(freq, na.rm = TRUE)) %&gt;%\n  ungroup() %&gt;%\n  # Keep only municipalities/year series with more than 100 cases total\n  group_by(mun, year) %&gt;%\n  mutate(total = sum(freq, na.rm = TRUE)) %&gt;%\n  ungroup() %&gt;%\n  filter(total &gt;= 100) %&gt;%\n  select(-total) %&gt;%\n  # Modify freq\n  group_by(mun, year) %&gt;%\n  arrange(week) %&gt;%\n  # Accumulate mun time series by year\n  mutate(freq = cumsum(freq)) %&gt;%\n  # Scale cases by mun and year\n  mutate(freq = scale(freq)) %&gt;%\n  ungroup() %&gt;%\n  arrange(mun, year, week) %&gt;%\n  # Isolate municipality and year\n  mutate(mun = paste0(mun, \"_\", year)) %&gt;%\n  select(-year, week) %&gt;%\n  # Prepare time series of municipalities by year\n  mutate(mun = paste0(\"m_\", mun)) %&gt;%\n  arrange(mun) %&gt;%\n  pivot_wider(names_from = mun, values_from = freq) %&gt;%\n  select(-week) %&gt;%\n  t() %&gt;%\n  # Convert object\n  tslist()\n\n`summarise()` has grouped output by 'mun', 'year'. You can override using the\n`.groups` argument.\n\n# Remove missing values created by leap years (week 53)\ntdengue &lt;- lapply(tdengue, na.omit)"
+  },
+  {
+    "objectID": "dengue-cluster/cluster_mun_year_cumulative.html#clustering",
+    "href": "dengue-cluster/cluster_mun_year_cumulative.html#clustering",
+    "title": "Mun/year time series, cumulative",
+    "section": "Clustering",
+    "text": "Clustering\nSequence of k groups to be used.\n\nk_seq &lt;- 3:10\n\n\nSBD method\n\ntic()\nclust &lt;- tsclust(\n  series = tdengue, \n  type = \"partitional\", \n  k = k_seq,\n  distance = \"sbd\",\n  seed = 13\n)\ntoc()\n\n12.062 sec elapsed\n\n\n\n\nCluster Validity Indices (CVI)\n\nnames(clust) &lt;- paste0(\"k_\", k_seq)\nres_cvi &lt;- sapply(clust, cvi, type = \"internal\") %&gt;% \n  t() %&gt;%\n  as_tibble(rownames = \"k\") %&gt;%\n  arrange(-Sil)\n\nres_cvi %&gt;%\n  kbl() %&gt;%\n  kable_styling()\n\n\n\n\nk\nSil\nSF\nCH\nDB\nDBstar\nD\nCOP\n\n\n\n\nk_3\n0.5421277\n0.5873658\n3808.751\n0.6836648\n1.038241\n0.0002976\n0.0694489\n\n\nk_4\n0.5042762\n0.5822914\n4206.850\n0.6056223\n1.262730\n0.0003035\n0.0528271\n\n\nk_6\n0.4448936\n0.5766970\n3833.303\n0.6646770\n1.555062\n0.0003156\n0.0363601\n\n\nk_5\n0.4399115\n0.5791845\n3498.320\n0.7169644\n1.936044\n0.0001725\n0.0459396\n\n\nk_8\n0.4345944\n0.5664725\n3330.480\n0.7752000\n1.988574\n0.0002574\n0.0289114\n\n\nk_7\n0.3884300\n0.5722467\n3277.221\n1.0922372\n3.133504\n0.0002989\n0.0330646\n\n\nk_10\n0.3534378\n0.5633514\n2802.179\n0.9206737\n3.137418\n0.0003279\n0.0267403\n\n\nk_9\n0.3434713\n0.5664988\n3067.097\n0.9059799\n2.630923\n0.0003052\n0.0279188\n\n\n\n\n\n\n\n\n\nCluster with higher Silhouette statistic\n\nsel_clust &lt;- clust[[res_cvi[[1,1]]]]\n\n\nplot(sel_clust)\n\n\n\n\n\nplot(sel_clust, type = \"centroids\", lty = 1)"
   },
   {
     "objectID": "dengue-data/imputation.html",
@@ -284,14 +368,21 @@
     "href": "software.html",
     "title": "Software",
     "section": "",
-    "text": "We created an R package to on-line zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.\nMore details on https://rfsaldanha.github.io/brclimr"
+    "text": "An R package to on-line access zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.\nMore details on https://rfsaldanha.github.io/brclimr"
   },
   {
     "objectID": "software.html#brclimr",
     "href": "software.html#brclimr",
     "title": "Software",
     "section": "",
-    "text": "We created an R package to on-line zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.\nMore details on https://rfsaldanha.github.io/brclimr"
+    "text": "An R package to on-line access zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.\nMore details on https://rfsaldanha.github.io/brclimr"
+  },
+  {
+    "objectID": "software.html#epifeat",
+    "href": "software.html#epifeat",
+    "title": "Software",
+    "section": "epifeat",
+    "text": "epifeat\nAn R package to extract epidemiological features from cases time series.\nMore details on https://github.com/rfsaldanha/happyfeat"
   },
   {
     "objectID": "presentations/presentation_test.html#isso-é-um-teste",

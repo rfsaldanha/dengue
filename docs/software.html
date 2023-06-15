@@ -31,7 +31,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./presentations.html" rel="next">
-<link href="./cluster_analysis.html" rel="prev">
+<link href="./dengue-cluster/cluster_mun_year_epi_year.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -96,7 +96,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./cluster_analysis.html" rel="" target="">
- <span class="menu-text">Cluster analyses</span></a>
+ <span class="menu-text">Cluster analysis</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./software.html" rel="" target="">
@@ -108,6 +108,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
 </ul>
             <div class="quarto-navbar-tools ms-auto">
+    <a href="https://github.com/rfsaldanha/dengue" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
 </div>
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
@@ -193,26 +194,32 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/raw_files.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Raw files</span></a>
+  <a href="./dengue-cluster/cluster_long.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Long time series (not scaled)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/missing_data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Missing data analysis</span></a>
+  <a href="./dengue-cluster/cluster_long_scaled.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Long time series (scaled)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/imputation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Imputation</span></a>
+  <a href="./dengue-cluster/cluster_mun_year.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mun/year time series</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/aggregated_database.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Export aggregated database</span></a>
+  <a href="./dengue-cluster/cluster_mun_year_cumulative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mun/year time series, cumulative</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dengue-cluster/cluster_mun_year_epi_year.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mun/epi year time series</span></a>
   </div>
 </li>
       </ul>
@@ -257,6 +264,7 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#brclimr" id="toc-brclimr" class="nav-link active" data-scroll-target="#brclimr"><code>brclimr</code></a></li>
+  <li><a href="#epifeat" id="toc-epifeat" class="nav-link" data-scroll-target="#epifeat"><code>epifeat</code></a></li>
   </ul>
 </nav>
     </div>
@@ -282,8 +290,13 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="brclimr" class="level2">
 <h2 class="anchored" data-anchor-id="brclimr"><code>brclimr</code></h2>
-<p>We created an R package to on-line zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.</p>
+<p>An R package to on-line access zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.</p>
 <p>More details on <a href="https://rfsaldanha.github.io/brclimr" class="uri">https://rfsaldanha.github.io/brclimr</a></p>
+</section>
+<section id="epifeat" class="level2">
+<h2 class="anchored" data-anchor-id="epifeat"><code>epifeat</code></h2>
+<p>An R package to extract epidemiological features from cases time series.</p>
+<p>More details on <a href="https://github.com/rfsaldanha/happyfeat" class="uri">https://github.com/rfsaldanha/happyfeat</a></p>
 
 
 </section>
@@ -524,8 +537,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./cluster_analysis.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Overview</span>
+      <a href="./dengue-cluster/cluster_mun_year_epi_year.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Mun/epi year time series</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

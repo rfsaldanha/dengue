@@ -26,7 +26,7 @@ arrow::read_parquet(file = "dengue-data/parquet_classification/dengue_cases_clas
   labs(title = "Dengue suspected cases notification in Brazil", x = "Month of first symptom's onset", y = "Records", fill = "Classification")
 ```
 
- 
+\
 
 ::: {style="text-align: center;"}
 ![](images/inr_logo_rouge.png){width="200"} ![](images/MARCACOMPLETA_LNCC_HORIZONTAL_FINAL_PNG_azul.png){width="200"}

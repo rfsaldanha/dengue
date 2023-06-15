@@ -1,10 +1,10 @@
 ---
-title: "Long time series (not scaled)"
+title: "Mun/year time series, cumulative"
 author: Raphael Saldanha
 date: now
 ---
 
-This notebook aims to cluster the Brazilian municipalities considering dengue cases time-series similarities.
+This notebook aims to cluster the Brazilian municipalities cumulative dengue cases time-series yearly by its similarities.
 
 ## Packages
 
@@ -48,19 +48,34 @@ tdengue <- dengue %>%
   group_by(mun, year, week) %>%
   summarise(freq = sum(freq, na.rm = TRUE)) %>%
   ungroup() %>%
-  # Keep only municipalities series with more than 100 cases total
-  group_by(mun) %>%
+  # Keep only municipalities/year series with more than 100 cases total
+  group_by(mun, year) %>%
   mutate(total = sum(freq, na.rm = TRUE)) %>%
   ungroup() %>%
   filter(total >= 100) %>%
   select(-total) %>%
-  # Prepare time series
+  # Modify freq
+  group_by(mun, year) %>%
+  arrange(week) %>%
+  # Accumulate mun time series by year
+  mutate(freq = cumsum(freq)) %>%
+  # Scale cases by mun and year
+  mutate(freq = scale(freq)) %>%
+  ungroup() %>%
+  arrange(mun, year, week) %>%
+  # Isolate municipality and year
+  mutate(mun = paste0(mun, "_", year)) %>%
+  select(-year, week) %>%
+  # Prepare time series of municipalities by year
+  mutate(mun = paste0("m_", mun)) %>%
   arrange(mun) %>%
   pivot_wider(names_from = mun, values_from = freq) %>%
   select(-week) %>%
   t() %>%
   # Convert object
   tslist()
+# Remove missing values created by leap years (week 53)
+tdengue <- lapply(tdengue, na.omit)
 ```
 
 ## Clustering

@@ -30,7 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./software.html" rel="next">
+<link href="./dengue-cluster/cluster_long.html" rel="next">
 <link href="./weather_data.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -96,7 +96,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./cluster_analysis.html" rel="" target="">
- <span class="menu-text">Cluster analyses</span></a>
+ <span class="menu-text">Cluster analysis</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./software.html" rel="" target="">
@@ -108,6 +108,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
 </ul>
             <div class="quarto-navbar-tools ms-auto">
+    <a href="https://github.com/rfsaldanha/dengue" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
 </div>
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
@@ -193,26 +194,32 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/raw_files.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Raw files</span></a>
+  <a href="./dengue-cluster/cluster_long.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Long time series (not scaled)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/missing_data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Missing data analysis</span></a>
+  <a href="./dengue-cluster/cluster_long_scaled.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Long time series (scaled)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/imputation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Imputation</span></a>
+  <a href="./dengue-cluster/cluster_mun_year.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mun/year time series</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/aggregated_database.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Export aggregated database</span></a>
+  <a href="./dengue-cluster/cluster_mun_year_cumulative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mun/year time series, cumulative</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./dengue-cluster/cluster_mun_year_epi_year.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mun/epi year time series</span></a>
   </div>
 </li>
       </ul>
@@ -519,8 +526,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./software.html" class="pagination-link">
-        <span class="nav-page-text">Software</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./dengue-cluster/cluster_long.html" class="pagination-link">
+        <span class="nav-page-text">Long time series (not scaled)</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

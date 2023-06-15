@@ -1,10 +1,10 @@
 ---
-title: "Long time series (not scaled)"
+title: "Mun/epi year time series"
 author: Raphael Saldanha
 date: now
 ---
 
-This notebook aims to cluster the Brazilian municipalities considering dengue cases time-series similarities.
+This notebook aims to cluster the Brazilian municipalities cumulative dengue cases time-series yearly (starting on September) by its similarities.
 
 ## Packages
 
@@ -35,32 +35,53 @@ The chunk bellow executes various steps to prepare the data for clustering.
 ```{r}
 tdengue <- dengue %>%
   # Filter out dates after 2020-01-01, as this year is not complete
-  filter(date <= as.Date("2020-01-01")) %>%
+  filter(date < as.Date("2020-01-01")) %>%
   # Pad days with zero cases
   group_by(mun) %>%
   pad_by_time(date, .by = "day", .pad_value = 0, .start_date = min(dengue$date), .end_date = max(dengue$date)) %>%
   ungroup() %>%
   # Aggregate by week
   mutate(
-    week = str_pad(epiweek(date), pad = 0, width = 2),
+    week = str_pad(isoweek(date), pad = 0, width = 2),
     year = year(date)
   ) %>%
   group_by(mun, year, week) %>%
   summarise(freq = sum(freq, na.rm = TRUE)) %>%
   ungroup() %>%
-  # Keep only municipalities series with more than 100 cases total
+  # Center year on September
   group_by(mun) %>%
+  mutate(year = case_when(
+    week < 40 ~ year -1,
+    .default = year
+  )) %>%
+  ungroup() %>% 
+  # Keep only municipalities/year series with more than 100 cases total
+  group_by(mun, year) %>%
   mutate(total = sum(freq, na.rm = TRUE)) %>%
   ungroup() %>%
   filter(total >= 100) %>%
   select(-total) %>%
-  # Prepare time series
+  # Scale cases by mun and year
+  group_by(mun, year) %>%
+  arrange(week) %>%
+  mutate(freq = scale(freq)) %>%
+  ungroup() %>%
+  arrange(mun, year, week) %>%
+  # Isolate municipality and year
+  mutate(mun = paste0(mun, "_", year)) %>%
+  select(-year, week) %>%
+  # Prepare time series of municipalities by year
+  mutate(mun = paste0("m_", mun)) %>%
   arrange(mun) %>%
   pivot_wider(names_from = mun, values_from = freq) %>%
   select(-week) %>%
   t() %>%
   # Convert object
   tslist()
+
+# Remove missing values created by leap years (week 53)
+tdengue <- lapply(tdengue, na.omit)
+
 ```
 
 ## Clustering
@@ -111,4 +132,10 @@ plot(sel_clust)
 
 ```{r}
 plot(sel_clust, type = "centroids", lty = 1)
+```
+
+### Cluster sizes
+
+```{r}
+table(sel_clust@cluster)
 ```

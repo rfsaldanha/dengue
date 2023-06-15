@@ -1,5 +1,5 @@
 ---
-title: "Long time series (not scaled)"
+title: "Mun/year time series"
 author: Raphael Saldanha
 date: now
 ---
@@ -48,19 +48,32 @@ tdengue <- dengue %>%
   group_by(mun, year, week) %>%
   summarise(freq = sum(freq, na.rm = TRUE)) %>%
   ungroup() %>%
-  # Keep only municipalities series with more than 100 cases total
-  group_by(mun) %>%
+  # Keep only municipalities/year series with more than 1,000 cases total
+  group_by(mun, year) %>%
   mutate(total = sum(freq, na.rm = TRUE)) %>%
   ungroup() %>%
   filter(total >= 100) %>%
   select(-total) %>%
-  # Prepare time series
+  # Scale cases by mun and year
+  group_by(mun, year) %>%
+  arrange(week) %>%
+  mutate(freq = scale(freq)) %>%
+  ungroup() %>%
+  arrange(mun, year, week) %>%
+  # Isolate municipality and year
+  mutate(mun = paste0(mun, "_", year)) %>%
+  select(-year, week) %>%
+  # Prepare time series of municipalities by year
+  mutate(mun = paste0("m_", mun)) %>%
   arrange(mun) %>%
   pivot_wider(names_from = mun, values_from = freq) %>%
   select(-week) %>%
   t() %>%
   # Convert object
   tslist()
+
+# Remove missing values created by leap years (week 53)
+tdengue <- lapply(tdengue, na.omit)
 ```
 
 ## Clustering

@@ -1,5 +1,5 @@
 ---
-title: "Cluster long time series, scaled"
+title: "Long time series (scaled)"
 author: Raphael Saldanha
 date: now
 ---

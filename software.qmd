@@ -4,6 +4,12 @@ title: "Software"
 
 ## `brclimr`
 
-We created an R package to on-line zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.
+An R package to on-line access zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.
 
 More details on <https://rfsaldanha.github.io/brclimr>
+
+## `epifeat`
+
+An R package to extract epidemiological features from cases time series.
+
+More details on <https://github.com/rfsaldanha/happyfeat>
