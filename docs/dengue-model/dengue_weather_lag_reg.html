@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.150">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Raphael Saldanha">
+<meta name="dcterms.date" content="2023-06-15">
+
+<title>Dengue AI - Dengue and weather lags, regression task</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../software.html" rel="next">
+<link href="../dengue-model/dengue_weather_lag_class.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZMP18L536K"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
+</script>
+<script src="../site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<script src="../site_libs/plotly-binding-4.10.2/plotly.js"></script>
+<script src="../site_libs/typedarray-0.1/typedarray.min.js"></script>
+<script src="../site_libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="../site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
+<script src="../site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="../site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="../site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Dengue AI</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../dengue_data.html" rel="" target="" aria-current="page">
+ <span class="menu-text">Dengue data</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../weather_data.html" rel="" target="">
+ <span class="menu-text">Weather data</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../cluster_analysis.html" rel="" target="">
+ <span class="menu-text">Cluster analysis</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../dengue_model.html" rel="" target="">
+ <span class="menu-text">Modeling</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../software.html" rel="" target="">
+ <span class="menu-text">Software</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../publications.html" rel="" target="">
+ <span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../presentations.html" rel="" target="">
+ <span class="menu-text">Presentations</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+    <a href="https://github.com/rfsaldanha/dengue" rel="" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dengue_model.html">Modeling</a></li><li class="breadcrumb-item"><a href="../dengue-model/dengue_weather_lag_reg.html">Dengue and weather lags, regression task</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+ <span class="menu-text">Dengue data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-data/raw_files.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Raw files</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-data/case_classification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Case classification analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-data/missing_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Missing data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-data/imputation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Imputation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-data/aggregated_database.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Export aggregated database</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../weather_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Weather data</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text">Cluster analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../cluster_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_long.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Long time series (not scaled)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_long_scaled.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Long time series (scaled)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_mun_year.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mun/year time series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_mun_year_cumulative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mun/year time series, cumulative</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_mun_year_epi_year.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mun/epi year time series</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Modeling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-model/dengue_weather_lag_class.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dengue and weather lags, classification task</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-model/dengue_weather_lag_reg.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Dengue and weather lags, regression task</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../software.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Software</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">Presentations</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../presentations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../presentations/presentation_test.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Teste de apresentação</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../publications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Publications</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#packages" id="toc-packages" class="nav-link active" data-scroll-target="#packages">Packages</a></li>
+  <li><a href="#dengue-data" id="toc-dengue-data" class="nav-link" data-scroll-target="#dengue-data">Dengue data</a>
+  <ul class="collapse">
+  <li><a href="#subset-and-aggregate" id="toc-subset-and-aggregate" class="nav-link" data-scroll-target="#subset-and-aggregate">Subset and aggregate</a></li>
+  </ul></li>
+  <li><a href="#weather-data" id="toc-weather-data" class="nav-link" data-scroll-target="#weather-data">Weather data</a></li>
+  <li><a href="#join-data" id="toc-join-data" class="nav-link" data-scroll-target="#join-data">Join data</a></li>
+  <li><a href="#decision-tree" id="toc-decision-tree" class="nav-link" data-scroll-target="#decision-tree">Decision tree</a>
+  <ul class="collapse">
+  <li><a href="#prepare-data" id="toc-prepare-data" class="nav-link" data-scroll-target="#prepare-data">Prepare data</a></li>
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  </ul></li>
+  <li><a href="#fit-model" id="toc-fit-model" class="nav-link" data-scroll-target="#fit-model">Fit model</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Dengue and weather lags, regression task</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Raphael Saldanha </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 15, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="packages" class="level2">
+<h2 class="anchored" data-anchor-id="packages">Packages</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.2     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ────────────────────────────────────── tidymodels 1.1.0 ──
+✔ broom        1.0.5     ✔ rsample      1.1.1
+✔ dials        1.2.0     ✔ tune         1.1.1
+✔ infer        1.0.4     ✔ workflows    1.1.3
+✔ modeldata    1.1.0     ✔ workflowsets 1.0.1
+✔ parsnip      1.1.0     ✔ yardstick    1.2.0
+✔ recipes      1.0.6     
+── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ scales::discard() masks purrr::discard()
+✖ dplyr::filter()   masks stats::filter()
+✖ recipes::fixed()  masks stringr::fixed()
+✖ dplyr::lag()      masks stats::lag()
+✖ yardstick::spec() masks readr::spec()
+✖ recipes::step()   masks stats::step()
+• Use tidymodels_prefer() to resolve common conflicts.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'arrow'
+
+The following object is masked from 'package:lubridate':
+
+    duration
+
+The following object is masked from 'package:utils':
+
+    timestamp</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(timetk)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart.plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: rpart
+
+Attaching package: 'rpart'
+
+The following object is masked from 'package:dials':
+
+    prune</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vip)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'vip'
+
+The following object is masked from 'package:utils':
+
+    vi</code></pre>
+</div>
+</div>
+</section>
+<section id="dengue-data" class="level2">
+<h2 class="anchored" data-anchor-id="dengue-data">Dengue data</h2>
+<section id="subset-and-aggregate" class="level3">
+<h3 class="anchored" data-anchor-id="subset-and-aggregate">Subset and aggregate</h3>
+<p>Rio de Janeiro, RJ, aggregated by month.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dengue_rj <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="st">"../dengue-data/parquet_aggregated/dengue_md.parquet"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(mun <span class="sc">==</span> <span class="dv">330455</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_by_time</span>(<span class="at">.date_var =</span> date, <span class="at">.by =</span> <span class="st">"month"</span>, <span class="at">freq =</span> <span class="fu">sum</span>(freq, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_time_series</span>(<span class="at">.data =</span> dengue_rj, <span class="at">.date_var =</span> date, <span class="at">.value =</span> freq, <span class="at">.smooth =</span> <span class="cn">FALSE</span>, <span class="at">.title =</span> <span class="st">"Dengue, absolute number of cases"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-f090eedb18ffeeec10e1" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-f090eedb18ffeeec10e1">{"x":{"data":[{"x":["2011-01-01","2011-02-01","2011-03-01","2011-04-01","2011-05-01","2011-06-01","2011-07-01","2011-08-01","2011-09-01","2011-10-01","2011-11-01","2011-12-01","2012-01-01","2012-02-01","2012-03-01","2012-04-01","2012-05-01","2012-06-01","2012-07-01","2012-08-01","2012-09-01","2012-10-01","2012-11-01","2012-12-01","2013-01-01","2013-02-01","2013-03-01","2013-04-01","2013-05-01","2013-06-01","2013-07-01","2013-08-01","2013-09-01","2013-10-01","2013-11-01","2013-12-01","2014-01-01","2014-02-01","2014-03-01","2014-04-01","2014-05-01","2014-06-01","2014-07-01","2014-08-01","2014-09-01","2014-10-01","2014-11-01","2014-12-01","2015-01-01","2015-02-01","2015-03-01","2015-04-01","2015-05-01","2015-06-01","2015-07-01","2015-08-01","2015-09-01","2015-10-01","2015-11-01","2015-12-01","2016-01-01","2016-02-01","2016-03-01","2016-04-01","2016-05-01","2016-06-01","2016-07-01","2016-08-01","2016-09-01","2016-10-01","2016-11-01","2016-12-01","2017-01-01","2017-02-01","2017-03-01","2017-04-01","2017-05-01","2017-06-01","2017-07-01","2017-08-01","2017-09-01","2017-10-01","2017-11-01","2017-12-01","2018-01-01","2018-02-01","2018-03-01","2018-04-01","2018-05-01","2018-06-01","2018-07-01","2018-08-01","2018-09-01","2018-10-01","2018-11-01","2018-12-01","2019-01-01","2019-02-01","2019-03-01","2019-04-01","2019-05-01","2019-06-01","2019-07-01","2019-08-01","2019-09-01","2019-10-01","2019-11-01","2019-12-01","2020-01-01","2020-02-01","2020-03-01","2020-04-01","2020-05-01","2020-06-01","2020-07-01","2020-08-01","2020-09-01","2020-10-01","2020-11-01","2020-12-01","2021-01-01","2021-02-01","2021-03-01","2021-04-01","2021-05-01","2021-06-01","2021-07-01","2021-08-01","2021-09-01","2021-10-01","2021-11-01","2021-12-01"],"y":[1627,5791,13484,19646,15778,4477,1152,545,595,955,1478,2441,1442,1876,6450,13447,8882,2191,434,303,158,144,129,310,1073,2431,11053,9931,1562,447,137,60,39,45,54,75,136,86,74,80,61,52,30,35,80,64,69,35,59,101,368,1121,1263,905,433,228,104,74,148,283,316,390,719,1126,455,320,348,159,113,100,180,331,731,575,432,336,229,105,111,98,118,181,147,184,342,284,623,868,857,538,474,228,158,188,226,425,620,476,1466,3974,5211,2189,814,333,183,209,174,188,280,187,143,87,41,27,39,28,23,31,33,29,45,63,102,171,150,98,73,43,24,23,45,29],"text":["date: 2011-01-01<br />.value:  1627","date: 2011-02-01<br />.value:  5791","date: 2011-03-01<br />.value: 13484","date: 2011-04-01<br />.value: 19646","date: 2011-05-01<br />.value: 15778","date: 2011-06-01<br />.value:  4477","date: 2011-07-01<br />.value:  1152","date: 2011-08-01<br />.value:   545","date: 2011-09-01<br />.value:   595","date: 2011-10-01<br />.value:   955","date: 2011-11-01<br />.value:  1478","date: 2011-12-01<br />.value:  2441","date: 2012-01-01<br />.value:  1442","date: 2012-02-01<br />.value:  1876","date: 2012-03-01<br />.value:  6450","date: 2012-04-01<br />.value: 13447","date: 2012-05-01<br />.value:  8882","date: 2012-06-01<br />.value:  2191","date: 2012-07-01<br />.value:   434","date: 2012-08-01<br />.value:   303","date: 2012-09-01<br />.value:   158","date: 2012-10-01<br />.value:   144","date: 2012-11-01<br />.value:   129","date: 2012-12-01<br />.value:   310","date: 2013-01-01<br />.value:  1073","date: 2013-02-01<br />.value:  2431","date: 2013-03-01<br />.value: 11053","date: 2013-04-01<br />.value:  9931","date: 2013-05-01<br />.value:  1562","date: 2013-06-01<br />.value:   447","date: 2013-07-01<br />.value:   137","date: 2013-08-01<br />.value:    60","date: 2013-09-01<br />.value:    39","date: 2013-10-01<br />.value:    45","date: 2013-11-01<br />.value:    54","date: 2013-12-01<br />.value:    75","date: 2014-01-01<br />.value:   136","date: 2014-02-01<br />.value:    86","date: 2014-03-01<br />.value:    74","date: 2014-04-01<br />.value:    80","date: 2014-05-01<br />.value:    61","date: 2014-06-01<br />.value:    52","date: 2014-07-01<br />.value:    30","date: 2014-08-01<br />.value:    35","date: 2014-09-01<br />.value:    80","date: 2014-10-01<br />.value:    64","date: 2014-11-01<br />.value:    69","date: 2014-12-01<br />.value:    35","date: 2015-01-01<br />.value:    59","date: 2015-02-01<br />.value:   101","date: 2015-03-01<br />.value:   368","date: 2015-04-01<br />.value:  1121","date: 2015-05-01<br />.value:  1263","date: 2015-06-01<br />.value:   905","date: 2015-07-01<br />.value:   433","date: 2015-08-01<br />.value:   228","date: 2015-09-01<br />.value:   104","date: 2015-10-01<br />.value:    74","date: 2015-11-01<br />.value:   148","date: 2015-12-01<br />.value:   283","date: 2016-01-01<br />.value:   316","date: 2016-02-01<br />.value:   390","date: 2016-03-01<br />.value:   719","date: 2016-04-01<br />.value:  1126","date: 2016-05-01<br />.value:   455","date: 2016-06-01<br />.value:   320","date: 2016-07-01<br />.value:   348","date: 2016-08-01<br />.value:   159","date: 2016-09-01<br />.value:   113","date: 2016-10-01<br />.value:   100","date: 2016-11-01<br />.value:   180","date: 2016-12-01<br />.value:   331","date: 2017-01-01<br />.value:   731","date: 2017-02-01<br />.value:   575","date: 2017-03-01<br />.value:   432","date: 2017-04-01<br />.value:   336","date: 2017-05-01<br />.value:   229","date: 2017-06-01<br />.value:   105","date: 2017-07-01<br />.value:   111","date: 2017-08-01<br />.value:    98","date: 2017-09-01<br />.value:   118","date: 2017-10-01<br />.value:   181","date: 2017-11-01<br />.value:   147","date: 2017-12-01<br />.value:   184","date: 2018-01-01<br />.value:   342","date: 2018-02-01<br />.value:   284","date: 2018-03-01<br />.value:   623","date: 2018-04-01<br />.value:   868","date: 2018-05-01<br />.value:   857","date: 2018-06-01<br />.value:   538","date: 2018-07-01<br />.value:   474","date: 2018-08-01<br />.value:   228","date: 2018-09-01<br />.value:   158","date: 2018-10-01<br />.value:   188","date: 2018-11-01<br />.value:   226","date: 2018-12-01<br />.value:   425","date: 2019-01-01<br />.value:   620","date: 2019-02-01<br />.value:   476","date: 2019-03-01<br />.value:  1466","date: 2019-04-01<br />.value:  3974","date: 2019-05-01<br />.value:  5211","date: 2019-06-01<br />.value:  2189","date: 2019-07-01<br />.value:   814","date: 2019-08-01<br />.value:   333","date: 2019-09-01<br />.value:   183","date: 2019-10-01<br />.value:   209","date: 2019-11-01<br />.value:   174","date: 2019-12-01<br />.value:   188","date: 2020-01-01<br />.value:   280","date: 2020-02-01<br />.value:   187","date: 2020-03-01<br />.value:   143","date: 2020-04-01<br />.value:    87","date: 2020-05-01<br />.value:    41","date: 2020-06-01<br />.value:    27","date: 2020-07-01<br />.value:    39","date: 2020-08-01<br />.value:    28","date: 2020-09-01<br />.value:    23","date: 2020-10-01<br />.value:    31","date: 2020-11-01<br />.value:    33","date: 2020-12-01<br />.value:    29","date: 2021-01-01<br />.value:    45","date: 2021-02-01<br />.value:    63","date: 2021-03-01<br />.value:   102","date: 2021-04-01<br />.value:   171","date: 2021-05-01<br />.value:   150","date: 2021-06-01<br />.value:    98","date: 2021-07-01<br />.value:    73","date: 2021-08-01<br />.value:    43","date: 2021-09-01<br />.value:    24","date: 2021-10-01<br />.value:    23","date: 2021-11-01<br />.value:    45","date: 2021-12-01<br />.value:    29"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(44,62,80,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.762557077625573,"r":7.3059360730593621,"b":25.570776255707766,"l":40.182648401826491},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724},"title":{"text":"Dengue, absolute number of cases","font":{"color":"rgba(44,62,80,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"date","autorange":true,"range":["2010-06-15","2022-06-18"],"tickmode":"auto","ticktext":["2012","2014","2016","2018","2020","2022"],"tickvals":[15340,16071,16801,17532,18262,18993],"categoryorder":"array","categoryarray":["2012","2014","2016","2018","2020","2022"],"nticks":null,"ticks":"outside","tickcolor":"rgba(204,204,204,1)","ticklen":3.6529680365296811,"tickwidth":0.22139200221392005,"showticklabels":true,"tickfont":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.22139200221392005,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":true,"range":[-958.15000000000009,20627.150000000001],"tickmode":"auto","ticktext":["0","5000","10000","15000","20000"],"tickvals":[0,5000,10000,15000,20000],"categoryorder":"array","categoryarray":["0","5000","10000","15000","20000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(204,204,204,1)","ticklen":3.6529680365296811,"tickwidth":0.22139200221392005,"showticklabels":true,"tickfont":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.22139200221392005,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(44,62,80,1)","width":0.33208800332088001,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"4babb4a0d190a":{"x":{},"y":{},"type":"scatter"}},"cur_data":"4babb4a0d190a","visdat":{"4babb4a0d190a":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+</section>
+<section id="weather-data" class="level2">
+<h2 class="anchored" data-anchor-id="weather-data">Weather data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tmax <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> <span class="st">"../weather-data/parquet/brdwgd/tmax.parquet"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(code_muni <span class="sc">==</span> <span class="dv">3304557</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">"Tmax_mean"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, value) <span class="sc">%&gt;%</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">min</span>(dengue_rj<span class="sc">$</span>date) <span class="sc">&amp;</span> date <span class="sc">&lt;=</span> <span class="fu">max</span>(dengue_rj<span class="sc">$</span>date)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_by_time</span>(<span class="at">.date_var =</span> date, <span class="at">.by =</span> <span class="st">"month"</span>, <span class="at">value =</span> <span class="fu">mean</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">tmax =</span> value)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>prec <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> <span class="st">"../weather-data/parquet/brdwgd/pr.parquet"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(code_muni <span class="sc">==</span> <span class="dv">3304557</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">"pr_sum"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, value) <span class="sc">%&gt;%</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">min</span>(dengue_rj<span class="sc">$</span>date) <span class="sc">&amp;</span> date <span class="sc">&lt;=</span> <span class="fu">max</span>(dengue_rj<span class="sc">$</span>date)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_by_time</span>(<span class="at">.date_var =</span> date, <span class="at">.by =</span> <span class="st">"month"</span>, <span class="at">value =</span> <span class="fu">sum</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">prec =</span> value)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>prec_avg <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> <span class="st">"../weather-data/parquet/brdwgd/pr.parquet"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(code_muni <span class="sc">==</span> <span class="dv">3304557</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">"pr_mean"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, value) <span class="sc">%&gt;%</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">min</span>(dengue_rj<span class="sc">$</span>date) <span class="sc">&amp;</span> date <span class="sc">&lt;=</span> <span class="fu">max</span>(dengue_rj<span class="sc">$</span>date)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_by_time</span>(<span class="at">.date_var =</span> date, <span class="at">.by =</span> <span class="st">"month"</span>, <span class="at">value =</span> <span class="fu">mean</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">prec_avg =</span> value)</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>rh <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> <span class="st">"../weather-data/parquet/brdwgd/rh.parquet"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(code_muni <span class="sc">==</span> <span class="dv">3304557</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">"RH_mean"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, value) <span class="sc">%&gt;%</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">min</span>(dengue_rj<span class="sc">$</span>date) <span class="sc">&amp;</span> date <span class="sc">&lt;=</span> <span class="fu">max</span>(dengue_rj<span class="sc">$</span>date)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_by_time</span>(<span class="at">.date_var =</span> date, <span class="at">.by =</span> <span class="st">"month"</span>, <span class="at">value =</span> <span class="fu">mean</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">rh =</span> value)</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>wind <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> <span class="st">"../weather-data/parquet/brdwgd/u2.parquet"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(code_muni <span class="sc">==</span> <span class="dv">3304557</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">"u2_mean"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, value) <span class="sc">%&gt;%</span></span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">min</span>(dengue_rj<span class="sc">$</span>date) <span class="sc">&amp;</span> date <span class="sc">&lt;=</span> <span class="fu">max</span>(dengue_rj<span class="sc">$</span>date)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_by_time</span>(<span class="at">.date_var =</span> date, <span class="at">.by =</span> <span class="st">"month"</span>, <span class="at">value =</span> <span class="fu">mean</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">wind =</span> value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_time_series</span>(<span class="at">.data =</span> tmax, <span class="at">.date_var =</span> date, <span class="at">.value =</span> tmax, <span class="at">.smooth =</span> <span class="cn">FALSE</span>, <span class="at">.title =</span> <span class="st">"Max temp, average"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-bda6167790fcef29e9b8" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-bda6167790fcef29e9b8">{"x":{"data":[{"x":["2011-01-01","2011-02-01","2011-03-01","2011-04-01","2011-05-01","2011-06-01","2011-07-01","2011-08-01","2011-09-01","2011-10-01","2011-11-01","2011-12-01","2012-01-01","2012-02-01","2012-03-01","2012-04-01","2012-05-01","2012-06-01","2012-07-01","2012-08-01","2012-09-01","2012-10-01","2012-11-01","2012-12-01","2013-01-01","2013-02-01","2013-03-01","2013-04-01","2013-05-01","2013-06-01","2013-07-01","2013-08-01","2013-09-01","2013-10-01","2013-11-01","2013-12-01","2014-01-01","2014-02-01","2014-03-01","2014-04-01","2014-05-01","2014-06-01","2014-07-01","2014-08-01","2014-09-01","2014-10-01","2014-11-01","2014-12-01","2015-01-01","2015-02-01","2015-03-01","2015-04-01","2015-05-01","2015-06-01","2015-07-01","2015-08-01","2015-09-01","2015-10-01","2015-11-01","2015-12-01","2016-01-01","2016-02-01","2016-03-01","2016-04-01","2016-05-01","2016-06-01","2016-07-01","2016-08-01","2016-09-01","2016-10-01","2016-11-01","2016-12-01","2017-01-01","2017-02-01","2017-03-01","2017-04-01","2017-05-01","2017-06-01","2017-07-01","2017-08-01","2017-09-01","2017-10-01","2017-11-01","2017-12-01","2018-01-01","2018-02-01","2018-03-01","2018-04-01","2018-05-01","2018-06-01","2018-07-01","2018-08-01","2018-09-01","2018-10-01","2018-11-01","2018-12-01","2019-01-01","2019-02-01","2019-03-01","2019-04-01","2019-05-01","2019-06-01","2019-07-01","2019-08-01","2019-09-01","2019-10-01","2019-11-01","2019-12-01","2020-01-01","2020-02-01","2020-03-01","2020-04-01","2020-05-01","2020-06-01","2020-07-01"],"y":[32.95668485087733,34.38097422463553,28.757251185755575,30.127972793579101,25.858036225841893,25.062712224324546,25.833979452809981,27.519682422760994,26.278426488240559,27.926111713532478,26.885514068603516,29.736509999921246,30.136963690480879,33.586299501616381,31.203104019165039,29.221546236673991,26.516879358599262,26.259454218546548,26.350040558845766,26.916667569068171,27.826279894510904,30.376427988852225,27.294988886515299,34.048145417244207,30.002007084508097,33.137141432080952,30.004942124889745,28.113858540852863,27.110097885131836,26.648273976643882,25.083738880772746,26.772080144574566,27.853775469462075,27.482431965489543,28.794360796610516,30.002880773236676,34.565716589650798,34.671546050480437,31.740525522539691,28.679971122741698,27.275714874267578,27.029971249898274,25.149255075762348,26.591689571257561,28.879144477844239,29.570805211221018,29.972122192382812,33.00536168006159,35.121249721896262,32.855400766645161,30.451650065760457,28.80860424041748,27.136178108953661,26.727003669738771,27.160519999842489,28.974402396909653,28.50134620666504,29.652724296815933,29.578573354085286,32.595000297792495,30.44522359294276,34.145930257336843,31.559363703573904,32.352886390686038,26.864803437263735,23.551760292053224,26.334338218935073,27.511188691662205,26.790391985575358,28.275678511588804,28.754885737101237,31.823458763860888,33.775130733366936,33.254813875470845,30.701127329180316,28.131695747375488,26.565133494715536,26.800780296325684,25.241389674525106,25.255603175009451,29.235370572408041,29.592999427549302,29.041559028625489,29.930961178195091,31.653848525016539,30.471623829432897,31.321092728645571,29.438762410481772,27.548033068256995,26.704429372151694,27.553645841536984,25.096204142416678,27.755217997233071,27.645654924454227,28.822710037231445,31.524913972423924,35.438893533522084,32.072015149252756,31.176477493778354,30.667869885762531,28.892675584362401,28.098005549112955,26.615534444009104,26.11595965969947,27.113354937235513,29.260991988643521,28.079182179768882,29.787942148024037,31.384238827613093,30.429387651640795,28.806077403406942,27.808608500162759,26.704490046347342,28.166965293884278,27.192757760324785],"text":["date: 2011-01-01<br />.value: 32.95668","date: 2011-02-01<br />.value: 34.38097","date: 2011-03-01<br />.value: 28.75725","date: 2011-04-01<br />.value: 30.12797","date: 2011-05-01<br />.value: 25.85804","date: 2011-06-01<br />.value: 25.06271","date: 2011-07-01<br />.value: 25.83398","date: 2011-08-01<br />.value: 27.51968","date: 2011-09-01<br />.value: 26.27843","date: 2011-10-01<br />.value: 27.92611","date: 2011-11-01<br />.value: 26.88551","date: 2011-12-01<br />.value: 29.73651","date: 2012-01-01<br />.value: 30.13696","date: 2012-02-01<br />.value: 33.58630","date: 2012-03-01<br />.value: 31.20310","date: 2012-04-01<br />.value: 29.22155","date: 2012-05-01<br />.value: 26.51688","date: 2012-06-01<br />.value: 26.25945","date: 2012-07-01<br />.value: 26.35004","date: 2012-08-01<br />.value: 26.91667","date: 2012-09-01<br />.value: 27.82628","date: 2012-10-01<br />.value: 30.37643","date: 2012-11-01<br />.value: 27.29499","date: 2012-12-01<br />.value: 34.04815","date: 2013-01-01<br />.value: 30.00201","date: 2013-02-01<br />.value: 33.13714","date: 2013-03-01<br />.value: 30.00494","date: 2013-04-01<br />.value: 28.11386","date: 2013-05-01<br />.value: 27.11010","date: 2013-06-01<br />.value: 26.64827","date: 2013-07-01<br />.value: 25.08374","date: 2013-08-01<br />.value: 26.77208","date: 2013-09-01<br />.value: 27.85378","date: 2013-10-01<br />.value: 27.48243","date: 2013-11-01<br />.value: 28.79436","date: 2013-12-01<br />.value: 30.00288","date: 2014-01-01<br />.value: 34.56572","date: 2014-02-01<br />.value: 34.67155","date: 2014-03-01<br />.value: 31.74053","date: 2014-04-01<br />.value: 28.67997","date: 2014-05-01<br />.value: 27.27571","date: 2014-06-01<br />.value: 27.02997","date: 2014-07-01<br />.value: 25.14926","date: 2014-08-01<br />.value: 26.59169","date: 2014-09-01<br />.value: 28.87914","date: 2014-10-01<br />.value: 29.57081","date: 2014-11-01<br />.value: 29.97212","date: 2014-12-01<br />.value: 33.00536","date: 2015-01-01<br />.value: 35.12125","date: 2015-02-01<br />.value: 32.85540","date: 2015-03-01<br />.value: 30.45165","date: 2015-04-01<br />.value: 28.80860","date: 2015-05-01<br />.value: 27.13618","date: 2015-06-01<br />.value: 26.72700","date: 2015-07-01<br />.value: 27.16052","date: 2015-08-01<br />.value: 28.97440","date: 2015-09-01<br />.value: 28.50135","date: 2015-10-01<br />.value: 29.65272","date: 2015-11-01<br />.value: 29.57857","date: 2015-12-01<br />.value: 32.59500","date: 2016-01-01<br />.value: 30.44522","date: 2016-02-01<br />.value: 34.14593","date: 2016-03-01<br />.value: 31.55936","date: 2016-04-01<br />.value: 32.35289","date: 2016-05-01<br />.value: 26.86480","date: 2016-06-01<br />.value: 23.55176","date: 2016-07-01<br />.value: 26.33434","date: 2016-08-01<br />.value: 27.51119","date: 2016-09-01<br />.value: 26.79039","date: 2016-10-01<br />.value: 28.27568","date: 2016-11-01<br />.value: 28.75489","date: 2016-12-01<br />.value: 31.82346","date: 2017-01-01<br />.value: 33.77513","date: 2017-02-01<br />.value: 33.25481","date: 2017-03-01<br />.value: 30.70113","date: 2017-04-01<br />.value: 28.13170","date: 2017-05-01<br />.value: 26.56513","date: 2017-06-01<br />.value: 26.80078","date: 2017-07-01<br />.value: 25.24139","date: 2017-08-01<br />.value: 25.25560","date: 2017-09-01<br />.value: 29.23537","date: 2017-10-01<br />.value: 29.59300","date: 2017-11-01<br />.value: 29.04156","date: 2017-12-01<br />.value: 29.93096","date: 2018-01-01<br />.value: 31.65385","date: 2018-02-01<br />.value: 30.47162","date: 2018-03-01<br />.value: 31.32109","date: 2018-04-01<br />.value: 29.43876","date: 2018-05-01<br />.value: 27.54803","date: 2018-06-01<br />.value: 26.70443","date: 2018-07-01<br />.value: 27.55365","date: 2018-08-01<br />.value: 25.09620","date: 2018-09-01<br />.value: 27.75522","date: 2018-10-01<br />.value: 27.64565","date: 2018-11-01<br />.value: 28.82271","date: 2018-12-01<br />.value: 31.52491","date: 2019-01-01<br />.value: 35.43889","date: 2019-02-01<br />.value: 32.07202","date: 2019-03-01<br />.value: 31.17648","date: 2019-04-01<br />.value: 30.66787","date: 2019-05-01<br />.value: 28.89268","date: 2019-06-01<br />.value: 28.09801","date: 2019-07-01<br />.value: 26.61553","date: 2019-08-01<br />.value: 26.11596","date: 2019-09-01<br />.value: 27.11335","date: 2019-10-01<br />.value: 29.26099","date: 2019-11-01<br />.value: 28.07918","date: 2019-12-01<br />.value: 29.78794","date: 2020-01-01<br />.value: 31.38424","date: 2020-02-01<br />.value: 30.42939","date: 2020-03-01<br />.value: 28.80608","date: 2020-04-01<br />.value: 27.80861","date: 2020-05-01<br />.value: 26.70449","date: 2020-06-01<br />.value: 28.16697","date: 2020-07-01<br />.value: 27.19276"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(44,62,80,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.762557077625573,"r":7.3059360730593621,"b":25.570776255707766,"l":22.648401826484022},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724},"title":{"text":"Max temp, average","font":{"color":"rgba(44,62,80,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"date","autorange":true,"range":["2010-07-11","2020-12-21"],"tickmode":"auto","ticktext":["2012","2014","2016","2018","2020"],"tickvals":[15340,16071,16801,17532,18262],"categoryorder":"array","categoryarray":["2012","2014","2016","2018","2020"],"nticks":null,"ticks":"outside","tickcolor":"rgba(204,204,204,1)","ticklen":3.6529680365296811,"tickwidth":0.22139200221392005,"showticklabels":true,"tickfont":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.22139200221392005,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":true,"range":[22.95740362997978,36.033250195595528],"tickmode":"auto","ticktext":["24","27","30","33","36"],"tickvals":[24,27,30,33,36],"categoryorder":"array","categoryarray":["24","27","30","33","36"],"nticks":null,"ticks":"outside","tickcolor":"rgba(204,204,204,1)","ticklen":3.6529680365296811,"tickwidth":0.22139200221392005,"showticklabels":true,"tickfont":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.22139200221392005,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(44,62,80,1)","width":0.33208800332088001,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"4babb63fa6436":{"x":{},"y":{},"type":"scatter"}},"cur_data":"4babb63fa6436","visdat":{"4babb63fa6436":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_time_series</span>(<span class="at">.data =</span> prec, <span class="at">.date_var =</span> date, <span class="at">.value =</span> prec, <span class="at">.smooth =</span> <span class="cn">FALSE</span>, <span class="at">.title =</span> <span class="st">"Precipitation, sum"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-07744f0b035750b5bba8" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-07744f0b035750b5bba8">{"x":{"data":[{"x":["2011-01-01","2011-02-01","2011-03-01","2011-04-01","2011-05-01","2011-06-01","2011-07-01","2011-08-01","2011-09-01","2011-10-01","2011-11-01","2011-12-01","2012-01-01","2012-02-01","2012-03-01","2012-04-01","2012-05-01","2012-06-01","2012-07-01","2012-08-01","2012-09-01","2012-10-01","2012-11-01","2012-12-01","2013-01-01","2013-02-01","2013-03-01","2013-04-01","2013-05-01","2013-06-01","2013-07-01","2013-08-01","2013-09-01","2013-10-01","2013-11-01","2013-12-01","2014-01-01","2014-02-01","2014-03-01","2014-04-01","2014-05-01","2014-06-01","2014-07-01","2014-08-01","2014-09-01","2014-10-01","2014-11-01","2014-12-01","2015-01-01","2015-02-01","2015-03-01","2015-04-01","2015-05-01","2015-06-01","2015-07-01","2015-08-01","2015-09-01","2015-10-01","2015-11-01","2015-12-01","2016-01-01","2016-02-01","2016-03-01","2016-04-01","2016-05-01","2016-06-01","2016-07-01","2016-08-01","2016-09-01","2016-10-01","2016-11-01","2016-12-01","2017-01-01","2017-02-01","2017-03-01","2017-04-01","2017-05-01","2017-06-01","2017-07-01","2017-08-01","2017-09-01","2017-10-01","2017-11-01","2017-12-01","2018-01-01","2018-02-01","2018-03-01","2018-04-01","2018-05-01","2018-06-01","2018-07-01","2018-08-01","2018-09-01","2018-10-01","2018-11-01","2018-12-01","2019-01-01","2019-02-01","2019-03-01","2019-04-01","2019-05-01","2019-06-01","2019-07-01","2019-08-01","2019-09-01","2019-10-01","2019-11-01","2019-12-01","2020-01-01","2020-02-01","2020-03-01","2020-04-01","2020-05-01","2020-06-01","2020-07-01"],"y":[1820.5001678466797,442.40635681152344,2226.6454925537109,2897.5073852539062,1728.2648773193359,604.36213684082031,518.56658935546875,436.02491760253906,432.63633728027344,1649.8077545166016,1387.5072174072266,2606.0164489746094,2822.1019744873047,564.76341247558594,1784.0800170898438,1003.5001678466797,2087.6418151855469,1653.8476181030273,616.09883117675781,320.07499694824219,1518.0993041992188,951.58563232421875,1584.4317932128906,1124.5605621337891,5147.1666870117188,1442.2945404052734,3371.8578948974609,1209.8240966796875,1343.6763458251953,728.58343505859375,1882.2023468017578,326.66361999511719,1094.2545471191406,1077.3714752197266,2293.1363525390625,3089.6983795166016,1075.2024230957031,635.856689453125,1860.9147186279297,1844.1210327148438,940.404296875,971.07891845703125,1511.9540252685547,708.73614501953125,736.22677612304688,533.04826354980469,1137.5786895751953,1015.0865631103516,1623.9833984375,1941.1571044921875,2918.3611907958984,972.21635437011719,932.94816589355469,1297.8675994873047,314.95643615722656,133.59442138671875,1478.7373352050781,542.09107971191406,2672.8466186523438,1691.2231292724609,3764.3365631103516,2243.3714141845703,2877.2175903320312,275.01573181152344,888.03585815429688,1433.574462890625,95.463882446289062,671.421142578125,1064.329345703125,759.18252563476562,3096.0719146728516,2327.1290130615234,2048.7151031494141,631.03829956054688,2167.4696197509766,2251.9246826171875,720.78109741210938,1810.9459915161133,515.85678100585938,906.21488952636719,156.94538879394531,1101.9336090087891,2143.7074584960938,1273.1383361816406,3892.5638122558594,2649.8072052001953,1677.443603515625,1219.9384613037109,838.13316345214844,1008.7914886474609,390.25019836425781,1427.2303771972656,873.65536499023438,1687.1078948974609,2927.262451171875,952.37353515625,1246.5931854248047,4521.9745788574219,4457.0761108398438,3254.3662872314453,1562.5558319091797,928.44203186035156,478.97750854492188,1480.0760803222656,1796.2768096923828,897.03196716308594,2032.4941864013672,1707.7139282226562,1812.7545928955078,4253.0478210449219,3313.0422973632812,450.62664794921875,1740.1305847167969,333.11026000976562,998.80311584472656],"text":["date: 2011-01-01<br />.value: 1820.50017","date: 2011-02-01<br />.value:  442.40636","date: 2011-03-01<br />.value: 2226.64549","date: 2011-04-01<br />.value: 2897.50739","date: 2011-05-01<br />.value: 1728.26488","date: 2011-06-01<br />.value:  604.36214","date: 2011-07-01<br />.value:  518.56659","date: 2011-08-01<br />.value:  436.02492","date: 2011-09-01<br />.value:  432.63634","date: 2011-10-01<br />.value: 1649.80775","date: 2011-11-01<br />.value: 1387.50722","date: 2011-12-01<br />.value: 2606.01645","date: 2012-01-01<br />.value: 2822.10197","date: 2012-02-01<br />.value:  564.76341","date: 2012-03-01<br />.value: 1784.08002","date: 2012-04-01<br />.value: 1003.50017","date: 2012-05-01<br />.value: 2087.64182","date: 2012-06-01<br />.value: 1653.84762","date: 2012-07-01<br />.value:  616.09883","date: 2012-08-01<br />.value:  320.07500","date: 2012-09-01<br />.value: 1518.09930","date: 2012-10-01<br />.value:  951.58563","date: 2012-11-01<br />.value: 1584.43179","date: 2012-12-01<br />.value: 1124.56056","date: 2013-01-01<br />.value: 5147.16669","date: 2013-02-01<br />.value: 1442.29454","date: 2013-03-01<br />.value: 3371.85789","date: 2013-04-01<br />.value: 1209.82410","date: 2013-05-01<br />.value: 1343.67635","date: 2013-06-01<br />.value:  728.58344","date: 2013-07-01<br />.value: 1882.20235","date: 2013-08-01<br />.value:  326.66362","date: 2013-09-01<br />.value: 1094.25455","date: 2013-10-01<br />.value: 1077.37148","date: 2013-11-01<br />.value: 2293.13635","date: 2013-12-01<br />.value: 3089.69838","date: 2014-01-01<br />.value: 1075.20242","date: 2014-02-01<br />.value:  635.85669","date: 2014-03-01<br />.value: 1860.91472","date: 2014-04-01<br />.value: 1844.12103","date: 2014-05-01<br />.value:  940.40430","date: 2014-06-01<br />.value:  971.07892","date: 2014-07-01<br />.value: 1511.95403","date: 2014-08-01<br />.value:  708.73615","date: 2014-09-01<br />.value:  736.22678","date: 2014-10-01<br />.value:  533.04826","date: 2014-11-01<br />.value: 1137.57869","date: 2014-12-01<br />.value: 1015.08656","date: 2015-01-01<br />.value: 1623.98340","date: 2015-02-01<br />.value: 1941.15710","date: 2015-03-01<br />.value: 2918.36119","date: 2015-04-01<br />.value:  972.21635","date: 2015-05-01<br />.value:  932.94817","date: 2015-06-01<br />.value: 1297.86760","date: 2015-07-01<br />.value:  314.95644","date: 2015-08-01<br />.value:  133.59442","date: 2015-09-01<br />.value: 1478.73734","date: 2015-10-01<br />.value:  542.09108","date: 2015-11-01<br />.value: 2672.84662","date: 2015-12-01<br />.value: 1691.22313","date: 2016-01-01<br />.value: 3764.33656","date: 2016-02-01<br />.value: 2243.37141","date: 2016-03-01<br />.value: 2877.21759","date: 2016-04-01<br />.value:  275.01573","date: 2016-05-01<br />.value:  888.03586","date: 2016-06-01<br />.value: 1433.57446","date: 2016-07-01<br />.value:   95.46388","date: 2016-08-01<br />.value:  671.42114","date: 2016-09-01<br />.value: 1064.32935","date: 2016-10-01<br />.value:  759.18253","date: 2016-11-01<br />.value: 3096.07191","date: 2016-12-01<br />.value: 2327.12901","date: 2017-01-01<br />.value: 2048.71510","date: 2017-02-01<br />.value:  631.03830","date: 2017-03-01<br />.value: 2167.46962","date: 2017-04-01<br />.value: 2251.92468","date: 2017-05-01<br />.value:  720.78110","date: 2017-06-01<br />.value: 1810.94599","date: 2017-07-01<br />.value:  515.85678","date: 2017-08-01<br />.value:  906.21489","date: 2017-09-01<br />.value:  156.94539","date: 2017-10-01<br />.value: 1101.93361","date: 2017-11-01<br />.value: 2143.70746","date: 2017-12-01<br />.value: 1273.13834","date: 2018-01-01<br />.value: 3892.56381","date: 2018-02-01<br />.value: 2649.80721","date: 2018-03-01<br />.value: 1677.44360","date: 2018-04-01<br />.value: 1219.93846","date: 2018-05-01<br />.value:  838.13316","date: 2018-06-01<br />.value: 1008.79149","date: 2018-07-01<br />.value:  390.25020","date: 2018-08-01<br />.value: 1427.23038","date: 2018-09-01<br />.value:  873.65536","date: 2018-10-01<br />.value: 1687.10789","date: 2018-11-01<br />.value: 2927.26245","date: 2018-12-01<br />.value:  952.37354","date: 2019-01-01<br />.value: 1246.59319","date: 2019-02-01<br />.value: 4521.97458","date: 2019-03-01<br />.value: 4457.07611","date: 2019-04-01<br />.value: 3254.36629","date: 2019-05-01<br />.value: 1562.55583","date: 2019-06-01<br />.value:  928.44203","date: 2019-07-01<br />.value:  478.97751","date: 2019-08-01<br />.value: 1480.07608","date: 2019-09-01<br />.value: 1796.27681","date: 2019-10-01<br />.value:  897.03197","date: 2019-11-01<br />.value: 2032.49419","date: 2019-12-01<br />.value: 1707.71393","date: 2020-01-01<br />.value: 1812.75459","date: 2020-02-01<br />.value: 4253.04782","date: 2020-03-01<br />.value: 3313.04230","date: 2020-04-01<br />.value:  450.62665","date: 2020-05-01<br />.value: 1740.13058","date: 2020-06-01<br />.value:  333.11026","date: 2020-07-01<br />.value:  998.80312"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(44,62,80,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.762557077625573,"r":7.3059360730593621,"b":25.570776255707766,"l":34.337899543379002},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724},"title":{"text":"Precipitation, sum","font":{"color":"rgba(44,62,80,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"date","autorange":true,"range":["2010-07-11","2020-12-21"],"tickmode":"auto","ticktext":["2012","2014","2016","2018","2020"],"tickvals":[15340,16071,16801,17532,18262],"categoryorder":"array","categoryarray":["2012","2014","2016","2018","2020"],"nticks":null,"ticks":"outside","tickcolor":"rgba(204,204,204,1)","ticklen":3.6529680365296811,"tickwidth":0.22139200221392005,"showticklabels":true,"tickfont":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.22139200221392005,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":true,"range":[-157.12125778198242,5399.7518272399902],"tickmode":"auto","ticktext":["0","1000","2000","3000","4000","5000"],"tickvals":[0,1000,2000,3000,4000,5000],"categoryorder":"array","categoryarray":["0","1000","2000","3000","4000","5000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(204,204,204,1)","ticklen":3.6529680365296811,"tickwidth":0.22139200221392005,"showticklabels":true,"tickfont":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.22139200221392005,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(44,62,80,1)","width":0.33208800332088001,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"4babb4c985698":{"x":{},"y":{},"type":"scatter"}},"cur_data":"4babb4c985698","visdat":{"4babb4c985698":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_time_series</span>(<span class="at">.data =</span> prec_avg, <span class="at">.date_var =</span> date, <span class="at">.value =</span> prec_avg, <span class="at">.smooth =</span> <span class="cn">FALSE</span>, <span class="at">.title =</span> <span class="st">"Precipitation, average"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-0fd6a3d1fb5bcedce051" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-0fd6a3d1fb5bcedce051">{"x":{"data":[{"x":["2011-01-01","2011-02-01","2011-03-01","2011-04-01","2011-05-01","2011-06-01","2011-07-01","2011-08-01","2011-09-01","2011-10-01","2011-11-01","2011-12-01","2012-01-01","2012-02-01","2012-03-01","2012-04-01","2012-05-01","2012-06-01","2012-07-01","2012-08-01","2012-09-01","2012-10-01","2012-11-01","2012-12-01","2013-01-01","2013-02-01","2013-03-01","2013-04-01","2013-05-01","2013-06-01","2013-07-01","2013-08-01","2013-09-01","2013-10-01","2013-11-01","2013-12-01","2014-01-01","2014-02-01","2014-03-01","2014-04-01","2014-05-01","2014-06-01","2014-07-01","2014-08-01","2014-09-01","2014-10-01","2014-11-01","2014-12-01","2015-01-01","2015-02-01","2015-03-01","2015-04-01","2015-05-01","2015-06-01","2015-07-01","2015-08-01","2015-09-01","2015-10-01","2015-11-01","2015-12-01","2016-01-01","2016-02-01","2016-03-01","2016-04-01","2016-05-01","2016-06-01","2016-07-01","2016-08-01","2016-09-01","2016-10-01","2016-11-01","2016-12-01","2017-01-01","2017-02-01","2017-03-01","2017-04-01","2017-05-01","2017-06-01","2017-07-01","2017-08-01","2017-09-01","2017-10-01","2017-11-01","2017-12-01","2018-01-01","2018-02-01","2018-03-01","2018-04-01","2018-05-01","2018-06-01","2018-07-01","2018-08-01","2018-09-01","2018-10-01","2018-11-01","2018-12-01","2019-01-01","2019-02-01","2019-03-01","2019-04-01","2019-05-01","2019-06-01","2019-07-01","2019-08-01","2019-09-01","2019-10-01","2019-11-01","2019-12-01","2020-01-01","2020-02-01","2020-03-01","2020-04-01","2020-05-01","2020-06-01","2020-07-01"],"y":[4.1232805110715072,1.0535904314560216,4.6419412570614966,6.7496656102962636,3.9550323674395198,1.4195307112541438,1.1093674096327666,0.95995509738643325,1.0425919496910259,3.9478040455508183,3.3651485414302442,6.0036673524206687,6.5008243014435134,1.3909607510371456,4.1988611737483996,2.3069048009550897,4.886891899089659,4.0115462394470036,1.4674242998082792,0.71933605081604557,3.5815708346179842,2.202131712955663,3.5252948494007188,2.406677052498825,11.40760047072845,3.6944756394576479,7.4118726886808872,2.8550909257396899,3.0032027091308979,1.6805963956285268,4.2159614663687535,0.70364611379468001,2.5330221744952723,2.4505474187279752,5.3089424793918925,6.9609348396620438,2.552451794895704,1.6011790104270662,4.2251402442399861,4.2824911455759622,2.1635757783435343,2.2645558940867585,3.4892236576378046,1.6096354832576076,1.7596865700179478,1.0973719697916926,2.4833833291505774,2.1995012411122929,3.8128604467868086,4.9930367318977789,6.6915975995512023,2.3312944908325637,2.1729486880621183,3.0101026836879705,0.69754106159352003,0.28675548332713302,3.4961852026463021,1.1647129228090747,6.1381443081811691,3.7540591804389543,8.2958477119644805,5.1812422846700867,6.5810499197499253,0.65557052621540302,1.9907209922882518,3.2907706878264436,0.22536956146359444,1.531696034608514,2.4179785950633232,1.6242674651345419,6.6359456416219471,5.2280702072406005,4.3350517770215387,1.3423865082087494,4.7153545684658082,5.3883391131860359,1.5798444071364017,4.4969600817188624,1.0793645574200539,2.0693099569499251,0.34887274915042021,2.490216215802056,4.9024767514201812,2.8115973390165658,8.6901230729042336,6.5924548571264108,3.5615548203556586,2.7776731963385828,1.68107789934748,2.4088330570957623,0.83308106667978032,3.2262788085875314,1.9987052598424877,3.7704978434203733,6.8644981122265261,2.0128256495320991,2.7624257539376438,11.549422755779233,10.460798149214938,7.9392932325019503,3.6355997232472403,2.1374731249952066,1.1237346085216549,3.2930306244130816,4.1916227044770498,2.0307259434954292,4.7196530239967007,3.6959175811592311,3.7419286508210785,10.323997989333042,7.6016014985019158,1.0697773215865405,4.1176968709332868,0.81813597224342327,2.4032773816612578],"text":["date: 2011-01-01<br />.value:  4.1232805","date: 2011-02-01<br />.value:  1.0535904","date: 2011-03-01<br />.value:  4.6419413","date: 2011-04-01<br />.value:  6.7496656","date: 2011-05-01<br />.value:  3.9550324","date: 2011-06-01<br />.value:  1.4195307","date: 2011-07-01<br />.value:  1.1093674","date: 2011-08-01<br />.value:  0.9599551","date: 2011-09-01<br />.value:  1.0425919","date: 2011-10-01<br />.value:  3.9478040","date: 2011-11-01<br />.value:  3.3651485","date: 2011-12-01<br />.value:  6.0036674","date: 2012-01-01<br />.value:  6.5008243","date: 2012-02-01<br />.value:  1.3909608","date: 2012-03-01<br />.value:  4.1988612","date: 2012-04-01<br />.value:  2.3069048","date: 2012-05-01<br />.value:  4.8868919","date: 2012-06-01<br />.value:  4.0115462","date: 2012-07-01<br />.value:  1.4674243","date: 2012-08-01<br />.value:  0.7193361","date: 2012-09-01<br />.value:  3.5815708","date: 2012-10-01<br />.value:  2.2021317","date: 2012-11-01<br />.value:  3.5252948","date: 2012-12-01<br />.value:  2.4066771","date: 2013-01-01<br />.value: 11.4076005","date: 2013-02-01<br />.value:  3.6944756","date: 2013-03-01<br />.value:  7.4118727","date: 2013-04-01<br />.value:  2.8550909","date: 2013-05-01<br />.value:  3.0032027","date: 2013-06-01<br />.value:  1.6805964","date: 2013-07-01<br />.value:  4.2159615","date: 2013-08-01<br />.value:  0.7036461","date: 2013-09-01<br />.value:  2.5330222","date: 2013-10-01<br />.value:  2.4505474","date: 2013-11-01<br />.value:  5.3089425","date: 2013-12-01<br />.value:  6.9609348","date: 2014-01-01<br />.value:  2.5524518","date: 2014-02-01<br />.value:  1.6011790","date: 2014-03-01<br />.value:  4.2251402","date: 2014-04-01<br />.value:  4.2824911","date: 2014-05-01<br />.value:  2.1635758","date: 2014-06-01<br />.value:  2.2645559","date: 2014-07-01<br />.value:  3.4892237","date: 2014-08-01<br />.value:  1.6096355","date: 2014-09-01<br />.value:  1.7596866","date: 2014-10-01<br />.value:  1.0973720","date: 2014-11-01<br />.value:  2.4833833","date: 2014-12-01<br />.value:  2.1995012","date: 2015-01-01<br />.value:  3.8128604","date: 2015-02-01<br />.value:  4.9930367","date: 2015-03-01<br />.value:  6.6915976","date: 2015-04-01<br />.value:  2.3312945","date: 2015-05-01<br />.value:  2.1729487","date: 2015-06-01<br />.value:  3.0101027","date: 2015-07-01<br />.value:  0.6975411","date: 2015-08-01<br />.value:  0.2867555","date: 2015-09-01<br />.value:  3.4961852","date: 2015-10-01<br />.value:  1.1647129","date: 2015-11-01<br />.value:  6.1381443","date: 2015-12-01<br />.value:  3.7540592","date: 2016-01-01<br />.value:  8.2958477","date: 2016-02-01<br />.value:  5.1812423","date: 2016-03-01<br />.value:  6.5810499","date: 2016-04-01<br />.value:  0.6555705","date: 2016-05-01<br />.value:  1.9907210","date: 2016-06-01<br />.value:  3.2907707","date: 2016-07-01<br />.value:  0.2253696","date: 2016-08-01<br />.value:  1.5316960","date: 2016-09-01<br />.value:  2.4179786","date: 2016-10-01<br />.value:  1.6242675","date: 2016-11-01<br />.value:  6.6359456","date: 2016-12-01<br />.value:  5.2280702","date: 2017-01-01<br />.value:  4.3350518","date: 2017-02-01<br />.value:  1.3423865","date: 2017-03-01<br />.value:  4.7153546","date: 2017-04-01<br />.value:  5.3883391","date: 2017-05-01<br />.value:  1.5798444","date: 2017-06-01<br />.value:  4.4969601","date: 2017-07-01<br />.value:  1.0793646","date: 2017-08-01<br />.value:  2.0693100","date: 2017-09-01<br />.value:  0.3488727","date: 2017-10-01<br />.value:  2.4902162","date: 2017-11-01<br />.value:  4.9024768","date: 2017-12-01<br />.value:  2.8115973","date: 2018-01-01<br />.value:  8.6901231","date: 2018-02-01<br />.value:  6.5924549","date: 2018-03-01<br />.value:  3.5615548","date: 2018-04-01<br />.value:  2.7776732","date: 2018-05-01<br />.value:  1.6810779","date: 2018-06-01<br />.value:  2.4088331","date: 2018-07-01<br />.value:  0.8330811","date: 2018-08-01<br />.value:  3.2262788","date: 2018-09-01<br />.value:  1.9987053","date: 2018-10-01<br />.value:  3.7704978","date: 2018-11-01<br />.value:  6.8644981","date: 2018-12-01<br />.value:  2.0128256","date: 2019-01-01<br />.value:  2.7624258","date: 2019-02-01<br />.value: 11.5494228","date: 2019-03-01<br />.value: 10.4607981","date: 2019-04-01<br />.value:  7.9392932","date: 2019-05-01<br />.value:  3.6355997","date: 2019-06-01<br />.value:  2.1374731","date: 2019-07-01<br />.value:  1.1237346","date: 2019-08-01<br />.value:  3.2930306","date: 2019-09-01<br />.value:  4.1916227","date: 2019-10-01<br />.value:  2.0307259","date: 2019-11-01<br />.value:  4.7196530","date: 2019-12-01<br />.value:  3.6959176","date: 2020-01-01<br />.value:  3.7419287","date: 2020-02-01<br />.value: 10.3239980","date: 2020-03-01<br />.value:  7.6016015","date: 2020-04-01<br />.value:  1.0697773","date: 2020-05-01<br />.value:  4.1176969","date: 2020-06-01<br />.value:  0.8181360","date: 2020-07-01<br />.value:  2.4032774"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(44,62,80,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.762557077625573,"r":7.3059360730593621,"b":25.570776255707766,"l":22.648401826484022},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724},"title":{"text":"Precipitation, average","font":{"color":"rgba(44,62,80,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"date","autorange":true,"range":["2010-07-11","2020-12-21"],"tickmode":"auto","ticktext":["2012","2014","2016","2018","2020"],"tickvals":[15340,16071,16801,17532,18262],"categoryorder":"array","categoryarray":["2012","2014","2016","2018","2020"],"nticks":null,"ticks":"outside","tickcolor":"rgba(204,204,204,1)","ticklen":3.6529680365296811,"tickwidth":0.22139200221392005,"showticklabels":true,"tickfont":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.22139200221392005,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":true,"range":[-0.34083309825218755,12.115625415495014],"tickmode":"auto","ticktext":["0","3","6","9","12"],"tickvals":[0,3,6,9,12],"categoryorder":"array","categoryarray":["0","3","6","9","12"],"nticks":null,"ticks":"outside","tickcolor":"rgba(204,204,204,1)","ticklen":3.6529680365296811,"tickwidth":0.22139200221392005,"showticklabels":true,"tickfont":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.22139200221392005,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(44,62,80,1)","width":0.33208800332088001,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"4babb13722c49":{"x":{},"y":{},"type":"scatter"}},"cur_data":"4babb13722c49","visdat":{"4babb13722c49":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_time_series</span>(<span class="at">.data =</span> rh, <span class="at">.date_var =</span> date, <span class="at">.value =</span> rh, <span class="at">.smooth =</span> <span class="cn">FALSE</span>, <span class="at">.title =</span> <span class="st">"Relative humidity, average"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-b2b71eb71ecdbdad48e7" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-b2b71eb71ecdbdad48e7">{"x":{"data":[{"x":["2011-01-01","2011-02-01","2011-03-01","2011-04-01","2011-05-01","2011-06-01","2011-07-01","2011-08-01","2011-09-01","2011-10-01","2011-11-01","2011-12-01","2012-01-01","2012-02-01","2012-03-01","2012-04-01","2012-05-01","2012-06-01","2012-07-01","2012-08-01","2012-09-01","2012-10-01","2012-11-01","2012-12-01","2013-01-01","2013-02-01","2013-03-01","2013-04-01","2013-05-01","2013-06-01","2013-07-01","2013-08-01","2013-09-01","2013-10-01","2013-11-01","2013-12-01","2014-01-01","2014-02-01","2014-03-01","2014-04-01","2014-05-01","2014-06-01","2014-07-01","2014-08-01","2014-09-01","2014-10-01","2014-11-01","2014-12-01","2015-01-01","2015-02-01","2015-03-01","2015-04-01","2015-05-01","2015-06-01","2015-07-01","2015-08-01","2015-09-01","2015-10-01","2015-11-01","2015-12-01","2016-01-01","2016-02-01","2016-03-01","2016-04-01","2016-05-01","2016-06-01","2016-07-01","2016-08-01","2016-09-01","2016-10-01","2016-11-01","2016-12-01","2017-01-01","2017-02-01","2017-03-01","2017-04-01","2017-05-01","2017-06-01","2017-07-01","2017-08-01","2017-09-01","2017-10-01","2017-11-01","2017-12-01","2018-01-01","2018-02-01","2018-03-01","2018-04-01","2018-05-01","2018-06-01","2018-07-01","2018-08-01","2018-09-01","2018-10-01","2018-11-01","2018-12-01","2019-01-01","2019-02-01","2019-03-01","2019-04-01","2019-05-01","2019-06-01","2019-07-01","2019-08-01","2019-09-01","2019-10-01","2019-11-01","2019-12-01","2020-01-01","2020-02-01","2020-03-01","2020-04-01","2020-05-01","2020-06-01","2020-07-01"],"y":[75.051534098963586,71.56684807368687,83.942512512207031,78.987827301025391,79.945756727649325,78.300030771891272,76.047413487588202,73.796942187893777,72.758387502034509,76.669896156557144,77.775487009684241,78.086789408037745,78.816973901564069,70.45796532466494,77.2780637433452,79.812812550862631,79.157866201093114,82.429942576090497,76.405937440933727,74.772356833181078,72.614159011840826,72.936220107540009,81.05844421386719,73.067333713654548,79.27090417185137,75.06328814370292,81.34661446848223,79.097944641113287,76.895825047646795,79.730786387125647,77.508668222735011,73.035266876220703,72.321236673990882,75.376700616651959,76.721185175577801,79.086929075179555,68.703708771736387,65.368731226239888,74.219257723900583,79.11129506429036,77.567887829196067,76.684978993733722,76.678018508418916,72.652774318572014,71.376338958740234,71.046409360824086,73.820153045654294,70.107190285959547,66.974215722853131,73.219752992902485,78.652321846254409,77.94644419352214,77.305604996219756,76.152837371826166,76.138472895468439,72.162458604381925,78.356332143147782,76.815574276831839,82.432342529296875,73.586531977499689,79.288696412117247,73.324675855965452,77.763293481642194,72.880964787801105,79.510608919205211,81.017487589518225,72.668731812507872,71.697290235950106,75.619497680664068,76.225795622794863,76.950449498494464,74.663836325368578,73.016425348097272,71.014824049813413,77.188990685247603,79.910673777262375,80.786044213079634,79.625654347737637,77.887580994636778,75.909055156092492,69.194014739990237,73.07977713308027,72.278510665893549,77.389165570659017,75.19236730760143,77.533742632184712,77.082905430947577,77.407561238606775,77.018152544575358,77.870529429117838,75.492126957062752,77.522771281580773,73.67434361775716,77.681159234816022,75.890908940633139,72.534764566729152,67.640097956503595,74.462281772068565,77.58077855263987,75.605798085530594,78.263974097467241,75.813555526733396,71.641158565398186,74.333319141018777,77.720697275797519,74.107909787085745,77.496328353881836,75.929232443532641,74.561999905493948,79.444185717352511,78.519326240785659,77.278431955973304,75.680440225908839,74.026479339599604,71.238983892625384],"text":["date: 2011-01-01<br />.value: 75.05153","date: 2011-02-01<br />.value: 71.56685","date: 2011-03-01<br />.value: 83.94251","date: 2011-04-01<br />.value: 78.98783","date: 2011-05-01<br />.value: 79.94576","date: 2011-06-01<br />.value: 78.30003","date: 2011-07-01<br />.value: 76.04741","date: 2011-08-01<br />.value: 73.79694","date: 2011-09-01<br />.value: 72.75839","date: 2011-10-01<br />.value: 76.66990","date: 2011-11-01<br />.value: 77.77549","date: 2011-12-01<br />.value: 78.08679","date: 2012-01-01<br />.value: 78.81697","date: 2012-02-01<br />.value: 70.45797","date: 2012-03-01<br />.value: 77.27806","date: 2012-04-01<br />.value: 79.81281","date: 2012-05-01<br />.value: 79.15787","date: 2012-06-01<br />.value: 82.42994","date: 2012-07-01<br />.value: 76.40594","date: 2012-08-01<br />.value: 74.77236","date: 2012-09-01<br />.value: 72.61416","date: 2012-10-01<br />.value: 72.93622","date: 2012-11-01<br />.value: 81.05844","date: 2012-12-01<br />.value: 73.06733","date: 2013-01-01<br />.value: 79.27090","date: 2013-02-01<br />.value: 75.06329","date: 2013-03-01<br />.value: 81.34661","date: 2013-04-01<br />.value: 79.09794","date: 2013-05-01<br />.value: 76.89583","date: 2013-06-01<br />.value: 79.73079","date: 2013-07-01<br />.value: 77.50867","date: 2013-08-01<br />.value: 73.03527","date: 2013-09-01<br />.value: 72.32124","date: 2013-10-01<br />.value: 75.37670","date: 2013-11-01<br />.value: 76.72119","date: 2013-12-01<br />.value: 79.08693","date: 2014-01-01<br />.value: 68.70371","date: 2014-02-01<br />.value: 65.36873","date: 2014-03-01<br />.value: 74.21926","date: 2014-04-01<br />.value: 79.11130","date: 2014-05-01<br />.value: 77.56789","date: 2014-06-01<br />.value: 76.68498","date: 2014-07-01<br />.value: 76.67802","date: 2014-08-01<br />.value: 72.65277","date: 2014-09-01<br />.value: 71.37634","date: 2014-10-01<br />.value: 71.04641","date: 2014-11-01<br />.value: 73.82015","date: 2014-12-01<br />.value: 70.10719","date: 2015-01-01<br />.value: 66.97422","date: 2015-02-01<br />.value: 73.21975","date: 2015-03-01<br />.value: 78.65232","date: 2015-04-01<br />.value: 77.94644","date: 2015-05-01<br />.value: 77.30560","date: 2015-06-01<br />.value: 76.15284","date: 2015-07-01<br />.value: 76.13847","date: 2015-08-01<br />.value: 72.16246","date: 2015-09-01<br />.value: 78.35633","date: 2015-10-01<br />.value: 76.81557","date: 2015-11-01<br />.value: 82.43234","date: 2015-12-01<br />.value: 73.58653","date: 2016-01-01<br />.value: 79.28870","date: 2016-02-01<br />.value: 73.32468","date: 2016-03-01<br />.value: 77.76329","date: 2016-04-01<br />.value: 72.88096","date: 2016-05-01<br />.value: 79.51061","date: 2016-06-01<br />.value: 81.01749","date: 2016-07-01<br />.value: 72.66873","date: 2016-08-01<br />.value: 71.69729","date: 2016-09-01<br />.value: 75.61950","date: 2016-10-01<br />.value: 76.22580","date: 2016-11-01<br />.value: 76.95045","date: 2016-12-01<br />.value: 74.66384","date: 2017-01-01<br />.value: 73.01643","date: 2017-02-01<br />.value: 71.01482","date: 2017-03-01<br />.value: 77.18899","date: 2017-04-01<br />.value: 79.91067","date: 2017-05-01<br />.value: 80.78604","date: 2017-06-01<br />.value: 79.62565","date: 2017-07-01<br />.value: 77.88758","date: 2017-08-01<br />.value: 75.90906","date: 2017-09-01<br />.value: 69.19401","date: 2017-10-01<br />.value: 73.07978","date: 2017-11-01<br />.value: 72.27851","date: 2017-12-01<br />.value: 77.38917","date: 2018-01-01<br />.value: 75.19237","date: 2018-02-01<br />.value: 77.53374","date: 2018-03-01<br />.value: 77.08291","date: 2018-04-01<br />.value: 77.40756","date: 2018-05-01<br />.value: 77.01815","date: 2018-06-01<br />.value: 77.87053","date: 2018-07-01<br />.value: 75.49213","date: 2018-08-01<br />.value: 77.52277","date: 2018-09-01<br />.value: 73.67434","date: 2018-10-01<br />.value: 77.68116","date: 2018-11-01<br />.value: 75.89091","date: 2018-12-01<br />.value: 72.53476","date: 2019-01-01<br />.value: 67.64010","date: 2019-02-01<br />.value: 74.46228","date: 2019-03-01<br />.value: 77.58078","date: 2019-04-01<br />.value: 75.60580","date: 2019-05-01<br />.value: 78.26397","date: 2019-06-01<br />.value: 75.81356","date: 2019-07-01<br />.value: 71.64116","date: 2019-08-01<br />.value: 74.33332","date: 2019-09-01<br />.value: 77.72070","date: 2019-10-01<br />.value: 74.10791","date: 2019-11-01<br />.value: 77.49633","date: 2019-12-01<br />.value: 75.92923","date: 2020-01-01<br />.value: 74.56200","date: 2020-02-01<br />.value: 79.44419","date: 2020-03-01<br />.value: 78.51933","date: 2020-04-01<br />.value: 77.27843","date: 2020-05-01<br />.value: 75.68044","date: 2020-06-01<br />.value: 74.02648","date: 2020-07-01<br />.value: 71.23898"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(44,62,80,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.762557077625573,"r":7.3059360730593621,"b":25.570776255707766,"l":22.648401826484022},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724},"title":{"text":"Relative humidity, average","font":{"color":"rgba(44,62,80,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"date","autorange":true,"range":["2010-07-11","2020-12-21"],"tickmode":"auto","ticktext":["2012","2014","2016","2018","2020"],"tickvals":[15340,16071,16801,17532,18262],"categoryorder":"array","categoryarray":["2012","2014","2016","2018","2020"],"nticks":null,"ticks":"outside","tickcolor":"rgba(204,204,204,1)","ticklen":3.6529680365296811,"tickwidth":0.22139200221392005,"showticklabels":true,"tickfont":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.22139200221392005,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":true,"range":[64.440042161941534,84.871201576505385],"tickmode":"auto","ticktext":["65","70","75","80"],"tickvals":[65,70,75,80],"categoryorder":"array","categoryarray":["65","70","75","80"],"nticks":null,"ticks":"outside","tickcolor":"rgba(204,204,204,1)","ticklen":3.6529680365296811,"tickwidth":0.22139200221392005,"showticklabels":true,"tickfont":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.22139200221392005,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(44,62,80,1)","width":0.33208800332088001,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"4babb7c4974f5":{"x":{},"y":{},"type":"scatter"}},"cur_data":"4babb7c4974f5","visdat":{"4babb7c4974f5":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_time_series</span>(<span class="at">.data =</span> wind, <span class="at">.date_var =</span> date, <span class="at">.value =</span> wind, <span class="at">.smooth =</span> <span class="cn">FALSE</span>, <span class="at">.title =</span> <span class="st">"Wind, average"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-c3162d1041cd258b7d04" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-c3162d1041cd258b7d04">{"x":{"data":[{"x":["2011-01-01","2011-02-01","2011-03-01","2011-04-01","2011-05-01","2011-06-01","2011-07-01","2011-08-01","2011-09-01","2011-10-01","2011-11-01","2011-12-01","2012-01-01","2012-02-01","2012-03-01","2012-04-01","2012-05-01","2012-06-01","2012-07-01","2012-08-01","2012-09-01","2012-10-01","2012-11-01","2012-12-01","2013-01-01","2013-02-01","2013-03-01","2013-04-01","2013-05-01","2013-06-01","2013-07-01","2013-08-01","2013-09-01","2013-10-01","2013-11-01","2013-12-01","2014-01-01","2014-02-01","2014-03-01","2014-04-01","2014-05-01","2014-06-01","2014-07-01","2014-08-01","2014-09-01","2014-10-01","2014-11-01","2014-12-01","2015-01-01","2015-02-01","2015-03-01","2015-04-01","2015-05-01","2015-06-01","2015-07-01","2015-08-01","2015-09-01","2015-10-01","2015-11-01","2015-12-01","2016-01-01","2016-02-01","2016-03-01","2016-04-01","2016-05-01","2016-06-01","2016-07-01","2016-08-01","2016-09-01","2016-10-01","2016-11-01","2016-12-01","2017-01-01","2017-02-01","2017-03-01","2017-04-01","2017-05-01","2017-06-01","2017-07-01","2017-08-01","2017-09-01","2017-10-01","2017-11-01","2017-12-01","2018-01-01","2018-02-01","2018-03-01","2018-04-01","2018-05-01","2018-06-01","2018-07-01","2018-08-01","2018-09-01","2018-10-01","2018-11-01","2018-12-01","2019-01-01","2019-02-01","2019-03-01","2019-04-01","2019-05-01","2019-06-01","2019-07-01","2019-08-01","2019-09-01","2019-10-01","2019-11-01","2019-12-01","2020-01-01","2020-02-01","2020-03-01","2020-04-01","2020-05-01","2020-06-01","2020-07-01"],"y":[1.4471589826768445,1.8152271849768502,1.3668056745682993,1.3806762814521789,1.2897637717185482,1.4114947219689686,1.4494644018911547,1.7693638051709821,1.9687838832537332,1.6267220108739791,1.5375032782554627,1.5184266048092996,1.391276151903214,1.4557815831283043,1.4135652703623618,1.3622321963310242,1.2943310083881501,1.4654410600662231,1.5204531050497485,1.5259797226998113,1.7683107455571492,1.6780256071398336,1.5029218077659607,1.5232227310057609,1.6411393265570364,1.4099493282181876,1.4196029593867641,1.332343477010727,1.3263916200207126,1.2600785175959268,1.7846475185886506,1.9319540685222996,2.0374133070309957,2.0037301971066381,1.6922393321990967,1.5021289548566263,1.6687797269513529,1.5594652848584312,1.4401025387548632,1.3225758949915567,1.2669788541332367,1.6338293095429739,1.654556849310475,1.650782742807942,1.9855406324068705,1.9895698793472782,1.7162910858790079,1.6858161995487828,1.5724426277222172,1.4732434068407332,1.2344010549206887,1.465383384625117,1.3418021048268964,1.4263759315013886,1.2679002823368195,1.4140442609786987,1.629277096192042,1.7997562846829813,1.5195855299631755,1.469423028730577,1.595467165593178,1.5417231156908233,1.3029319528610475,1.3480146249135336,1.3938945108844387,1.4235260864098866,1.4101633083435796,1.8410820864862012,1.8972472588221232,1.9641237105092695,1.979694135983785,1.7592378085659397,1.7430106266852348,1.7383029013872147,1.5880229434659403,1.5897928635279337,1.4129784510981651,1.3420321365197501,1.4921244421312887,1.6394415555461761,1.3809004068374633,1.6010840535163879,1.6635160366694133,1.421768521108935,1.5075961466758483,1.4096343900476183,1.3743926632788874,1.2140330612659453,1.2625446184988944,1.2791635076204935,1.3823492065552743,1.421674091969767,1.6355207939942678,1.5273477281293562,1.5804531474908192,1.4641903485021284,1.4680370938393377,1.4108982235193253,1.2962032191215023,1.3383602281411489,1.2038383445432108,1.1754435737927755,1.4627693622343001,1.5095611176183146,1.6027081271012624,1.5050248407548474,1.4986657480398813,1.2939079384649954,1.2609291884206957,1.1488793184017312,1.2700028861722639,1.1169996480147044,1.2346336533946376,1.0468662838141123,1.07812298305573],"text":["date: 2011-01-01<br />.value: 1.447159","date: 2011-02-01<br />.value: 1.815227","date: 2011-03-01<br />.value: 1.366806","date: 2011-04-01<br />.value: 1.380676","date: 2011-05-01<br />.value: 1.289764","date: 2011-06-01<br />.value: 1.411495","date: 2011-07-01<br />.value: 1.449464","date: 2011-08-01<br />.value: 1.769364","date: 2011-09-01<br />.value: 1.968784","date: 2011-10-01<br />.value: 1.626722","date: 2011-11-01<br />.value: 1.537503","date: 2011-12-01<br />.value: 1.518427","date: 2012-01-01<br />.value: 1.391276","date: 2012-02-01<br />.value: 1.455782","date: 2012-03-01<br />.value: 1.413565","date: 2012-04-01<br />.value: 1.362232","date: 2012-05-01<br />.value: 1.294331","date: 2012-06-01<br />.value: 1.465441","date: 2012-07-01<br />.value: 1.520453","date: 2012-08-01<br />.value: 1.525980","date: 2012-09-01<br />.value: 1.768311","date: 2012-10-01<br />.value: 1.678026","date: 2012-11-01<br />.value: 1.502922","date: 2012-12-01<br />.value: 1.523223","date: 2013-01-01<br />.value: 1.641139","date: 2013-02-01<br />.value: 1.409949","date: 2013-03-01<br />.value: 1.419603","date: 2013-04-01<br />.value: 1.332343","date: 2013-05-01<br />.value: 1.326392","date: 2013-06-01<br />.value: 1.260079","date: 2013-07-01<br />.value: 1.784648","date: 2013-08-01<br />.value: 1.931954","date: 2013-09-01<br />.value: 2.037413","date: 2013-10-01<br />.value: 2.003730","date: 2013-11-01<br />.value: 1.692239","date: 2013-12-01<br />.value: 1.502129","date: 2014-01-01<br />.value: 1.668780","date: 2014-02-01<br />.value: 1.559465","date: 2014-03-01<br />.value: 1.440103","date: 2014-04-01<br />.value: 1.322576","date: 2014-05-01<br />.value: 1.266979","date: 2014-06-01<br />.value: 1.633829","date: 2014-07-01<br />.value: 1.654557","date: 2014-08-01<br />.value: 1.650783","date: 2014-09-01<br />.value: 1.985541","date: 2014-10-01<br />.value: 1.989570","date: 2014-11-01<br />.value: 1.716291","date: 2014-12-01<br />.value: 1.685816","date: 2015-01-01<br />.value: 1.572443","date: 2015-02-01<br />.value: 1.473243","date: 2015-03-01<br />.value: 1.234401","date: 2015-04-01<br />.value: 1.465383","date: 2015-05-01<br />.value: 1.341802","date: 2015-06-01<br />.value: 1.426376","date: 2015-07-01<br />.value: 1.267900","date: 2015-08-01<br />.value: 1.414044","date: 2015-09-01<br />.value: 1.629277","date: 2015-10-01<br />.value: 1.799756","date: 2015-11-01<br />.value: 1.519586","date: 2015-12-01<br />.value: 1.469423","date: 2016-01-01<br />.value: 1.595467","date: 2016-02-01<br />.value: 1.541723","date: 2016-03-01<br />.value: 1.302932","date: 2016-04-01<br />.value: 1.348015","date: 2016-05-01<br />.value: 1.393895","date: 2016-06-01<br />.value: 1.423526","date: 2016-07-01<br />.value: 1.410163","date: 2016-08-01<br />.value: 1.841082","date: 2016-09-01<br />.value: 1.897247","date: 2016-10-01<br />.value: 1.964124","date: 2016-11-01<br />.value: 1.979694","date: 2016-12-01<br />.value: 1.759238","date: 2017-01-01<br />.value: 1.743011","date: 2017-02-01<br />.value: 1.738303","date: 2017-03-01<br />.value: 1.588023","date: 2017-04-01<br />.value: 1.589793","date: 2017-05-01<br />.value: 1.412978","date: 2017-06-01<br />.value: 1.342032","date: 2017-07-01<br />.value: 1.492124","date: 2017-08-01<br />.value: 1.639442","date: 2017-09-01<br />.value: 1.380900","date: 2017-10-01<br />.value: 1.601084","date: 2017-11-01<br />.value: 1.663516","date: 2017-12-01<br />.value: 1.421769","date: 2018-01-01<br />.value: 1.507596","date: 2018-02-01<br />.value: 1.409634","date: 2018-03-01<br />.value: 1.374393","date: 2018-04-01<br />.value: 1.214033","date: 2018-05-01<br />.value: 1.262545","date: 2018-06-01<br />.value: 1.279164","date: 2018-07-01<br />.value: 1.382349","date: 2018-08-01<br />.value: 1.421674","date: 2018-09-01<br />.value: 1.635521","date: 2018-10-01<br />.value: 1.527348","date: 2018-11-01<br />.value: 1.580453","date: 2018-12-01<br />.value: 1.464190","date: 2019-01-01<br />.value: 1.468037","date: 2019-02-01<br />.value: 1.410898","date: 2019-03-01<br />.value: 1.296203","date: 2019-04-01<br />.value: 1.338360","date: 2019-05-01<br />.value: 1.203838","date: 2019-06-01<br />.value: 1.175444","date: 2019-07-01<br />.value: 1.462769","date: 2019-08-01<br />.value: 1.509561","date: 2019-09-01<br />.value: 1.602708","date: 2019-10-01<br />.value: 1.505025","date: 2019-11-01<br />.value: 1.498666","date: 2019-12-01<br />.value: 1.293908","date: 2020-01-01<br />.value: 1.260929","date: 2020-02-01<br />.value: 1.148879","date: 2020-03-01<br />.value: 1.270003","date: 2020-04-01<br />.value: 1.117000","date: 2020-05-01<br />.value: 1.234634","date: 2020-06-01<br />.value: 1.046866","date: 2020-07-01<br />.value: 1.078123"],"type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(44,62,80,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.762557077625573,"r":7.3059360730593621,"b":25.570776255707766,"l":34.337899543379002},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724},"title":{"text":"Wind, average","font":{"color":"rgba(44,62,80,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"date","autorange":true,"range":["2010-07-11","2020-12-21"],"tickmode":"auto","ticktext":["2012","2014","2016","2018","2020"],"tickvals":[15340,16071,16801,17532,18262],"categoryorder":"array","categoryarray":["2012","2014","2016","2018","2020"],"nticks":null,"ticks":"outside","tickcolor":"rgba(204,204,204,1)","ticklen":3.6529680365296811,"tickwidth":0.22139200221392005,"showticklabels":true,"tickfont":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.22139200221392005,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":true,"range":[0.99733893265326812,2.0869406581918399],"tickmode":"auto","ticktext":["1.00","1.25","1.50","1.75","2.00"],"tickvals":[1,1.25,1.5,1.75,2],"categoryorder":"array","categoryarray":["1.00","1.25","1.50","1.75","2.00"],"nticks":null,"ticks":"outside","tickcolor":"rgba(204,204,204,1)","ticklen":3.6529680365296811,"tickwidth":0.22139200221392005,"showticklabels":true,"tickfont":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(204,204,204,1)","gridwidth":0.22139200221392005,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(44,62,80,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(44,62,80,1)","width":0.33208800332088001,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(44,62,80,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"4babb688c65fe":{"x":{},"y":{},"type":"scatter"}},"cur_data":"4babb688c65fe","visdat":{"4babb688c65fe":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="join-data" class="level2">
+<h2 class="anchored" data-anchor-id="join-data">Join data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(<span class="at">x =</span> dengue_rj, <span class="at">y =</span> tmax, <span class="at">by =</span> <span class="st">"date"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(prec, <span class="at">by =</span> <span class="st">"date"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(prec_avg, <span class="at">by =</span> <span class="st">"date"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(rh, <span class="at">by =</span> <span class="st">"date"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(wind, <span class="at">by =</span> <span class="st">"date"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, <span class="at">cases =</span> freq, tmax, prec, rh, wind)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="decision-tree" class="level2">
+<h2 class="anchored" data-anchor-id="decision-tree">Decision tree</h2>
+<section id="prepare-data" class="level3">
+<h3 class="anchored" data-anchor-id="prepare-data">Prepare data</h3>
+<ul>
+<li><p>Remove date</p></li>
+<li><p>Lag variables: 6 months</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>res_prep <span class="ot">&lt;-</span> res <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>date) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tk_augment_lags</span>(<span class="at">.value =</span> <span class="fu">c</span>(tmax, prec, wind, rh), <span class="at">.lags =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="parameters" class="level3">
+<h3 class="anchored" data-anchor-id="parameters">Parameters</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>tree_spec <span class="ot">&lt;-</span> <span class="fu">decision_tree</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="fit-model" class="level2">
+<h2 class="anchored" data-anchor-id="fit-model">Fit model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> tree_spec <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(cases <span class="sc">~</span> ., <span class="at">data =</span> res_prep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fit1 <span class="sc">%&gt;%</span> <span class="fu">extract_fit_engine</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rpart.plot</span>(<span class="at">roundint =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="dengue_weather_lag_reg_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(fit1, <span class="at">new_data =</span> res_prep) <span class="sc">%&gt;%</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mae</span>(<span class="at">truth =</span> cases, <span class="at">estimate =</span> .pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  .metric .estimator .estimate
+  &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+1 mae     standard       1256.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(fit1, <span class="at">new_data =</span> res_prep) <span class="sc">%&gt;%</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(cases, .pred) <span class="sc">%&gt;%</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">t =</span> <span class="fu">row_number</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">"cases"</span>, <span class="st">".pred"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> t, <span class="at">y =</span> value, <span class="at">color =</span> name)) <span class="sc">+</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="dengue_weather_lag_reg_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fit1 <span class="sc">%&gt;%</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_engine</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="dengue_weather_lag_reg_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    if (id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        for (let i = 0; i < 2; i++) {
+          container.appendChild(note.children[i].cloneNode(true));
+        }
+        return container.innerHTML
+      } else {
+        return note.innerHTML;
+      }
+    } else {
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      try { hash = new URL(url).hash; } catch {}
+      const id = hash.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note !== null) {
+        try {
+          const html = processXRef(id, note);
+          instance.setContent(html);
+        } finally {
+          instance.enable();
+          instance.show();
+        }
+      } else {
+        // See if we can fetch this
+        fetch(url.split('#')[0])
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.getElementById(id);
+          if (note !== null) {
+            const html = processXRef(id, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../dengue-model/dengue_weather_lag_class.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Dengue and weather lags, classification task</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../software.html" class="pagination-link">
+        <span class="nav-page-text">Software</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Website made with <a href="https://quarto.org/">Quarto</a>, by Raphael Saldanha.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Inria | LNCC | PCDaS</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

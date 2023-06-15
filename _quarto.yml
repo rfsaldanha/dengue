@@ -28,6 +28,8 @@ website:
         file: weather_data.qmd
       - text: "Cluster analysis"
         file: cluster_analysis.qmd
+      - text: "Modeling"
+        file: dengue_model.qmd
       - text: "Software"
         file: software.qmd
       - text: "Publications"
@@ -56,6 +58,11 @@ website:
               - dengue-cluster/cluster_mun_year.qmd
               - dengue-cluster/cluster_mun_year_cumulative.qmd
               - dengue-cluster/cluster_mun_year_epi_year.qmd
+        - section: "Modeling"
+          contents: 
+              - dengue_model.qmd
+              - dengue-model/dengue_weather_lag_class.qmd
+              - dengue-model/dengue_weather_lag_reg.qmd
         - software.qmd
         - section: "Presentations"
           contents: 

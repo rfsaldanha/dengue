@@ -4,7 +4,7 @@ files_dirs <- list(
   "parquet_aggregated" = "dengue-data/parquet_aggregated/",
   "parquet_classification" = "dengue-data/parquet_classification/",
   "parquet_improved" = "dengue-data/parquet_improved/",
-  "parquets" = "dengue-data/parquets/"
+  "parquets" = "dengue-data/parquets/",
 )
 
 temp_dir <- tempdir()

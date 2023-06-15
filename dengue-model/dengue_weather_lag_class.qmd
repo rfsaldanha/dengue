@@ -1,0 +1,183 @@
+---
+title: "Dengue and weather lags, classification task"
+author: Raphael Saldanha
+date: now
+---
+
+## Packages
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(arrow)
+library(timetk)
+library(rpart.plot)
+library(vip)
+```
+
+## Dengue data
+
+### Subset and aggregate
+
+Rio de Janeiro, RJ, aggregated by month.
+
+```{r}
+dengue_rj <- open_dataset("../dengue-data/parquet_aggregated/dengue_md.parquet") %>%
+  filter(mun == 330455) %>%
+  collect() %>%
+  summarise_by_time(.date_var = date, .by = "month", freq = sum(freq, na.rm = TRUE))
+```
+
+```{r}
+plot_time_series(.data = dengue_rj, .date_var = date, .value = freq, .smooth = FALSE, .title = "Dengue, absolute number of cases")
+```
+
+## Classify
+
+```{r}
+plot_anomaly_diagnostics(.data = dengue_rj, .date_var = date, .value = freq, .alpha = 0.10, .max_anomalies = 1, .legend_show = FALSE)
+```
+
+```{r}
+dengue_rj_anom <- tk_anomaly_diagnostics(.data = dengue_rj, .date_var = date, .value = freq, .alpha = 0.10, .max_anomalies = 1) %>%
+  select(date, anomaly) %>%
+  mutate(anomaly = as.factor(anomaly))
+```
+
+```{r}
+dengue_rj <- inner_join(dengue_rj, dengue_rj_anom) 
+```
+
+```{r}
+prop.table(table(dengue_rj$anomaly))
+```
+
+## Weather data
+
+```{r}
+tmax <- open_dataset(sources = "../weather-data/parquet/brdwgd/tmax.parquet") %>%
+  filter(code_muni == 3304557) %>%
+  filter(name == "Tmax_mean") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue_rj$date) & date <= max(dengue_rj$date)) %>%
+  summarise_by_time(.date_var = date, .by = "month", value = mean(value, na.rm = TRUE)) %>%
+  rename(tmax = value)
+
+prec <- open_dataset(sources = "../weather-data/parquet/brdwgd/pr.parquet") %>%
+  filter(code_muni == 3304557) %>%
+  filter(name == "pr_sum") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue_rj$date) & date <= max(dengue_rj$date)) %>%
+  summarise_by_time(.date_var = date, .by = "month", value = sum(value, na.rm = TRUE)) %>%
+  rename(prec = value)
+
+prec_avg <- open_dataset(sources = "../weather-data/parquet/brdwgd/pr.parquet") %>%
+  filter(code_muni == 3304557) %>%
+  filter(name == "pr_mean") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue_rj$date) & date <= max(dengue_rj$date)) %>%
+  summarise_by_time(.date_var = date, .by = "month", value = mean(value, na.rm = TRUE)) %>%
+  rename(prec_avg = value)
+
+rh <- open_dataset(sources = "../weather-data/parquet/brdwgd/rh.parquet") %>%
+  filter(code_muni == 3304557) %>%
+  filter(name == "RH_mean") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue_rj$date) & date <= max(dengue_rj$date)) %>%
+  summarise_by_time(.date_var = date, .by = "month", value = mean(value, na.rm = TRUE)) %>%
+  rename(rh = value)
+
+wind <- open_dataset(sources = "../weather-data/parquet/brdwgd/u2.parquet") %>%
+  filter(code_muni == 3304557) %>%
+  filter(name == "u2_mean") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue_rj$date) & date <= max(dengue_rj$date)) %>%
+  summarise_by_time(.date_var = date, .by = "month", value = mean(value, na.rm = TRUE)) %>%
+  rename(wind = value)
+```
+
+```{r}
+plot_time_series(.data = tmax, .date_var = date, .value = tmax, .smooth = FALSE, .title = "Max temp, average")
+```
+
+```{r}
+plot_time_series(.data = prec, .date_var = date, .value = prec, .smooth = FALSE, .title = "Precipitation, sum")
+```
+
+```{r}
+plot_time_series(.data = prec_avg, .date_var = date, .value = prec_avg, .smooth = FALSE, .title = "Precipitation, average")
+```
+
+```{r}
+plot_time_series(.data = rh, .date_var = date, .value = rh, .smooth = FALSE, .title = "Relative humidity, average")
+```
+
+```{r}
+plot_time_series(.data = wind, .date_var = date, .value = wind, .smooth = FALSE, .title = "Wind, average")
+```
+
+## Join data
+
+```{r}
+res <- inner_join(x = dengue_rj, y = tmax, by = "date") %>%
+  inner_join(prec, by = "date") %>%
+  inner_join(prec_avg, by = "date") %>%
+  inner_join(rh, by = "date") %>%
+  inner_join(wind, by = "date") %>%
+  select(date, anomaly, tmax, prec, rh, wind)
+```
+
+## Decision tree
+
+### Prepare data
+
+-   Remove date
+
+-   Lag variables: 12 months
+
+```{r}
+res_prep <- res %>%
+  select(-date) %>%
+  tk_augment_lags(.value = c(tmax, prec, rh, wind), .lags = 1:6)
+```
+
+### Parameters
+
+```{r}
+tree_spec <- decision_tree() %>%
+  set_engine("rpart") %>%
+  set_mode("classification")
+```
+
+## Fit model
+
+```{r}
+fit1 <- tree_spec %>%
+  fit(anomaly ~ ., data = res_prep, model = TRUE)
+```
+
+```{r}
+fit1 %>% extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+```
+
+```{r}
+augment(fit1, new_data = res_prep) %>%
+    conf_mat(truth = anomaly, estimate = .pred_class)
+```
+
+```{r}
+augment(fit1, new_data = res_prep) %>%
+    accuracy(truth = anomaly, estimate = .pred_class)
+```
+
+```{r}
+fit1 %>% 
+  extract_fit_engine() %>% 
+  vip()
+```
