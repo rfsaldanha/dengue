@@ -32,6 +32,8 @@ website:
         file: software.qmd
       - text: "Presentations"
         file: presentations.qmd
+      - text: "Publications"
+        file: publications.qmd
   
   sidebar:
       collapse-level: 1
@@ -58,6 +60,7 @@ website:
           contents: 
               - presentations.qmd
               - presentations/presentation_test.qmd
+        - publications.qmd
   
 format:
   html:
