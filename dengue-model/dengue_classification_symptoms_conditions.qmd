@@ -12,13 +12,15 @@ library(arrow)
 library(knitr)
 library(lubridate)
 library(tidymodels)
-library(rpart.plot)
+library(finetune)
+library(tictoc)
 library(vip)
 ```
 
 ## Data
 
 ```{r}
+# Data sources
 files_list <- c(
   "../dengue-data/parquets/dengue_2016.parquet",
   "../dengue-data/parquets/dengue_2017.parquet",
@@ -28,55 +30,133 @@ files_list <- c(
   "../dengue-data/parquets/dengue_2021.parquet"
 )
 
-x_vars <- c("FEBRE", "MIALGIA", "CEFALEIA", "EXANTEMA",
-         "VOMITO", "NAUSEA", "DOR_COSTAS", "CONJUNTVIT", 
-         "ARTRITE", "ARTRALGIA", "PETEQUIA_N", "LEUCOPENIA", 
-         "LACO", "DOR_RETRO", "DIABETES", "HEMATOLOG", "HEPATOPAT",
-         "HEPATOPAT", "RENAL", "HIPERTENSA", "ACIDO_PEPT",
-         "AUTO_IMUNE")
+# Independent variables
+x_vars <- c("FEBRE", "MIALGIA", "CEFALEIA", 
+            "EXANTEMA", "VOMITO", "NAUSEA", 
+            "DOR_COSTAS", "CONJUNTVIT", 
+            "ARTRITE", "ARTRALGIA", "PETEQUIA_N", 
+            "LEUCOPENIA", "LACO", "DOR_RETRO", 
+            "DIABETES", "HEMATOLOG", "HEPATOPAT", 
+            "HEPATOPAT", "RENAL", "HIPERTENSA",
+            "ACIDO_PEPT", "AUTO_IMUNE")
 
+# Prepare data
 dengue <- arrow::open_dataset(sources = files_list) %>%
-  select(all_of(c("CLASSI_FIN", x_vars))) %>%
+  # Select variables
+  select(all_of(c("CLASSI_FIN", "DT_SIN_PRI", x_vars))) %>%
+  # Filter out "Inconclusivo" cases
   filter(CLASSI_FIN != "Inconclusivo") %>%
+  # Collect data from parquet files
   collect() %>%
+  # Prepare variables
+  mutate(CLASSI_FIN = case_when(
+    CLASSI_FIN != "Descartado" ~ TRUE,
+    .default = FALSE
+  )) %>%
   mutate(CLASSI_FIN = as.factor(CLASSI_FIN)) %>%
-  mutate_at(.vars = x_vars, .funs = ~ . == "Sim")
+  mutate(DT_SIN_PRI = as_date(DT_SIN_PRI)) %>%
+  mutate_at(.vars = x_vars, .funs = ~ . == "Sim") 
 ```
 
-## Model
+```{r}
+# Smaller dataset for tests
+dengue <- sample_n(dengue, 50000)
+```
 
-### Parameters
+## Modeling
+
+### Train and test dataset split
 
 ```{r}
-tree_spec <- decision_tree() %>%
-  set_engine("rpart") %>%
+set.seed(123)
+
+dengue_split <- dengue %>%
+  initial_split(strata = CLASSI_FIN)
+
+dengue_train <- training(dengue_split)
+dengue_test <- testing(dengue_split)
+
+set.seed(234)
+dengue_folds <- vfold_cv(dengue_train, strata = CLASSI_FIN)
+```
+
+### Recipe
+
+```{r}
+dengue_rec <- 
+  recipe(CLASSI_FIN ~ . , data = dengue) %>%
+  step_date(DT_SIN_PRI, features = c("month", "week", "semester", "quarter"), keep_original_cols = FALSE) %>%
+  step_integer(all_predictors())
+```
+
+### XGB Specification
+
+```{r}
+xgb_spec <-
+  boost_tree(
+    trees = tune(),
+    min_n = tune(),
+    mtry = tune(),
+    learn_rate = 0.01
+  ) %>%
+  set_engine("xgboost") %>%
   set_mode("classification")
 ```
 
-### Fit model
+### Workflow
 
 ```{r}
-fit1 <- tree_spec %>%
-  fit(CLASSI_FIN ~ ., data = sample_n(dengue, 10000) , model = TRUE)
+xgb_wf <- workflow(dengue_rec, xgb_spec)
+```
+
+### Tuning
+
+```{r}
+doParallel::registerDoParallel()
+
+set.seed(345)
+
+tic()
+xgb_rs <- tune_race_anova(
+  xgb_wf,
+  resamples = dengue_folds,
+  grid = 15,
+  control = control_race(verbose_elim = TRUE)
+)
+toc()
+```
+
+#### Race metrics
+
+```{r}
+collect_metrics(xgb_rs)
 ```
 
 ```{r}
-fit1 %>% extract_fit_engine() %>%
-  rpart.plot(roundint = FALSE)
+plot_race(xgb_rs)
+```
+
+### Last fit
+
+```{r}
+xgb_last <- xgb_wf %>%
+  finalize_workflow(select_best(xgb_rs, "accuracy")) %>%
+  last_fit(dengue_split)
+```
+
+### Evaluate on test
+
+```{r}
+collect_metrics(xgb_last)
 ```
 
 ```{r}
-# augment(fit1, new_data = res_prep) %>%
-#     conf_mat(truth = anomaly, estimate = .pred_class)
+collect_predictions(xgb_last) %>%
+    conf_mat(CLASSI_FIN, .pred_class)
 ```
 
 ```{r}
-# augment(fit1, new_data = res_prep) %>%
-#     accuracy(truth = anomaly, estimate = .pred_class)
-```
-
-```{r}
-# fit1 %>% 
-#   extract_fit_engine() %>% 
-#   vip()
+xgb_last %>%
+  extract_fit_engine() %>%
+  vip()
 ```
