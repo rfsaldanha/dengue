@@ -1,5 +1,6 @@
 ---
-title: "Dengue case classification and symptons"
+title: "Dengue case classification"
+subtitle: "by symptoms and clinical condition"
 author: Raphael Saldanha
 date: now
 ---
@@ -60,7 +61,7 @@ dengue <- arrow::open_dataset(sources = files_list) %>%
 
 ```{r}
 # Smaller dataset for tests
-dengue <- sample_n(dengue, 50000)
+dengue <- sample_n(dengue, 100000)
 ```
 
 ## Modeling
@@ -80,18 +81,18 @@ set.seed(234)
 dengue_folds <- vfold_cv(dengue_train, strata = CLASSI_FIN)
 ```
 
-### Recipe
+### Recipes
 
 ```{r}
-dengue_rec <- 
-  recipe(CLASSI_FIN ~ . , data = dengue) %>%
+dengue_rec_1 <- 
+  recipe(CLASSI_FIN ~ . , data = dengue_train) %>%
   step_date(DT_SIN_PRI, features = c("month", "week", "semester", "quarter"), keep_original_cols = FALSE) %>%
   step_integer(all_predictors())
 ```
 
 ### Specifications
 
-#### SGB
+#### XGB
 
 ```{r}
 xgb_spec <-
@@ -122,7 +123,7 @@ cart_spec <-
 ```{r}
 all_workflows <- 
   workflow_set(
-    preproc = list(recipe = dengue_rec),
+    preproc = list(recipe_1 = dengue_rec_1),
     models = list(xgb = xgb_spec, cart = cart_spec)
   )
 ```
@@ -155,7 +156,9 @@ toc()
 #### Race metrics
 
 ```{r}
-rank_results(race_results, rank_metric = "roc_auc")
+train_rank_results <- rank_results(race_results, rank_metric = "roc_auc")
+
+train_rank_results
 ```
 
 ```{r}
@@ -165,8 +168,17 @@ autoplot(race_results, metric = "roc_auc")
 ### Last fit
 
 ```{r}
+selection_train <- train_rank_results %>%
+  arrange(-mean) %>%
+  pull(wflow_id) %>%
+  first()
+
+selection_train
+```
+
+```{r}
 best_results <- race_results %>%
-  extract_workflow_set_result("recipe_xgb") %>%
+  extract_workflow_set_result(selection_train) %>%
   select_best("accuracy")
 
 best_results
@@ -174,7 +186,7 @@ best_results
 
 ```{r}
 last_fit <- race_results %>%
-  extract_workflow("recipe_xgb") %>%
+  extract_workflow(selection_train) %>%
   finalize_workflow(best_results) %>%
   last_fit(dengue_split)
 ```
@@ -194,4 +206,10 @@ collect_predictions(last_fit) %>%
 last_fit %>%
   extract_fit_engine() %>%
   vip()
+```
+
+## Session info
+
+```{r}
+sessionInfo()
 ```

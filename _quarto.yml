@@ -63,6 +63,7 @@ website:
               - dengue_model.qmd
               - dengue-model/dengue_weather_lag_class.qmd
               - dengue-model/dengue_weather_lag_reg.qmd
+              - dengue-model/dengue_classification_symptoms_conditions_multi.qmd
         - software.qmd
         - section: "Presentations"
           contents: 
