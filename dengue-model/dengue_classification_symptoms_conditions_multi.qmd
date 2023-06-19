@@ -85,10 +85,17 @@ dengue_folds <- vfold_cv(dengue_train, strata = CLASSI_FIN)
 ### Recipes
 
 ```{r}
+# All variables
 dengue_rec_1 <- 
   recipe(CLASSI_FIN ~ . , data = dengue_train) %>%
   step_date(DT_SIN_PRI, features = c("month", "week", "semester", "quarter"), keep_original_cols = FALSE) %>%
   step_integer(all_predictors())
+```
+
+```{r}
+# Without municipality code
+dengue_rec_2 <- dengue_rec_1 %>%
+  step_rm(COMUNINF)
 ```
 
 ### Specifications
@@ -124,7 +131,7 @@ cart_spec <-
 ```{r}
 all_workflows <- 
   workflow_set(
-    preproc = list(recipe_1 = dengue_rec_1),
+    preproc = list(recipe_1 = dengue_rec_1, recipe_2 = dengue_rec_2),
     models = list(xgb = xgb_spec, cart = cart_spec)
   )
 ```
