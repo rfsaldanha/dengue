@@ -381,7 +381,9 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   <li><a href="#sbd-method" id="toc-sbd-method" class="nav-link" data-scroll-target="#sbd-method">SBD method</a></li>
   <li><a href="#cluster-validity-indices-cvi" id="toc-cluster-validity-indices-cvi" class="nav-link" data-scroll-target="#cluster-validity-indices-cvi">Cluster Validity Indices (CVI)</a></li>
   <li><a href="#cluster-with-higher-silhouette-statistic" id="toc-cluster-with-higher-silhouette-statistic" class="nav-link" data-scroll-target="#cluster-with-higher-silhouette-statistic">Cluster with higher Silhouette statistic</a></li>
+  <li><a href="#cluster-sizes" id="toc-cluster-sizes" class="nav-link" data-scroll-target="#cluster-sizes">Cluster sizes</a></li>
   </ul></li>
+  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info">Session info</a></li>
   </ul>
 </nav>
     </div>
@@ -534,43 +536,49 @@ The following object is masked from 'package:dplyr':
 argument.</code></pre>
 </div>
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(tdengue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2952</code></pre>
+</div>
+</div>
 </section>
 </section>
 <section id="clustering" class="level2">
 <h2 class="anchored" data-anchor-id="clustering">Clustering</h2>
 <p>Sequence of <code>k</code> groups to be used.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>k_seq <span class="ot">&lt;-</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>k_seq <span class="ot">&lt;-</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="sbd-method" class="level3">
 <h3 class="anchored" data-anchor-id="sbd-method">SBD method</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">tsclust</span>(</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">series =</span> tdengue, </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"partitional"</span>, </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> k_seq,</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance =</span> <span class="st">"sbd"</span>,</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">13</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">tsclust</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">series =</span> tdengue, </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"partitional"</span>, </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> k_seq,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance =</span> <span class="st">"sbd"</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">13</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>29.499 sec elapsed</code></pre>
+<pre><code>30.198 sec elapsed</code></pre>
 </div>
 </div>
 </section>
 <section id="cluster-validity-indices-cvi" class="level3">
 <h3 class="anchored" data-anchor-id="cluster-validity-indices-cvi">Cluster Validity Indices (CVI)</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(clust) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"k_"</span>, k_seq)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>res_cvi <span class="ot">&lt;-</span> <span class="fu">sapply</span>(clust, cvi, <span class="at">type =</span> <span class="st">"internal"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">"k"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>Sil)</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>res_cvi <span class="sc">%&gt;%</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(clust) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"k_"</span>, k_seq)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>res_cvi <span class="ot">&lt;-</span> <span class="fu">sapply</span>(clust, cvi, <span class="at">type =</span> <span class="st">"internal"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">"k"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>Sil)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>res_cvi <span class="sc">%&gt;%</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
@@ -676,23 +684,117 @@ argument.</code></pre>
 <section id="cluster-with-higher-silhouette-statistic" class="level3">
 <h3 class="anchored" data-anchor-id="cluster-with-higher-silhouette-statistic">Cluster with higher Silhouette statistic</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>sel_clust <span class="ot">&lt;-</span> clust[[res_cvi[[<span class="dv">1</span>,<span class="dv">1</span>]]]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sel_clust <span class="ot">&lt;-</span> clust[[res_cvi[[<span class="dv">1</span>,<span class="dv">1</span>]]]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sel_clust)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="cluster_long_scaled_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sel_clust, <span class="at">type =</span> <span class="st">"centroids"</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sel_clust)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="cluster_long_scaled_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-
-
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">"cluster_long_scaled.pdf"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sel_clust, <span class="at">type =</span> <span class="st">"centroids"</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_long_scaled_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 </section>
+<section id="cluster-sizes" class="level3">
+<h3 class="anchored" data-anchor-id="cluster-sizes">Cluster sizes</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sel_clust<span class="sc">@</span>cluster)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   1    2    3 
+2457   54  441 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="session-info" class="level2">
+<h2 class="anchored" data-anchor-id="session-info">Session info</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.1.2 (2021-11-01)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 22.04.2 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0
+LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0
+
+Random number generation:
+ RNG:     L'Ecuyer-CMRG 
+ Normal:  Inversion 
+ Sample:  Rejection 
+ 
+locale:
+ [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] tictoc_1.2       kableExtra_1.3.4 dtwclust_5.5.12  dtw_1.23-1      
+ [5] proxy_0.4-27     timetk_2.8.3     arrow_12.0.1     lubridate_1.9.2 
+ [9] forcats_1.0.0    stringr_1.5.0    dplyr_1.1.2      purrr_1.0.1     
+[13] readr_2.1.4      tidyr_1.3.0      tibble_3.2.1     ggplot2_3.4.2   
+[17] tidyverse_2.0.0 
+
+loaded via a namespace (and not attached):
+  [1] colorspace_2.1-0    ellipsis_0.3.2      class_7.3-20       
+  [4] modeltools_0.2-23   clue_0.3-64         rstudioapi_0.14    
+  [7] farver_2.1.1        listenv_0.9.0       furrr_0.3.1        
+ [10] dials_1.2.0         ggrepel_0.9.3       bit64_4.0.5        
+ [13] RSpectra_0.16-1     prodlim_2023.03.31  fansi_1.0.4        
+ [16] xml2_1.3.4          codetools_0.2-18    splines_4.1.2      
+ [19] knitr_1.43          jsonlite_1.8.5      workflows_1.1.3    
+ [22] anytime_0.3.9       cluster_2.1.2       yardstick_1.2.0    
+ [25] shiny_1.7.4         tune_1.1.1          httr_1.4.6         
+ [28] compiler_4.1.2      assertthat_0.2.1    Matrix_1.5-4.1     
+ [31] fastmap_1.1.1       cli_3.6.1           later_1.3.1        
+ [34] htmltools_0.5.5     tools_4.1.2         gtable_0.3.3       
+ [37] glue_1.6.2          reshape2_1.4.4      Rcpp_1.0.10        
+ [40] DiceDesign_1.9      vctrs_0.6.3         svglite_2.1.1      
+ [43] iterators_1.0.14    parsnip_1.1.0       timeDate_4022.108  
+ [46] gower_1.0.1         xfun_0.39           globals_0.16.2     
+ [49] rvest_1.0.3         timechange_0.2.0    mime_0.12          
+ [52] lifecycle_1.0.3     future_1.32.0       MASS_7.3-55        
+ [55] zoo_1.8-12          scales_1.2.1        ipred_0.9-14       
+ [58] ragg_1.2.5          hms_1.1.3           promises_1.2.0.1   
+ [61] parallel_4.1.2      yaml_2.3.7          padr_0.6.2         
+ [64] rpart_4.1.16        stringi_1.7.12      highr_0.10         
+ [67] foreach_1.5.2       lhs_1.1.6           hardhat_1.3.0      
+ [70] lava_1.7.2.1        systemfonts_1.0.4   rlang_1.1.1        
+ [73] pkgconfig_2.0.3     rsample_1.1.1       evaluate_0.21      
+ [76] lattice_0.20-45     labeling_0.4.2      recipes_1.0.6      
+ [79] htmlwidgets_1.6.2   bit_4.0.5           tidyselect_1.2.0   
+ [82] parallelly_1.36.0   plyr_1.8.8          magrittr_2.0.3     
+ [85] R6_2.5.1            generics_0.1.3      pillar_1.9.0       
+ [88] withr_2.5.0         xts_0.13.1          survival_3.2-13    
+ [91] nnet_7.3-17         future.apply_1.11.0 utf8_1.2.3         
+ [94] tzdb_0.4.0          rmarkdown_2.22      grid_4.1.2         
+ [97] flexclust_1.4-1     data.table_1.14.8   webshot_0.5.4      
+[100] digest_0.6.31       xtable_1.8-4        httpuv_1.6.11      
+[103] textshaping_0.3.6   RcppParallel_5.1.7  stats4_4.1.2       
+[106] GPfit_1.0-8         munsell_0.5.0       viridisLite_0.4.2  
+[109] shinyjs_2.1.0      </code></pre>
+</div>
+</div>
+
+
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->

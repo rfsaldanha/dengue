@@ -66,6 +66,10 @@ tdengue <- dengue %>%
   tslist()
 ```
 
+```{r}
+length(tdengue)
+```
+
 ## Clustering
 
 Sequence of `k` groups to be used.
@@ -113,5 +117,21 @@ plot(sel_clust)
 ```
 
 ```{r}
+ggsave(filename = "cluster_long_scaled.pdf")
+```
+
+```{r}
 plot(sel_clust, type = "centroids", lty = 1)
+```
+
+### Cluster sizes
+
+```{r}
+table(sel_clust@cluster)
+```
+
+## Session info
+
+```{r}
+sessionInfo()
 ```

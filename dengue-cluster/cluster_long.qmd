@@ -35,7 +35,7 @@ The chunk bellow executes various steps to prepare the data for clustering.
 ```{r}
 tdengue <- dengue %>%
   # Filter out dates after 2020-01-01, as this year is not complete
-  filter(date <= as.Date("2020-01-01")) %>%
+  filter(date < as.Date("2020-01-01")) %>%
   # Pad days with zero cases
   group_by(mun) %>%
   pad_by_time(date, .by = "day", .pad_value = 0, .start_date = min(dengue$date), .end_date = max(dengue$date)) %>%
@@ -61,6 +61,10 @@ tdengue <- dengue %>%
   t() %>%
   # Convert object
   tslist()
+```
+
+```{r}
+length(tdengue)
 ```
 
 ## Clustering
@@ -110,5 +114,21 @@ plot(sel_clust)
 ```
 
 ```{r}
+ggsave(filename = "cluster_long.pdf")
+```
+
+```{r}
 plot(sel_clust, type = "centroids", lty = 1)
+```
+
+### Cluster sizes
+
+```{r}
+table(sel_clust@cluster)
+```
+
+## Session info
+
+```{r}
+sessionInfo()
 ```
