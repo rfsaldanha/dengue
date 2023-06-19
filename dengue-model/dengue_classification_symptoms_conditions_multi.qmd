@@ -44,7 +44,7 @@ x_vars <- c("FEBRE", "MIALGIA", "CEFALEIA",
 # Prepare data
 dengue <- arrow::open_dataset(sources = files_list) %>%
   # Select variables
-  select(all_of(c("CLASSI_FIN", "DT_SIN_PRI", x_vars))) %>%
+  select(all_of(c("CLASSI_FIN", "COMUNINF", "DT_SIN_PRI", x_vars))) %>%
   # Filter out "Inconclusivo" cases
   filter(CLASSI_FIN != "Inconclusivo") %>%
   # Collect data from parquet files
@@ -56,6 +56,7 @@ dengue <- arrow::open_dataset(sources = files_list) %>%
   )) %>%
   mutate(CLASSI_FIN = as.factor(CLASSI_FIN)) %>%
   mutate(DT_SIN_PRI = as_date(DT_SIN_PRI)) %>%
+  mutate(COMUNINF = as.factor(COMUNINF)) %>%
   mutate_at(.vars = x_vars, .funs = ~ . == "Sim") 
 ```
 
