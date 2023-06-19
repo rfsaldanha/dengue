@@ -134,6 +134,10 @@ ggsave(filename = "cluster_mun_year.pdf")
 plot(sel_clust, type = "centroids", lty = 1)
 ```
 
+```{r}
+ggsave(filename = "cluster_mun_year_centr.pdf")
+```
+
 ### Cluster sizes
 
 ```{r}
