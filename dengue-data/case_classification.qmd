@@ -1,17 +1,16 @@
 ---
 title: "Case classification analysis"
 author: Raphael Saldanha
-date: last-modified
+date: now
 ---
 
-This is a descriptive report about dengue case classification and used criteria.
+## Context
 
-Input: dengue suspected cases parquet files.
+This report presents a description report about dengue case classification and criteria.
 
 ## Packages
 
 ```{r}
-#| message: false
 library(tidyverse)
 library(arrow)
 library(knitr)
@@ -20,10 +19,8 @@ library(lubridate)
 
 ## Load data
 
-Here we will load the dengue suspected cases parquet files, selecting some variables and sub-setting the records in a specified date interval.
-
 ```{r}
-important_vars <- c("DT_SIN_PRI", "SOROTIPO", "CLASSI_FIN", "CRITERIO")
+important_vars <- c("DT_SIN_PRI", "RESUL_SORO", "SOROTIPO", "CLASSI_FIN", "CRITERIO")
 
 valid_interval <- interval(ymd("2011-01-01"), ymd("2021-12-31"))
 
@@ -34,16 +31,6 @@ dengue <- open_dataset(sources = "parquets/") %>%
   filter(DT_SIN_PRI %within% valid_interval) %>%
   filter(CLASSI_FIN != "6")
 ```
-
-::: callout-note
-DT_SIN_PRI: Date of first symptoms onset.
-
-SOROTIPO: Dengue virus identification (DEN 1, 2, 3, or 4)
-
-CLASSI_FIN: Final classification of the suspected case: confirmed dengue case with classification or discarded suspected case.
-
-CRITERIO: Which criteria was used to classify the case. Laboratorial exam, clinical examination, or ongoing investigation.
-:::
 
 ## Final classification and criteria
 
@@ -62,6 +49,7 @@ dengue_classifications <- c("Febre hemorrágica do dengue", "Síndrome do choque
   "Dengue clássico", "Dengue com complicações", "Dengue",
   "Dengue grave")
 ```
+
 
 ```{r}
 dengue_cases_classification <- dengue %>% 
@@ -105,6 +93,8 @@ dengue %>%
   summarise(freq = n()) %>%
   ungroup()
 ```
+
+
 
 ## Session info
 

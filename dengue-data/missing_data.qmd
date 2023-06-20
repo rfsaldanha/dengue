@@ -1,19 +1,18 @@
 ---
 title: "Missing data analysis"
 author: Raphael Saldanha
-date: last-modified
+date: now
 ---
 
-This report presents a missing data analysis from the suspected dengue cases parquet files.
+## Context
+
+This report presents a missing data analysis from the raw parquet files.
 
 Considering the high number of variables, this report will use a subset of the most relevant ones for this research.
-
-Input: dengue suspected cases parquet files.
 
 ## Packages
 
 ```{r}
-#| message: false
 library(tidyverse)
 library(arrow)
 library(naniar)

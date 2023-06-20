@@ -1,12 +1,12 @@
 ---
 title: "Building and Selecting Specialized AI Models for Predicting Dengue Disease"
 sidebar: false
+back-to-top-navigation: false
 ---
 
 ------------------------------------------------------------------------
 
-This website presents working in progress research on dengue and machine learning, as part of my postdoc at Inria (Montpellier, France) and LNCC (Petrópolis, Brazil).\
-\
+This website presents working in progress research on dengue and machine learning, as part of my Postdoctoral researcher position at Inria (Montpellier, France) and LNCC (Petrópolis, Brazil). \
 \
 
 ```{r}
@@ -20,13 +20,14 @@ arrow::read_parquet(file = "dengue-data/parquet_classification/dengue_cases_clas
   geom_bar() +
   scale_fill_hue(direction = 1) +
   scale_y_continuous(labels = scales::comma) +
+  labs(fill = "Classificação") +
   theme_minimal() +
   theme(legend.position = "bottom") +
-  labs(title = "Suspected dengue cases notification in Brazil", x = "Month of first symptom's onset", y = "Records", fill = "Suspected case")
+  labs(title = "Suspected dengue cases notification in Brazil", x = "Month of first symptom's onset", y = "Records", fill = "Classification")
 ```
 
 \
 
 ::: {style="text-align: center;"}
-![](images/inr_logo_rouge.png){width="200"} ![](images/MARCACOMPLETA_LNCC_HORIZONTAL_FINAL_PNG_azul.png){width="200"}
+[![](images/inr_logo_rouge.png){width="200"}](https://www.inria.fr) [![](images/MARCACOMPLETA_LNCC_HORIZONTAL_FINAL_PNG_azul.png){width="200"}](https://www.gov.br/lncc)
 :::

@@ -1,7 +1,7 @@
 ---
 title: "Long time series (scaled)"
 author: Raphael Saldanha
-date: last-modified
+date: now
 ---
 
 This notebook aims to cluster the Brazilian municipalities considering dengue cases time-series similarities.
@@ -9,7 +9,6 @@ This notebook aims to cluster the Brazilian municipalities considering dengue ca
 ## Packages
 
 ```{r}
-#| message: false
 library(tidyverse)
 library(lubridate)
 library(arrow)
