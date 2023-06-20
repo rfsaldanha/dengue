@@ -1,16 +1,19 @@
 ---
 title: "Imputation"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
 
-## Context
-
 This notebook aims to imputate some missing data and enrich the dataset.
+
+Input: dengue suspected cases parquet files.
+
+Output: improved suspected cases parquet single file.
 
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(arrow)
 library(knitr)

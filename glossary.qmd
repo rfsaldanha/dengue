@@ -1,0 +1,14 @@
+---
+title: "Glossary"
+---
+
+SUS
+
+:   Sistema Único de Saúde. Brazilian Universal Health System.
+
+DataSUS
+
+:   Departamento de Informática do SUS. IT departament from SUS.
+
+SINAN
+: Sistema de Informação de Agravos de Notificação. Health information system where a list of selected diseases and health issues are promptly notified to the health authorities.

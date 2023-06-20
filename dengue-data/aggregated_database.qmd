@@ -1,19 +1,21 @@
 ---
 title: "Export aggregated database"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
 
-## Context
-
-This notebook aims to create a database with aggregated counts of positive dengue cases for spatial and time units.
+This notebook aims to create a database with aggregated counts of positive dengue cases for specific spatial and time units.
 
 The aggregation will be on municipalities and time will be date and epidemiological week.
 
+Input: improved suspected cases parquet file.
+
+Output: parquet files with aggregated counts of confirmed dengue cases by municipality of residence, date and epidemiological week.
 
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(arrow)
 library(lubridate)
@@ -40,7 +42,6 @@ dengue <- dengue %>%
 
 tally(dengue)
 ```
-
 
 ## Filter positive cases of dengue
 

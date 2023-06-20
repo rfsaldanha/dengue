@@ -1,12 +1,17 @@
 ---
-title: "Dengue and weather lags, classification task"
+title: "Classification task"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
+
+This notebook aims to investigate the relationship between weather variables and dengue cases in different time lags in a classification task.
+
+Initially, the Rio de Janeiro, RJ municipality is examined.
 
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(tidymodels)
 library(arrow)
@@ -32,7 +37,9 @@ dengue_rj <- open_dataset("../dengue-data/parquet_aggregated/dengue_md.parquet")
 plot_time_series(.data = dengue_rj, .date_var = date, .value = freq, .smooth = FALSE, .title = "Dengue, absolute number of cases")
 ```
 
-## Classify
+### Classify
+
+Based on the nominal dengue incidence, we will classify the incidence as outbreak or normal levels. For this, an time series anomaly detection algorithm was applied.
 
 ```{r}
 plot_anomaly_diagnostics(.data = dengue_rj, .date_var = date, .value = freq, .alpha = 0.10, .max_anomalies = 1, .legend_show = FALSE)
@@ -53,6 +60,8 @@ prop.table(table(dengue_rj$anomaly))
 ```
 
 ## Weather data
+
+Load weather data and subset to the selected municipality and time period.
 
 ```{r}
 tmax <- open_dataset(sources = "../weather-data/parquet/brdwgd/tmax.parquet") %>%
@@ -122,6 +131,8 @@ plot_time_series(.data = wind, .date_var = date, .value = wind, .smooth = FALSE,
 ```
 
 ## Join data
+
+Joins the dengue incidence classification and weather variables.
 
 ```{r}
 res <- inner_join(x = dengue_rj, y = tmax, by = "date") %>%

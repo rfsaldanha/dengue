@@ -268,22 +268,33 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
  <span class="menu-text">Overview</span></a>
   </div>
 </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">Dengue and lagged weather variables</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dengue-model/dengue_weather_lag_class.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Dengue and weather lags, classification task</span></a>
+ <span class="menu-text">Classification task</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dengue-model/dengue_weather_lag_reg.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Dengue and weather lags, regression task</span></a>
+ <span class="menu-text">Regression task</span></a>
   </div>
 </li>
+      </ul>
+  </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dengue-model/dengue_classification_symptoms_conditions_multi.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Dengue case classification</span></a>
+ <span class="menu-text">Predict dengue diagnose</span></a>
   </div>
 </li>
       </ul>
@@ -296,13 +307,13 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
  <span class="menu-text">Presentations</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./presentations.html" class="sidebar-item-text sidebar-link">
@@ -329,7 +340,14 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#dengue-and-lagged-weather-variables" id="toc-dengue-and-lagged-weather-variables" class="nav-link active" data-scroll-target="#dengue-and-lagged-weather-variables">Dengue and lagged weather variables</a></li>
+  <li><a href="#predict-dengue-diagnose-by-symptoms-and-clinical-conditions" id="toc-predict-dengue-diagnose-by-symptoms-and-clinical-conditions" class="nav-link" data-scroll-target="#predict-dengue-diagnose-by-symptoms-and-clinical-conditions">Predict dengue diagnose by symptoms and clinical conditions</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -352,8 +370,17 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </header>
 
 <p>In this section there are notebooks for dengue modelling.</p>
+<section id="dengue-and-lagged-weather-variables" class="level2">
+<h2 class="anchored" data-anchor-id="dengue-and-lagged-weather-variables">Dengue and lagged weather variables</h2>
+<p>The goal is to investigate the relationship between weather variables and dengue cases in different time lags. Despite applying a decision tree algorithm, the focus is to examine how concurrent lags of weather variables impacts dengue cases incidence and not the overall model predictive performance.</p>
+<p>The classification task notebook classify dengue incidence as outbreak and normal level by using an anomaly regression algorithm. The regression task notebook uses directly the dengue incidence count.</p>
+</section>
+<section id="predict-dengue-diagnose-by-symptoms-and-clinical-conditions" class="level2">
+<h2 class="anchored" data-anchor-id="predict-dengue-diagnose-by-symptoms-and-clinical-conditions">Predict dengue diagnose by symptoms and clinical conditions</h2>
+<p>The objective is to predict dengue diagnosis solely on patient symptoms and clinical conditions.</p>
 
 
+</section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -660,7 +687,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
   <div class="nav-page nav-page-next">
       <a href="./dengue-model/dengue_weather_lag_class.html" class="pagination-link">
-        <span class="nav-page-text">Dengue and weather lags, classification task</span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text">Classification task</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

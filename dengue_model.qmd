@@ -3,3 +3,13 @@ title: "Overview"
 ---
 
 In this section there are notebooks for dengue modelling.
+
+## Dengue and lagged weather variables
+
+The goal is to investigate the relationship between weather variables and dengue cases in different time lags. Despite applying a decision tree algorithm, the focus is to examine how concurrent lags of weather variables impacts dengue cases incidence and not the overall model predictive performance.
+
+The classification task notebook classify dengue incidence as outbreak and normal level by using an anomaly regression algorithm. The regression task notebook uses directly the dengue incidence count.
+
+## Predict dengue diagnose by symptoms and clinical conditions
+
+The objective is to predict dengue diagnosis solely on patient symptoms and clinical conditions.

@@ -1,8 +1,12 @@
 ---
-title: "Dengue and weather lags, regression task"
+title: "Regression task"
 author: Raphael Saldanha
 date: now
 ---
+
+This notebook aims to investigate the relationship between weather variables and dengue cases in different time lags in a regression task.
+
+Initially, the Rio de Janeiro, RJ municipality is examined.
 
 ## Packages
 
@@ -33,6 +37,8 @@ plot_time_series(.data = dengue_rj, .date_var = date, .value = freq, .smooth = F
 ```
 
 ## Weather data
+
+Load weather data and subset to the selected municipality and time period.
 
 ```{r}
 tmax <- open_dataset(sources = "../weather-data/parquet/brdwgd/tmax.parquet") %>%
@@ -102,6 +108,8 @@ plot_time_series(.data = wind, .date_var = date, .value = wind, .smooth = FALSE,
 ```
 
 ## Join data
+
+Joins the dengue incidence and weather variables.
 
 ```{r}
 res <- inner_join(x = dengue_rj, y = tmax, by = "date") %>%
