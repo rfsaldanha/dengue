@@ -1,0 +1,16 @@
+{
+  "hash": "916b1b3fe26845c2ff1a85a8f24de77c",
+  "result": {
+    "markdown": "---\ntitle: \"Socio economic data\"\nauthor: Raphael Saldanha\ndate: last-modified\n---\n\n\n## Packages\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(tidyverse)\nlibrary(janitor)\nlibrary(arrow)\n```\n:::\n\n\n## HDI\n\n\n::: {.cell}\n\n```{.r .cell-code}\nhdi <- read_delim(\n  file = \"../socioeconomic-data/idhm.csv\",\n  delim = \",\", locale=locale(decimal_mark = \".\"), \n  na = \"-\",\n  col_types = cols(\n    CD_GEOCMU = col_character(),\n    Município = col_character(),\n    CodEstado = col_character(),\n    Estado = col_character(),\n    IDHM1991 = col_double(),\n    IDHMR1991 = col_double(),\n    IDHML1991 = col_double(),\n    IDHME1991 = col_double(),\n    R1991 = col_double(),\n    IDHM2000 = col_double(),\n    IDHMR2000 = col_double(),\n    IDHML2000 = col_double(),\n    IDHME2000 = col_double(),\n    R2000 = col_double(),\n    IDHM2010 = col_double(),\n    IDHMR2010 = col_double(),\n    IDHML2010 = col_double(),\n    IDHME2010 = col_double(),\n    R2010 = col_double(),\n    NM_MUNNICIP = col_character()\n  )\n) %>%\n  clean_names() %>%\n  rename(code_muni = cd_geocmu, name_muni = municipio, code_uf = cod_estado, uf = estado) %>%\n  select(-nm_munnicip) %>%\n  mutate(code_muni = substr(code_muni, 0, 6))\n```\n:::\n\n\n## Export\n\n\n::: {.cell}\n\n```{.r .cell-code}\nwrite_parquet(x = hdi, sink = \"hdi.parquet\")\n```\n:::\n",
+    "supporting": [
+      "socioeconomic_data_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -26,6 +26,8 @@ website:
         file: dengue_data.qmd
       - text: "Weather data"
         file: weather_data.qmd
+      - text: "Socioeconomic data"
+        file: socioeconomic-data/socioeconomic_data.qmd
       - text: "Cluster analysis"
         file: cluster_analysis.qmd
       - text: "Modeling"
@@ -34,6 +36,8 @@ website:
         file: software.qmd
       - text: "Publications"
         file: publications.qmd
+      - text: "Exported data"
+        file: export-data/exported_data.qmd  
       - text: "Presentations"
         file: presentations.qmd
 
@@ -50,6 +54,7 @@ website:
             - dengue-data/imputation.qmd
             - dengue-data/aggregated_database.qmd
         - weather_data.qmd
+        - socioeconomic-data/socioeconomic_data.qmd
         - section: "Cluster analysis"
           contents: 
             - cluster_analysis.qmd
@@ -67,11 +72,13 @@ website:
                 - dengue-model/dengue_weather_lag_reg.qmd
             - dengue-model/dengue_classification_symptoms_conditions_multi.qmd
         - software.qmd
+        - publications.qmd
+        - export-data/exported_data.qmd  
         - section: "Presentations"
           contents: 
             - presentations.qmd
             - presentations/presentation_test.qmd
-        - publications.qmd
+        
   
 format:
   html:

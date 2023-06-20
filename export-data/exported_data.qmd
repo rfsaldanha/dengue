@@ -1,0 +1,176 @@
+---
+title: "Exported data"
+author: Raphael Saldanha
+date: last-modified
+---
+
+## Packages
+
+```{r}
+#| message: false
+library(tidyverse)
+library(lubridate)
+library(arrow)
+library(timetk)
+library(brpop)
+library(piggyback)
+```
+
+## Dengue data
+
+Total number of confirmed dengue cases, aggregated per municipality of residence and week of the first symptom's onset.
+
+```{r}
+dengue <- read_parquet("../dengue-data/parquet_aggregated/dengue_md.parquet") %>%
+  group_by(mun) %>%
+  summarise_by_time(.date_var = date, .by = "week", freq = sum(freq, na.rm = TRUE)) %>%
+  ungroup() %>%
+  rename(cases = freq)
+```
+
+## Population
+
+Estimated municipality population per year.
+
+```{r}
+pop <- mun_pop_totals() %>%
+  filter(year %in% seq(year(min(dengue$date)), year(max(dengue$date)))) %>%
+  mutate(mun = as.character(mun))
+```
+
+## Human Development Index
+
+```{r}
+hdi <- read_parquet("../socioeconomic-data/hdi.parquet") %>%
+  select(code_muni, hdi2010 = idhm2010)
+```
+
+## Weather data
+
+Weather indicators estimated by using zonal statistics of the territorial area of the municipality.
+
+### Precipitation
+
+Total estimated precipitation, per municipality and week, in millimeter.
+
+```{r}
+prec <- open_dataset(sources = "../weather-data/parquet/brdwgd/pr.parquet") %>%
+  filter(name == "pr_sum") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue$date) & date <= max(dengue$date)) %>%
+  summarise_by_time(.date_var = date, .by = "week", value = sum(value, na.rm = TRUE)) %>%
+  rename(prec = value)
+```
+
+### Average maximun temperature
+
+Average of maximum temperatures, per municipality and week, in celsius.
+
+```{r}
+tmax <- open_dataset(sources = "../weather-data/parquet/brdwgd/tmax.parquet") %>%
+  filter(name == "Tmax_mean") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue$date) & date <= max(dengue$date)) %>%
+  summarise_by_time(.date_var = date, .by = "week", value = mean(value, na.rm = TRUE)) %>%
+  rename(tmax = value)
+```
+
+### Average minimum temperature
+
+Average of minimum temperatures, per municipality and week, in celsius.
+
+```{r}
+tmin <- open_dataset(sources = "../weather-data/parquet/brdwgd/tmin.parquet") %>%
+  filter(name == "Tmin_mean") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue$date) & date <= max(dengue$date)) %>%
+  summarise_by_time(.date_var = date, .by = "week", value = mean(value, na.rm = TRUE)) %>%
+  rename(tmin = value)
+```
+
+## Join data
+
+```{r}
+exp_data <- dengue %>%
+  mutate(dengue_year = year(date)) %>%
+  inner_join(pop, by = c("dengue_year" = "year", "mun")) %>%
+  select(-dengue_year) %>%
+  inner_join(hdi, by = c("mun" = "code_muni")) %>%
+  inner_join(prec, by = "date") %>%
+  inner_join(tmax, by = "date") %>%
+  inner_join(tmin, by = "date")
+```
+
+## Lag weather variables
+
+Lag one and two weeks.
+
+```{r}
+exp_data <- exp_data %>%
+  tk_augment_lags(.value = c(prec, tmax, tmin), .lags = 1:2)
+```
+
+## Overview
+
+```{r}
+glimpse(exp_data)
+```
+
+Municipalities count: `r length(unique(exp_data$mun))`
+
+## Export data
+
+```{r}
+exp_data %>% write_parquet(sink = "exp_data.parquet")
+```
+
+```{r}
+exp_data %>% write_csv(file = "exp_data.csv")
+zip::zip(zipfile = "exp_data.csv.zip", files = "exp_data.csv")
+unlink(x = "exp_data.csv")
+```
+
+## Data dictionary
+
+-   `mun` character. Municipality code with 6 digits
+
+-   `date` date. Date on format YYYY-MM-DD of the ceiling data of the week
+
+-   `cases` integer. Confirmed dengue cases count
+
+-   `pop` integer. Population estimation of the municipality
+
+-   `hdi2010` double. Human Development Index for 2010
+
+-   `prec` double. Total precipitation, mm
+
+-   `tmax` double. Average maximum temperature, Celsius
+
+-   `tmin` double. Average minimum temperature, Celsius
+
+-   `*_lag1` double. One week lagged variables
+
+-   `*_lag2` double. Two weeks lagged variables
+
+## Include on current GitHub release
+
+```{r}
+# Files list to upload
+files_list <- c("exp_data.parquet", "exp_data.csv.zip")
+
+# Upload files
+for(i in files_list){
+  pb_upload(file = i, repo = "rfsaldanha/dengue", overwrite = TRUE)
+}
+```
+
+Files `exp_data.parquet` and `exp_data.csv.zip` available on current release: <https://github.com/rfsaldanha/dengue/releases>
+
+## Session info
+
+```{r}
+sessionInfo()
+```

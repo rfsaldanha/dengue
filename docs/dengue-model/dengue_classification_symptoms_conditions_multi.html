@@ -146,6 +146,10 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
  <span class="menu-text">Weather data</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../socioeconomic-data/socioeconomic_data.html" rel="" target="">
+ <span class="menu-text">Socioeconomic data</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="../cluster_analysis.html" rel="" target="">
  <span class="menu-text">Cluster analysis</span></a>
   </li>  
@@ -160,6 +164,10 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   <li class="nav-item">
     <a class="nav-link" href="../publications.html" rel="" target="">
  <span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../export-data/exported_data.html" rel="" target="">
+ <span class="menu-text">Exported data</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../presentations.html" rel="" target="">
@@ -240,6 +248,12 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../weather_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Weather data</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../socioeconomic-data/socioeconomic_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Socio economic data</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -341,6 +355,18 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
  <span class="menu-text">Software</span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../publications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Publications</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../export-data/exported_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exported data</span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
@@ -364,12 +390,6 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </li>
       </ul>
   </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../publications.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Publications</span></a>
-  </div>
-</li>
     </ul>
     </div>
 </nav>
@@ -484,7 +504,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Smaller dataset for tests</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">sample_n</span>(dengue, <span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">sample_n</span>(dengue, <span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="modeling" class="level2">
@@ -597,7 +617,7 @@ i Creating pre-processing data to finalize unknown parameter: mtry</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>114.535 sec elapsed</code></pre>
+<pre><code>172.639 sec elapsed</code></pre>
 </div>
 </div>
 <section id="race-metrics" class="level4">
@@ -607,20 +627,20 @@ i Creating pre-processing data to finalize unknown parameter: mtry</code></pre>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>train_rank_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 84 × 9
+<pre><code># A tibble: 30 × 9
    wflow_id     .config     .metric  mean std_err     n preprocessor model  rank
    &lt;chr&gt;        &lt;chr&gt;       &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;        &lt;chr&gt; &lt;int&gt;
- 1 recipe_1_xgb Preprocess… accura… 0.597  0.0172    10 recipe       boos…     1
- 2 recipe_1_xgb Preprocess… roc_auc 0.642  0.0236    10 recipe       boos…     1
- 3 recipe_1_xgb Preprocess… accura… 0.597  0.0192    10 recipe       boos…     2
- 4 recipe_1_xgb Preprocess… roc_auc 0.639  0.0172    10 recipe       boos…     2
- 5 recipe_1_xgb Preprocess… accura… 0.596  0.0197    10 recipe       boos…     3
- 6 recipe_1_xgb Preprocess… roc_auc 0.637  0.0220    10 recipe       boos…     3
- 7 recipe_1_xgb Preprocess… accura… 0.590  0.0203    10 recipe       boos…     4
- 8 recipe_1_xgb Preprocess… roc_auc 0.637  0.0229    10 recipe       boos…     4
- 9 recipe_1_xgb Preprocess… accura… 0.594  0.0200    10 recipe       boos…     5
-10 recipe_1_xgb Preprocess… roc_auc 0.637  0.0217    10 recipe       boos…     5
-# ℹ 74 more rows</code></pre>
+ 1 recipe_1_xgb Preprocess… accura… 0.612 0.00467    10 recipe       boos…     1
+ 2 recipe_1_xgb Preprocess… roc_auc 0.625 0.00603    10 recipe       boos…     1
+ 3 recipe_1_xgb Preprocess… accura… 0.611 0.00383    10 recipe       boos…     2
+ 4 recipe_1_xgb Preprocess… roc_auc 0.624 0.00544    10 recipe       boos…     2
+ 5 recipe_1_xgb Preprocess… accura… 0.608 0.00355    10 recipe       boos…     3
+ 6 recipe_1_xgb Preprocess… roc_auc 0.623 0.00632    10 recipe       boos…     3
+ 7 recipe_1_xgb Preprocess… accura… 0.602 0.00417    10 recipe       boos…     4
+ 8 recipe_1_xgb Preprocess… roc_auc 0.623 0.00578    10 recipe       boos…     4
+ 9 recipe_1_xgb Preprocess… accura… 0.607 0.00354    10 recipe       boos…     5
+10 recipe_1_xgb Preprocess… roc_auc 0.623 0.00593    10 recipe       boos…     5
+# ℹ 20 more rows</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -654,7 +674,7 @@ i Creating pre-processing data to finalize unknown parameter: mtry</code></pre>
 <pre><code># A tibble: 1 × 4
    mtry trees min_n .config              
   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;                
-1    10  1190    16 Preprocessor1_Model07</code></pre>
+1     9   442    39 Preprocessor1_Model06</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -672,8 +692,8 @@ i Creating pre-processing data to finalize unknown parameter: mtry</code></pre>
 <pre><code># A tibble: 2 × 4
   .metric  .estimator .estimate .config             
   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-1 accuracy binary         0.629 Preprocessor1_Model1
-2 roc_auc  binary         0.632 Preprocessor1_Model1</code></pre>
+1 accuracy binary         0.623 Preprocessor1_Model1
+2 roc_auc  binary         0.647 Preprocessor1_Model1</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -682,8 +702,8 @@ i Creating pre-processing data to finalize unknown parameter: mtry</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>          Truth
 Prediction FALSE TRUE
-     FALSE    61   39
-     TRUE     54   97</code></pre>
+     FALSE   343  217
+     TRUE    725 1215</code></pre>
 </div>
 </div>
 <div class="cell">
