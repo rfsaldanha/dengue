@@ -1,10 +1,8 @@
 ---
 title: "Missing data analysis"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
-
-## Context
 
 This report presents a missing data analysis from the raw parquet files.
 
@@ -13,6 +11,7 @@ Considering the high number of variables, this report will use a subset of the m
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(arrow)
 library(naniar)
