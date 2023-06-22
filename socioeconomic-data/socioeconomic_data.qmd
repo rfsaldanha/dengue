@@ -56,3 +56,8 @@ hdi <- read_delim(
 write_parquet(x = hdi, sink = "hdi.parquet")
 ```
 
+## Session info
+
+```{r}
+sessionInfo()
+```
