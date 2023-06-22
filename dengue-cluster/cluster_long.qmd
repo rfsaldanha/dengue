@@ -1,14 +1,15 @@
 ---
-title: "Long time series (not scaled)"
+title: "Raw cases"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
 
-This notebook aims to cluster the Brazilian municipalities considering dengue cases time-series similarities.
+This notebook aims to cluster the Brazilian municipalities considering dengue raw cases time-series similarities.
 
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(lubridate)
 library(arrow)

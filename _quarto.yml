@@ -58,11 +58,15 @@ website:
         - section: "Cluster analysis"
           contents: 
               - cluster_analysis.qmd
-              - dengue-cluster/cluster_long.qmd
-              - dengue-cluster/cluster_long_scaled.qmd
-              - dengue-cluster/cluster_mun_year.qmd
-              - dengue-cluster/cluster_mun_year_cumulative.qmd
-              - dengue-cluster/cluster_mun_year_epi_year.qmd
+              - section: "Long time series"
+                contents: 
+                    - dengue-cluster/cluster_long.qmd
+                    - dengue-cluster/cluster_long_scaled.qmd
+              - section: "Municipality/year time series"
+                contents:
+                    - dengue-cluster/cluster_mun_year.qmd
+                    - dengue-cluster/cluster_mun_year_cumulative.qmd
+                    - dengue-cluster/cluster_mun_year_epi_year.qmd
         - section: "Modeling"
           contents: 
               - dengue_model.qmd
@@ -94,4 +98,5 @@ format:
 
 editor: visual
 
-# published-title: "Last run"
+published-title: "Last run"
+date-format: "MMMM D, YYYY | HH:mm:ss Z"
