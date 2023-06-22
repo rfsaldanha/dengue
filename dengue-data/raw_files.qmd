@@ -1,14 +1,15 @@
 ---
 title: "Raw files"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
 
-This notebook presents the process of downloading SINAN Dengue raw data files from DataSUS, preprocessing steps using the `{microdatasus}` package and exporting the raw files to `parquet` files.
+This notebook presents the process of downloading SINAN Dengue raw data files from DataSUS, pre-processing steps using the `{microdatasus}` package and exporting the raw files to `parquet` files.
 
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 # remotes::install_github("rfsaldanha/microdatasus")
 library(microdatasus)
@@ -34,11 +35,11 @@ library(arrow)
 # }
 ```
 
+::: callout-warning
 This code chunk is commented to avoid unnecessary download again the raw DBC files from DataSUS.
+:::
 
-## Load
-
-After download, preprocessing and export, the parquet files are read to have a dimension of the size.
+## Overview
 
 ```{r}
 dengue <- open_dataset(sources = "parquets/")
