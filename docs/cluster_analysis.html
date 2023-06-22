@@ -241,13 +241,13 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dengue-cluster/cluster_long.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Long time series (not scaled)</span></a>
+ <span class="menu-text">Raw cases</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dengue-cluster/cluster_long_scaled.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Long time series (scaled)</span></a>
+ <span class="menu-text">Scaled cases</span></a>
   </div>
 </li>
       </ul>
@@ -264,19 +264,19 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dengue-cluster/cluster_mun_year.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Mun/year time series</span></a>
+ <span class="menu-text">Yearly time series</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dengue-cluster/cluster_mun_year_cumulative.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Mun/year time series, cumulative</span></a>
+ <span class="menu-text">Cumulative time series</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dengue-cluster/cluster_mun_year_epi_year.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Mun/epi year time series</span></a>
+ <span class="menu-text">Epi year time series</span></a>
   </div>
 </li>
       </ul>
@@ -405,7 +405,16 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#long-time-series" id="toc-long-time-series" class="nav-link active" data-scroll-target="#long-time-series">Long time series</a>
+  <ul class="collapse">
+  <li><a href="#municipalityyear-time-series" id="toc-municipalityyear-time-series" class="nav-link" data-scroll-target="#municipalityyear-time-series">Municipality/year time series</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -428,8 +437,16 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </header>
 
 <p>On this section there are notebooks that cluster municipalities time series of dengue cases with different strategies.</p>
+<section id="long-time-series" class="level2">
+<h2 class="anchored" data-anchor-id="long-time-series">Long time series</h2>
+<p>Clustering of full-size time series of each municipality.</p>
+<section id="municipalityyear-time-series" class="level3">
+<h3 class="anchored" data-anchor-id="municipalityyear-time-series">Municipality/year time series</h3>
+<p>Clustering of time-series of each municipality per year.</p>
 
 
+</section>
+</section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -673,7 +690,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
   <div class="nav-page nav-page-next">
       <a href="./dengue-cluster/cluster_long.html" class="pagination-link">
-        <span class="nav-page-text">Long time series (not scaled)</span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text">Raw cases</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
