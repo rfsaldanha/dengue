@@ -74,6 +74,7 @@ website:
               - section: "Dengue time series modelling"
                 contents:
                     - dengue-model/dengue_ts_data.qmd
+                    - dengue-model/dengue_ts_global_model.qmd
               
         - software.qmd
         - publications.qmd
