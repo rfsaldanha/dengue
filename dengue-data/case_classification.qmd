@@ -1,16 +1,15 @@
 ---
 title: "Case classification analysis"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
 
-## Context
-
-This report presents a description report about dengue case classification and criteria.
+This is a descriptive report about dengue case classification and criteria.
 
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(arrow)
 library(knitr)
@@ -49,7 +48,6 @@ dengue_classifications <- c("Febre hemorrágica do dengue", "Síndrome do choque
   "Dengue clássico", "Dengue com complicações", "Dengue",
   "Dengue grave")
 ```
-
 
 ```{r}
 dengue_cases_classification <- dengue %>% 
@@ -93,8 +91,6 @@ dengue %>%
   summarise(freq = n()) %>%
   ungroup()
 ```
-
-
 
 ## Session info
 

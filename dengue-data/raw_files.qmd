@@ -48,3 +48,9 @@ dengue <- open_dataset(sources = "parquets/")
 ```{r}
 dengue %>% glimpse()
 ```
+
+## Session info
+
+```{r}
+sessionInfo()
+```
