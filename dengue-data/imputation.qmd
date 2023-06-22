@@ -1,16 +1,15 @@
 ---
 title: "Imputation"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
 
-## Context
-
-This notebook aims to imputate some missing data and enrich the dataset.
+This notebook aims to impute some missing data and enrich the dataset.
 
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(arrow)
 library(knitr)
