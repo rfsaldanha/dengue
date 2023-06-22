@@ -1,14 +1,15 @@
 ---
-title: "Mun/year time series"
+title: "Yearly time series"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
 
-This notebook aims to cluster the Brazilian municipalities considering dengue cases time-series similarities.
+This notebook aims to cluster the Brazilian municipalities considering yearly dengue cases time-series similarities.
 
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(lubridate)
 library(arrow)

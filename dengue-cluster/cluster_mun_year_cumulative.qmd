@@ -1,14 +1,15 @@
 ---
-title: "Mun/year time series, cumulative"
+title: "Cumulative time series"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
 
-This notebook aims to cluster the Brazilian municipalities cumulative dengue cases time-series yearly by its similarities.
+This notebook aims to cluster the Brazilian municipalities cumulative yearly dengue cases time-series yearly by its similarities.
 
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(lubridate)
 library(arrow)

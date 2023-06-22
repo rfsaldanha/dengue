@@ -1,14 +1,15 @@
 ---
-title: "Mun/epi year time series"
+title: "Epi year time series"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
 
-This notebook aims to cluster the Brazilian municipalities cumulative dengue cases time-series yearly (starting on September) by its similarities.
+This notebook aims to cluster the Brazilian municipalities by epidemiological yearly dengue cases time-series yearly (starting on September) by its similarities.
 
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(lubridate)
 library(arrow)
