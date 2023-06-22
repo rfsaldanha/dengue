@@ -1,12 +1,15 @@
 ---
-title: "Dengue and weather lags, regression task"
+title: "Regression task"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
+
+This notebook models the relationship between dengue cases and weather variables using the nominal value of dengue cases.
 
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(tidymodels)
 library(arrow)
