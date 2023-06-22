@@ -1,0 +1,132 @@
+---
+title: "Data preparing"
+author: "Raphael Saldanha"
+date: last-modified
+---
+
+## Packages
+
+```{r}
+#| message: false
+library(tidyverse)
+library(arrow)
+library(brpop)
+library(tidymodels)
+library(timetk)
+```
+
+## Data
+
+### Dengue
+
+```{r}
+dengue <- read_parquet("../dengue-data/parquet_aggregated/dengue_md.parquet") %>%
+  group_by(mun) %>%
+  summarise_by_time(.date_var = date, .by = "week", freq = sum(freq, na.rm = TRUE)) %>%
+  ungroup() %>%
+  rename(cases = freq)
+```
+
+### Population
+
+```{r}
+pop <- mun_pop_totals() %>%
+  filter(year %in% seq(year(min(dengue$date)), year(max(dengue$date)))) %>%
+  mutate(mun = as.character(mun))
+```
+
+### Precipitation
+
+```{r}
+prec <- open_dataset(sources = "../weather-data/parquet/brdwgd/pr.parquet") %>%
+  filter(name == "pr_sum") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue$date) & date <= max(dengue$date)) %>%
+  summarise_by_time(.date_var = date, .by = "week", value = sum(value, na.rm = TRUE)) %>%
+  rename(prec = value)
+```
+
+### Average maximum temperature
+
+```{r}
+tmax <- open_dataset(sources = "../weather-data/parquet/brdwgd/tmax.parquet") %>%
+  filter(name == "Tmax_mean") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue$date) & date <= max(dengue$date)) %>%
+  summarise_by_time(.date_var = date, .by = "week", value = mean(value, na.rm = TRUE)) %>%
+  rename(tmax = value)
+```
+
+### Join data
+
+```{r}
+tdengue <- dengue %>%
+  mutate(dengue_year = year(date)) %>%
+  inner_join(pop, by = c("dengue_year" = "year", "mun")) %>%
+  select(-dengue_year) %>%
+  inner_join(prec, by = "date") %>%
+  inner_join(tmax, by = "date")
+
+rm(dengue, pop, prec, tmax)
+```
+
+### Cleaning and basic features
+
+```{r}
+tdengue <- tdengue %>%
+  # Remove municipalilities with zero population
+  filter(pop != 0) %>%
+  # Keep only municipalities series with more than 3000 cases total
+  group_by(mun) %>%
+  mutate(total = sum(cases, na.rm = TRUE)) %>%
+  ungroup() %>%
+  filter(total >= 3000) %>%
+  select(-total) %>%
+  # Compute dengue rate per population
+  mutate(cases = cases/pop*100000) %>%
+  # Remove population
+  select(-pop) %>%
+  # Round values
+mutate(across(c(cases, prec, tmax), ~ round(.x, digits = 2)))
+```
+
+Municipalities remaining at the dataset: `r length(unique(tdengue$mun))`
+
+### Standardize measures
+
+```{r}
+tdengue <- tdengue %>%
+  group_by(mun) %>%
+  mutate(across(c(cases, prec, tmax), ~ standardize_vec(.x, silent = TRUE))) %>%
+  ungroup()
+```
+
+### Lag and rolling lag variables
+
+```{r}
+tdengue <- tdengue %>%
+  group_by(mun) %>%
+  tk_augment_lags(.value = c(cases, prec, tmax), .lags = 1:12) %>%
+  tk_augment_slidify(
+    .value = contains("_lag"), 
+    .period = c(2, 3, 4, 6, 8, 12), 
+    .f = ~ mean(.x, na.rm = TRUE), 
+    .partial = TRUE,
+    .align   = "center"
+  ) %>%
+  ungroup()
+```
+
+## Overview
+
+```{r}
+glimpse(tdengue)
+```
+
+## Save result
+
+```{r}
+write_parquet(x = tdengue, sink = "tdengue.parquet")
+```

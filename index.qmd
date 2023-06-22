@@ -6,7 +6,7 @@ back-to-top-navigation: false
 
 ------------------------------------------------------------------------
 
-This website presents working in progress research on dengue and machine learning, as part of my Postdoctoral researcher position at Inria (Montpellier, France) and LNCC (Petrópolis, Brazil). \
+This website presents working in progress research on dengue and machine learning, as part of my Postdoctoral researcher position at Inria (Montpellier, France) and LNCC (Petrópolis, Brazil).\
 \
 
 ```{r}
