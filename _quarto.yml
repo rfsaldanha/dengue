@@ -22,12 +22,8 @@ website:
     left:
       - text: "Home"
         file: index.qmd
-      - text: "Dengue data"
+      - text: "Data"
         file: dengue_data.qmd
-      - text: "Weather data"
-        file: weather_data.qmd
-      - text: "Socioeconomic data"
-        file: socioeconomic-data/socioeconomic_data.qmd
       - text: "Cluster analysis"
         file: cluster_analysis.qmd
       - text: "Modeling"
@@ -45,16 +41,18 @@ website:
   sidebar:
       collapse-level: 1
       contents: 
-        - section: "Dengue data"
+        - section: "Data"
           contents: 
-            - dengue_data.qmd
-            - dengue-data/raw_files.qmd
-            - dengue-data/case_classification.qmd
-            - dengue-data/missing_data.qmd
-            - dengue-data/imputation.qmd
-            - dengue-data/aggregated_database.qmd
-        - weather_data.qmd
-        - socioeconomic-data/socioeconomic_data.qmd
+            - section: "Dengue data"
+              contents: 
+                - dengue_data.qmd
+                - dengue-data/raw_files.qmd
+                - dengue-data/case_classification.qmd
+                - dengue-data/missing_data.qmd
+                - dengue-data/imputation.qmd
+                - dengue-data/aggregated_database.qmd
+            - weather_data.qmd
+            - socioeconomic-data/socioeconomic_data.qmd
         - section: "Cluster analysis"
           contents: 
               - cluster_analysis.qmd
