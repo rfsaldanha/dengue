@@ -915,5 +915,54 @@
     "title": "Global Model",
     "section": "Session info",
     "text": "Session info\n\nsessionInfo()\n\nR version 4.1.2 (2021-11-01)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.2 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0\nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] rlang_1.1.1        ranger_0.15.1      tictoc_1.2         timetk_2.8.3      \n [5] modeltime_1.2.6    finetune_1.1.0     yardstick_1.2.0    workflowsets_1.0.1\n [9] workflows_1.1.3    tune_1.1.1         rsample_1.1.1      recipes_1.0.6     \n[13] parsnip_1.1.0      modeldata_1.1.0    infer_1.0.4        dials_1.2.0       \n[17] scales_1.2.1       broom_1.0.5        tidymodels_1.1.0   arrow_12.0.1      \n[21] lubridate_1.9.2    forcats_1.0.0      stringr_1.5.0      dplyr_1.1.2       \n[25] purrr_1.0.1        readr_2.1.4        tidyr_1.3.0        tibble_3.2.1      \n[29] ggplot2_3.4.2      tidyverse_2.0.0   \n\nloaded via a namespace (and not attached):\n [1] minqa_1.2.5         colorspace_2.1-0    ellipsis_0.3.2     \n [4] class_7.3-20        rstudioapi_0.14     listenv_0.9.0      \n [7] furrr_0.3.1         bit64_4.0.5         prodlim_2023.03.31 \n[10] fansi_1.0.4         codetools_0.2-18    splines_4.1.2      \n[13] doParallel_1.0.17   knitr_1.43          jsonlite_1.8.5     \n[16] nloptr_2.0.3        httr_1.4.6          compiler_4.1.2     \n[19] backports_1.4.1     lazyeval_0.2.2      assertthat_0.2.1   \n[22] Matrix_1.5-4.1      fastmap_1.1.1       cli_3.6.1          \n[25] htmltools_0.5.5     tools_4.1.2         gtable_0.3.3       \n[28] glue_1.6.2          Rcpp_1.0.10         DiceDesign_1.9     \n[31] vctrs_0.6.3         nlme_3.1-155        crosstalk_1.2.0    \n[34] iterators_1.0.14    timeDate_4022.108   gower_1.0.1        \n[37] xfun_0.39           globals_0.16.2      lme4_1.1-33        \n[40] timechange_0.2.0    lifecycle_1.0.3     future_1.32.0      \n[43] MASS_7.3-55         zoo_1.8-12          ipred_0.9-14       \n[46] hms_1.1.3           parallel_4.1.2      yaml_2.3.7         \n[49] StanHeaders_2.26.27 rpart_4.1.16        stringi_1.7.12     \n[52] foreach_1.5.2       lhs_1.1.6           hardhat_1.3.0      \n[55] boot_1.3-28         lava_1.7.2.1        pkgconfig_2.0.3    \n[58] evaluate_0.21       lattice_0.20-45     labeling_0.4.2     \n[61] htmlwidgets_1.6.2   bit_4.0.5           tidyselect_1.2.0   \n[64] parallelly_1.36.0   magrittr_2.0.3      R6_2.5.1           \n[67] generics_0.1.3      pillar_1.9.0        withr_2.5.0        \n[70] xts_0.13.1          survival_3.2-13     nnet_7.3-17        \n[73] future.apply_1.11.0 utf8_1.2.3          plotly_4.10.2      \n[76] tzdb_0.4.0          rmarkdown_2.22      grid_4.1.2         \n[79] data.table_1.14.8   digest_0.6.31       RcppParallel_5.1.7 \n[82] GPfit_1.0-8         munsell_0.5.0       viridisLite_0.4.2"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#building-and-selecting-specialized-ai-models-for-predicting-dengue-disease",
+    "href": "presentations/presentation_test.html#building-and-selecting-specialized-ai-models-for-predicting-dengue-disease",
+    "title": "Building and Selecting Specialized AI Models",
+    "section": "Building and Selecting Specialized AI Models for Predicting Dengue Disease",
+    "text": "Building and Selecting Specialized AI Models for Predicting Dengue Disease\n\nSALDANHA, Raphael\nAKBARINIA, Reza\nPENA, Eduardo\nRIBEIRO, Victor\nPORTO, Fabio"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#context",
+    "href": "presentations/presentation_test.html#context",
+    "title": "Building and Selecting Specialized AI Models",
+    "section": "Context",
+    "text": "Context\n\nRaphael SALDANHA: Degrees on Geography, Statistics, Public Health and Health Information\nPostdoc call from International Relations Department of Inria. Duration of 24 months (2023-2024)\nSupervisors: Prof. Reza Akbarinia (Inria) and Prof. Fabio Porto (LNCC)"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#motivation",
+    "href": "presentations/presentation_test.html#motivation",
+    "title": "Building and Selecting Specialized AI Models",
+    "section": "Motivation",
+    "text": "Motivation\n\nDengue, Zika, Chikungunya, and other arboviruses imposes a significant burden over populations health\nEndemic vector borne disease (Aedes mosquitoes)\nImpacts all geographic regions in Brazil, with its continental extension\nFollow spatial and seasonal trends"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#motivation-1",
+    "href": "presentations/presentation_test.html#motivation-1",
+    "title": "Building and Selecting Specialized AI Models",
+    "section": "Motivation",
+    "text": "Motivation\n\nPrediction of dengue cases may help local managers and health policies\nGeneral models tend to ignore the diversity of the territory\n\nDifferent or even contradictory predictors relationship with the outcome\nDengue transmission follows different rules, affected by climate and culture\n\nLocal models are basically restricted, not useful for different regions and dengue transmission regimes\nA single machine-learning model is not a good option due the Brazilian diversity"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#aproach",
+    "href": "presentations/presentation_test.html#aproach",
+    "title": "Building and Selecting Specialized AI Models",
+    "section": "Aproach",
+    "text": "Aproach\n\nSeparate Brazilian municipalities into clusters, maximizing their similarity regarding dengue transmissions and its covariate’s importance and signals\nTrain several ML models of different strategies for each cluster\nConsidering a query region r, select models with the best accuracy from related clusters to r, and ensemble the models into a single model, tailored for the specific region\nPredict cases using the ensemble model and compare its results with a baseline model trained with all data"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#problem-definition",
+    "href": "presentations/presentation_test.html#problem-definition",
+    "title": "Building and Selecting Specialized AI Models",
+    "section": "Problem definition",
+    "text": "Problem definition\n\nGiven : sets of models \\(M\\), trained for a set of regions \\(R\\)\nGoal: predict the propagation of Dengue for a query region \\(r (∉ R)\\) by choosing the best models from \\(M\\)"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#expected-results",
+    "href": "presentations/presentation_test.html#expected-results",
+    "title": "Building and Selecting Specialized AI Models",
+    "section": "Expected results",
+    "text": "Expected results\n\nMore precise predictions for regions, with data “closer” to the training data.\nParallelism in training models on different regions, less costs.\nReduce the impact of concep-drift models of the affected regions.\nProvide health managers with tools, predictions and scenarios adequate to different scales of health surveillance, preparedness and field action _ Contribute to public health policies formulation and implementation"
   }
 ]

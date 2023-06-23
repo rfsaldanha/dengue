@@ -1,12 +1,65 @@
 ---
-title: "Teste de apresentação"
-format: revealjs
+title: "Building and Selecting Specialized AI Models"
+subtitle: "for Predicting Dengue Disease"
+author: "Saldanha, Raphael et al"
+institute: "Inria, LNCC"
+format:
+  revealjs: 
+    theme: solarized
 ---
 
-## Isso é um teste
+## Building and Selecting Specialized AI Models for Predicting Dengue Disease
 
--   bla
+-   SALDANHA, Raphael
+-   AKBARINIA, Reza
+-   PENA, Eduardo
+-   RIBEIRO, Victor
+-   PORTO, Fabio
 
--   bla bla
+## Context
 
--   bla
+-   Raphael SALDANHA: Degrees on Geography, Statistics, Public Health and Health Information
+-   Postdoc call from International Relations Department of Inria. Duration of 24 months (2023-2024)
+-   Supervisors: Prof. Reza Akbarinia (Inria) and Prof. Fabio Porto (LNCC)
+
+## Motivation
+
+-   Dengue, Zika, Chikungunya, and other arboviruses imposes a significant burden over populations health
+-   Endemic vector borne disease (Aedes mosquitoes)
+-   Impacts all geographic regions in Brazil, with its continental extension
+-   Follow spatial and seasonal trends
+
+## Motivation
+
+-   Prediction of dengue cases may help local managers and health policies
+-   General models tend to ignore the diversity of the territory
+    -   Different or even contradictory predictors relationship with the outcome
+    -   Dengue transmission follows different rules, affected by climate and culture
+-   Local models are basically restricted, not useful for different regions and dengue transmission regimes
+-   A single machine-learning model is not a good option due the Brazilian diversity
+
+## Aproach
+
+-   Separate Brazilian municipalities into clusters, maximizing their similarity regarding dengue transmissions and its covariate's importance and signals
+-   Train several ML models of different strategies for each cluster
+-   Considering a query region r, select models with the best accuracy from related clusters to r, and ensemble the models into a single model, tailored for the specific region
+-   Predict cases using the ensemble model and compare its results with a baseline model trained with all data
+
+## Problem definition
+
+-   Given : sets of models $M$, trained for a set of regions $R$
+-   Goal: predict the propagation of Dengue for a query region $r (∉ R)$ by choosing the best models from $M$ 
+
+## Expected results
+
+-   More precise predictions for regions, with data "closer" to the training data.
+-   Parallelism in training models on different regions, less costs.
+-   Reduce the impact of concep-drift models of the affected regions.
+-   Provide health managers with tools, predictions and scenarios adequate to different scales of health surveillance, preparedness and field action
+_   Contribute to public health policies formulation and implementation
+
+
+
+
+
+

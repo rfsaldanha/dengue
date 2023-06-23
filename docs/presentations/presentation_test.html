@@ -10,7 +10,8 @@
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.4.150">
 
-  <title>Dengue AI - Teste de apresentação</title>
+  <meta name="author" content="Saldanha, Raphael et al">
+  <title>Dengue AI - Building and Selecting Specialized AI Models</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -334,18 +335,84 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Teste de apresentação</h1>
+  <h1 class="title">Building and Selecting Specialized AI Models</h1>
+  <p class="subtitle">for Predicting Dengue Disease</p>
 
 <div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Saldanha, Raphael et al 
+</div>
+        <p class="quarto-title-affiliation">
+            Inria, LNCC
+          </p>
+    </div>
 </div>
 
 </section>
-<section id="isso-é-um-teste" class="slide level2">
-<h2>Isso é um teste</h2>
+<section id="building-and-selecting-specialized-ai-models-for-predicting-dengue-disease" class="slide level2">
+<h2>Building and Selecting Specialized AI Models for Predicting Dengue Disease</h2>
 <ul>
-<li><p>bla</p></li>
-<li><p>bla bla</p></li>
-<li><p>bla</p></li>
+<li>SALDANHA, Raphael</li>
+<li>AKBARINIA, Reza</li>
+<li>PENA, Eduardo</li>
+<li>RIBEIRO, Victor</li>
+<li>PORTO, Fabio</li>
+</ul>
+</section>
+<section id="context" class="slide level2">
+<h2>Context</h2>
+<ul>
+<li>Raphael SALDANHA: Degrees on Geography, Statistics, Public Health and Health Information</li>
+<li>Postdoc call from International Relations Department of Inria. Duration of 24 months (2023-2024)</li>
+<li>Supervisors: Prof.&nbsp;Reza Akbarinia (Inria) and Prof.&nbsp;Fabio Porto (LNCC)</li>
+</ul>
+</section>
+<section id="motivation" class="slide level2">
+<h2>Motivation</h2>
+<ul>
+<li>Dengue, Zika, Chikungunya, and other arboviruses imposes a significant burden over populations health</li>
+<li>Endemic vector borne disease (Aedes mosquitoes)</li>
+<li>Impacts all geographic regions in Brazil, with its continental extension</li>
+<li>Follow spatial and seasonal trends</li>
+</ul>
+</section>
+<section id="motivation-1" class="slide level2">
+<h2>Motivation</h2>
+<ul>
+<li>Prediction of dengue cases may help local managers and health policies</li>
+<li>General models tend to ignore the diversity of the territory
+<ul>
+<li>Different or even contradictory predictors relationship with the outcome</li>
+<li>Dengue transmission follows different rules, affected by climate and culture</li>
+</ul></li>
+<li>Local models are basically restricted, not useful for different regions and dengue transmission regimes</li>
+<li>A single machine-learning model is not a good option due the Brazilian diversity</li>
+</ul>
+</section>
+<section id="aproach" class="slide level2">
+<h2>Aproach</h2>
+<ul>
+<li>Separate Brazilian municipalities into clusters, maximizing their similarity regarding dengue transmissions and its covariate’s importance and signals</li>
+<li>Train several ML models of different strategies for each cluster</li>
+<li>Considering a query region r, select models with the best accuracy from related clusters to r, and ensemble the models into a single model, tailored for the specific region</li>
+<li>Predict cases using the ensemble model and compare its results with a baseline model trained with all data</li>
+</ul>
+</section>
+<section id="problem-definition" class="slide level2">
+<h2>Problem definition</h2>
+<ul>
+<li>Given : sets of models <span class="math inline">\(M\)</span>, trained for a set of regions <span class="math inline">\(R\)</span></li>
+<li>Goal: predict the propagation of Dengue for a query region <span class="math inline">\(r (∉ R)\)</span> by choosing the best models from <span class="math inline">\(M\)</span></li>
+</ul>
+</section>
+<section id="expected-results" class="slide level2">
+<h2>Expected results</h2>
+<ul>
+<li>More precise predictions for regions, with data “closer” to the training data.</li>
+<li>Parallelism in training models on different regions, less costs.</li>
+<li>Reduce the impact of concep-drift models of the affected regions.</li>
+<li>Provide health managers with tools, predictions and scenarios adequate to different scales of health surveillance, preparedness and field action _ Contribute to public health policies formulation and implementation</li>
 </ul>
 
 <div class="footer footer-default">
