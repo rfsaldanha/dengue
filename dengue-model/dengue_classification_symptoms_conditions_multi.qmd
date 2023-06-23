@@ -2,18 +2,20 @@
 title: "Dengue case classification"
 subtitle: "by symptoms and clinical condition"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
 
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(arrow)
 library(knitr)
 library(lubridate)
 library(tidymodels)
 library(finetune)
+library(bonsai)
 library(tictoc)
 library(vip)
 ```
@@ -62,7 +64,7 @@ dengue <- arrow::open_dataset(sources = files_list) %>%
 
 ```{r}
 # Smaller dataset for tests
-dengue <- sample_n(dengue, 10000)
+dengue <- sample_n(dengue, 5000)
 ```
 
 ## Modeling
@@ -126,13 +128,28 @@ cart_spec <-
   set_mode("classification")
 ```
 
+#### LightGBM
+
+```{r}
+lgbm_spec <-
+  boost_tree(
+    trees = tune(),
+    min_n = tune(),
+    mtry = tune(),
+    tree_depth = tune(),
+    learn_rate = 0.01
+  ) %>% 
+  set_engine("lightgbm") %>% 
+  set_mode("classification")
+```
+
 ### Workflows
 
 ```{r}
 all_workflows <- 
   workflow_set(
     preproc = list(recipe_1 = dengue_rec_1, recipe_2 = dengue_rec_2),
-    models = list(xgb = xgb_spec, cart = cart_spec)
+    models = list(xgb = xgb_spec, cart = cart_spec, lgbm = lgbm_spec)
   )
 ```
 
@@ -141,12 +158,7 @@ all_workflows <-
 ```{r}
 doParallel::registerDoParallel()
 
-race_ctrl <-
-   control_race(
-      save_pred = TRUE,
-      parallel_over = "everything",
-      save_workflow = TRUE
-   )
+race_ctrl <- control_race(parallel_over = "everything")
 
 tic()
 race_results <- 
@@ -155,7 +167,7 @@ race_results <-
     "tune_race_anova",
     seed = 345,
     resamples = dengue_folds,
-    grid = 15,
+    grid = 10,
     control = race_ctrl
   )
 toc()
