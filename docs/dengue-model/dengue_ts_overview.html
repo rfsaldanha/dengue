@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Dengue AI - Software</title>
+<title>Dengue AI - Modeling overview</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +23,24 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./publications.html" rel="next">
-<link href="./dengue-model/dengue_ts_global_model.html" rel="prev">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../dengue-model/dengue_ts_data.html" rel="next">
+<link href="../dengue-model/dengue_classification_symptoms_conditions_multi.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -75,9 +75,12 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </script>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -87,7 +90,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Dengue AI</span>
     </a>
   </div>
@@ -98,35 +101,35 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html" rel="" target="">
+    <a class="nav-link" href="../index.html" rel="" target="">
  <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./dengue_data.html" rel="" target="" aria-current="page">
+    <a class="nav-link active" href="../dengue_data.html" rel="" target="" aria-current="page">
  <span class="menu-text">Data</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./cluster_analysis.html" rel="" target="">
+    <a class="nav-link" href="../cluster_analysis.html" rel="" target="">
  <span class="menu-text">Cluster analysis</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./dengue_model.html" rel="" target="">
+    <a class="nav-link" href="../dengue_model.html" rel="" target="">
  <span class="menu-text">Modeling</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./software.html" rel="" target="">
+    <a class="nav-link" href="../software.html" rel="" target="">
  <span class="menu-text">Software</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./publications.html" rel="" target="">
+    <a class="nav-link" href="../publications.html" rel="" target="">
  <span class="menu-text">Publications</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./export-data/exported_data.html" rel="" target="">
+    <a class="nav-link" href="../export-data/exported_data.html" rel="" target="">
  <span class="menu-text">Exported data</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./presentations.html" rel="" target="">
+    <a class="nav-link" href="../presentations.html" rel="" target="">
  <span class="menu-text">Presentations</span></a>
   </li>  
 </ul>
@@ -141,7 +144,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./software.html">Software</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dengue_model.html">Modeling</a></li><li class="breadcrumb-item"><a href="../dengue-model/dengue_ts_overview.html">Dengue time series modelling</a></li><li class="breadcrumb-item"><a href="../dengue-model/dengue_ts_overview.html">Modeling overview</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
     </div>
@@ -173,37 +176,37 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue_data.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Overview</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/raw_files.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-data/raw_files.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Raw files</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/case_classification.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-data/case_classification.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Case classification analysis</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/missing_data.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-data/missing_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Missing data analysis</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/imputation.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-data/imputation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Imputation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/aggregated_database.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-data/aggregated_database.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Export aggregated database</span></a>
   </div>
 </li>
@@ -211,13 +214,13 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./weather_data.html" class="sidebar-item-text sidebar-link">
+  <a href="../weather_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Weather data</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./socioeconomic-data/socioeconomic_data.html" class="sidebar-item-text sidebar-link">
+  <a href="../socioeconomic-data/socioeconomic_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Socio economic data</span></a>
   </div>
 </li>
@@ -234,7 +237,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./cluster_analysis.html" class="sidebar-item-text sidebar-link">
+  <a href="../cluster_analysis.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Overview</span></a>
   </div>
 </li>
@@ -249,13 +252,13 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_long.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_long.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Raw cases</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_long_scaled.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_long_scaled.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Scaled cases</span></a>
   </div>
 </li>
@@ -272,19 +275,19 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_mun_year.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_mun_year.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Yearly time series</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_mun_year_cumulative.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_mun_year_cumulative.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Cumulative time series</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_mun_year_epi_year.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_mun_year_epi_year.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Epi year time series</span></a>
   </div>
 </li>
@@ -294,16 +297,16 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true">
  <span class="menu-text">Modeling</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue_model.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue_model.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Overview</span></a>
   </div>
 </li>
@@ -318,13 +321,13 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-model/dengue_weather_lag_class.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-model/dengue_weather_lag_class.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Classification task</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-model/dengue_weather_lag_reg.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-model/dengue_weather_lag_reg.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Regression task</span></a>
   </div>
 </li>
@@ -332,34 +335,34 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-model/dengue_classification_symptoms_conditions_multi.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-model/dengue_classification_symptoms_conditions_multi.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Dengue case classification</span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true">
  <span class="menu-text">Dengue time series modelling</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-model/dengue_ts_overview.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-model/dengue_ts_overview.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Modeling overview</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-model/dengue_ts_data.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-model/dengue_ts_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Data preparing</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-model/dengue_ts_global_model.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-model/dengue_ts_global_model.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Global Model</span></a>
   </div>
 </li>
@@ -369,19 +372,19 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./software.html" class="sidebar-item-text sidebar-link active">
+  <a href="../software.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Software</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./publications.html" class="sidebar-item-text sidebar-link">
+  <a href="../publications.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Publications</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./export-data/exported_data.html" class="sidebar-item-text sidebar-link">
+  <a href="../export-data/exported_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Exported data</span></a>
   </div>
 </li>
@@ -396,13 +399,13 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./presentations.html" class="sidebar-item-text sidebar-link">
+  <a href="../presentations.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Overview</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./presentations/presentation_test.html" class="sidebar-item-text sidebar-link">
+  <a href="../presentations/presentation_test.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Teste de apresentação</span></a>
   </div>
 </li>
@@ -410,7 +413,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./publications.html" class="sidebar-item-text sidebar-link">
+  <a href="../publications.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Publications</span></a>
   </div>
 </li>
@@ -420,21 +423,14 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#brclimr" id="toc-brclimr" class="nav-link active" data-scroll-target="#brclimr"><code>brclimr</code></a></li>
-  <li><a href="#epifeat" id="toc-epifeat" class="nav-link" data-scroll-target="#epifeat"><code>epifeat</code></a></li>
-  </ul>
-</nav>
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Software</h1>
+<h1 class="title">Modeling overview</h1>
 </div>
 
 
@@ -449,18 +445,39 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 
 </header>
 
-<section id="brclimr" class="level2">
-<h2 class="anchored" data-anchor-id="brclimr"><code>brclimr</code></h2>
-<p>An R package to on-line access zonal statistics from weather indicators that were calculated for each municipality in Brazil using data from the BR-DWGD and TerraClimate projects.</p>
-<p>More details on <a href="https://rfsaldanha.github.io/brclimr" class="uri">https://rfsaldanha.github.io/brclimr</a></p>
-</section>
-<section id="epifeat" class="level2">
-<h2 class="anchored" data-anchor-id="epifeat"><code>epifeat</code></h2>
-<p>An R package to extract epidemiological features from cases time series.</p>
-<p>More details on <a href="https://github.com/rfsaldanha/happyfeat" class="uri">https://github.com/rfsaldanha/happyfeat</a></p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<pre class="mermaid mermaid-js">  flowchart TD
+    Y0[Dengue data] --&gt; | Filter municipalities \n with 100k inhab| Y[Subset dengue data]
+    X1[Weather data]
+    X2[Other covariates]
+    X1 --&gt; A[Dataset]
+    X2 --&gt; A
+    Y --&gt; B[Clustering algorithm \n assign k partitions] 
+    B --&gt; |Add cluster ID \n variable| A
+    A --&gt; A2[Time lag \n outcome and predictors]
+    A2 --&gt; |Drop date variable| D{Split}
+    D --&gt; E[Train dataset]
+    D --&gt; F[Test dataset]
+    E --&gt; G[Global model \n specification]
+    G --&gt; |Drop \ncluster ID| H[Tune hyperparameters]
+    E --&gt; I[Subsets k  \nmodel specification]
+    I --&gt; |k models| H
+    H --&gt; J[Predict with \n global model training]
+    F --&gt; J
+    H --&gt; K[Predict with k \n subsets trainings]
+    F --&gt; K
+    J --&gt; L[Collect metrics for each municipality \n and compare models performance]
+    K --&gt; L
+</pre>
+</div>
+</div>
+</div>
+</div>
 
 
-</section>
 
 <a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -761,13 +778,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./dengue-model/dengue_ts_global_model.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Global Model</span>
+      <a href="../dengue-model/dengue_classification_symptoms_conditions_multi.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Dengue case classification</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./publications.html" class="pagination-link">
-        <span class="nav-page-text">Publications</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../dengue-model/dengue_ts_data.html" class="pagination-link">
+        <span class="nav-page-text">Data preparing</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

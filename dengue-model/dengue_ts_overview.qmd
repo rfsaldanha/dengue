@@ -1,0 +1,28 @@
+---
+title: "Modeling overview"
+---
+
+```{mermaid}
+  flowchart TD
+    Y0[Dengue data] --> | Filter municipalities \n with 100k inhab| Y[Subset dengue data]
+    X1[Weather data]
+    X2[Other covariates]
+    X1 --> A[Dataset]
+    X2 --> A
+    Y --> B[Clustering algorithm \n assign k partitions] 
+    B --> |Add cluster ID \n variable| A
+    A --> A2[Time lag \n outcome and predictors]
+    A2 --> |Drop date variable| D{Split}
+    D --> E[Train dataset]
+    D --> F[Test dataset]
+    E --> G[Global model \n specification]
+    G --> |Drop \ncluster ID| H[Tune hyperparameters]
+    E --> I[Subsets k  \nmodel specification]
+    I --> |k models| H
+    H --> J[Predict with \n global model training]
+    F --> J
+    H --> K[Predict with k \n subsets trainings]
+    F --> K
+    J --> L[Collect metrics for each municipality \n and compare models performance]
+    K --> L
+```
