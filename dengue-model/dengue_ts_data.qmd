@@ -69,27 +69,37 @@ tdengue <- dengue %>%
   inner_join(prec, by = "date") %>%
   inner_join(tmax, by = "date")
 
-rm(dengue, pop, prec, tmax)
+rm(dengue, prec, tmax)
 ```
 
 ### Cleaning and basic features
 
 ```{r}
+# List municipalities with moren than 100k inhab
+mun_vec <- pop %>%
+  filter(year == max(year)) %>%
+  filter(pop >= 100000) %>%
+  pull(mun)
+
+rm(pop)
+```
+
+```{r}
 tdengue <- tdengue %>%
   # Remove municipalilities with zero population
   filter(pop != 0) %>%
-  # Keep only municipalities series with more than 10000 cases total
-  group_by(mun) %>%
-  mutate(total = sum(cases, na.rm = TRUE)) %>%
-  ungroup() %>%
-  filter(total >= 10000) %>%
-  select(-total) %>%
+  # Keep only municipalities in the list
+   filter(mun %in% mun_vec) %>%
   # Compute dengue rate per population
   mutate(cases = cases/pop*100000) %>%
   # Remove population
   select(-pop) %>%
   # Round values
-mutate(across(c(cases, prec, tmax), ~ round(.x, digits = 2)))
+mutate(across(c(cases, prec, tmax), ~ round(.x, digits = 2))) %>%
+  # Pad months 
+  group_by(mun) %>%
+  pad_by_time(date, .by = "month", .pad_value = 0, .start_date = min(tdengue$date), .end_date = max(tdengue$date)) %>%
+  ungroup()
 ```
 
 Municipalities remaining at the dataset: `r length(unique(tdengue$mun))`
