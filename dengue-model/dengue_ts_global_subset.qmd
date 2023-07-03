@@ -1,0 +1,205 @@
+---
+title: "Global and subset models"
+author: "Raphael Saldanha"
+date: last-modified
+---
+
+Reference: https://blog.bguarisma.com/series/time-series-forecasting
+
+## Packages
+
+```{r}
+#| message: false
+library(tidyverse)
+library(arrow)
+library(tidymodels)
+library(finetune)
+library(modeltime)
+library(timetk)
+library(tictoc)
+```
+
+## Load data
+
+And remove rows with NAs
+
+```{r}
+tdengue <- read_parquet(file = "tdengue.parquet") %>%
+  drop_na()
+```
+
+## Cluster
+
+Assign random groups.
+
+::: callout-warning
+To use a cluster algorithm later.
+:::
+
+```{r}
+tdengue <- tdengue %>%
+  mutate(group = sample(x = 4, size = nrow(.), replace = TRUE))
+```
+
+## Train and test split
+
+```{r}
+tdengue_split <- tdengue %>%
+  time_series_split(
+    date_var = date, 
+    assess = 24,
+    cumulative = TRUE
+  )
+```
+
+## K-folds
+
+```{r}
+tdengue_split_folds <- training(tdengue_split) %>%
+  vfold_cv(v = 5)
+```
+
+## Recipes
+
+```{r}
+recipes_list <- list()
+```
+
+### Global
+
+Using data from all municipalities.
+
+```{r}
+recipe_global <- recipe(cases ~ ., data = training(tdengue_split)) %>%
+  step_rm(mun, group)
+
+recipes_list <- append(recipes_list, list(global = recipe_global))
+
+rm(recipe_global)
+```
+
+### Groups
+
+One recipe for each group, with data only from the group.
+
+```{r}
+for(g in unique(tdengue$group)){
+  tmp <- recipe(cases ~ ., data = training(tdengue_split)) %>%
+  step_filter(group == g) %>%
+  step_rm(mun, group)
+  
+  tmp <- list(tmp)
+  tmp <- setNames(tmp, paste0("g", g))
+  
+  recipes_list <- append(recipes_list, tmp)
+  
+  rm(tmp)
+}
+```
+
+## Models specification
+
+### Random forest
+
+```{r}
+rf_spec <- rand_forest(
+  trees = tune(),
+  min_n = tune()
+) %>%
+  set_engine("ranger") %>%
+  set_mode("regression")
+```
+
+### Decision tree
+
+```{r}
+dt_spec <- decision_tree() %>%
+  set_engine("rpart") %>%
+  set_mode("regression")
+```
+
+## Workflow set
+
+```{r}
+all_workflows <- workflow_set(
+  preproc = recipes_list, 
+  models = list(rf = rf_spec, dt = dt_spec), 
+  cross = TRUE
+)
+```
+
+## Tune
+
+```{r}
+doParallel::registerDoParallel()
+
+tic()
+race_results <- 
+  all_workflows %>%
+  workflow_map(
+    "tune_race_anova",
+    seed = 345,
+    resamples = tdengue_split_folds,
+    grid = 3,
+    control = control_race(parallel_over = "everything"),
+    verbose = TRUE
+  )
+toc()
+```
+
+## Fit train data
+
+For combination of each municipality, model and recipe.
+
+```{r}
+trained_models <- list()
+for(w in unique(race_results$wflow_id)){
+  best_tune <- race_results %>%
+    extract_workflow_set_result(w) %>%
+    select_best("rmse")
+  
+  final_fit <- race_results %>%
+    extract_workflow(w) %>%
+    finalize_workflow(best_tune) %>%
+    fit(training(tdengue_split))
+  
+  final_fit <- list(final_fit)
+  final_fit <- setNames(final_fit, paste0(w))
+  
+  trained_models <- append(trained_models, final_fit)
+}
+```
+
+```{r}
+models_accuracy <- tibble()
+for(t in 1:length(trained_models)){
+  model_tbl <- modeltime_table(trained_models[[t]]) 
+
+  calib_tbl <- model_tbl %>%
+      modeltime_calibrate(
+        new_data = testing(tdengue_split), 
+        id       = "mun"
+      )
+  
+  res <- calib_tbl %>% 
+      modeltime_accuracy(
+        acc_by_id = TRUE, 
+        metric_set = metric_set(rmse)
+      )
+  
+  res$.model_id <- word(names(trained_models[t]), 1, sep = "_")
+  
+  models_accuracy <- bind_rows(models_accuracy, res)
+}
+```
+
+```{r}
+ggplot(data = models_accuracy, aes(x = .model_id, y = rmse, fill = .model_desc)) +
+  geom_boxplot()
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```

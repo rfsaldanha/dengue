@@ -128,28 +128,13 @@ cart_spec <-
   set_mode("classification")
 ```
 
-#### LightGBM
-
-```{r}
-lgbm_spec <-
-  boost_tree(
-    trees = tune(),
-    min_n = tune(),
-    mtry = tune(),
-    tree_depth = tune(),
-    learn_rate = 0.01
-  ) %>% 
-  set_engine("lightgbm") %>% 
-  set_mode("classification")
-```
-
 ### Workflows
 
 ```{r}
 all_workflows <- 
   workflow_set(
     preproc = list(recipe_1 = dengue_rec_1, recipe_2 = dengue_rec_2),
-    models = list(xgb = xgb_spec, cart = cart_spec, lgbm = lgbm_spec)
+    models = list(xgb = xgb_spec, cart = cart_spec)
   )
 ```
 
