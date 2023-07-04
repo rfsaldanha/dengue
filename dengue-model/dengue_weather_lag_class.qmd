@@ -146,7 +146,7 @@ res <- inner_join(x = dengue_rj, y = tmax, by = "date") %>%
 ```{r}
 res_prep <- res %>%
   select(-date) %>%
-  tk_augment_lags(.value = c(tmax, prec, rh, wind), .lags = 1:6)
+  tk_augment_lags(.value = c(tmax, prec, rh, wind), .lags = 1:12)
 ```
 
 ### Parameters

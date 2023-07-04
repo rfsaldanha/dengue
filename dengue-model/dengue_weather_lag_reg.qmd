@@ -12,6 +12,7 @@ This notebook models the relationship between dengue cases and weather variables
 #| message: false
 library(tidyverse)
 library(tidymodels)
+library(bonsai)
 library(arrow)
 library(timetk)
 library(rpart.plot)
@@ -133,7 +134,7 @@ res_prep <- res %>%
 
 ```{r}
 tree_spec <- decision_tree() %>%
-  set_engine("rpart") %>%
+  set_engine("partykit") %>%
   set_mode("regression")
 ```
 
@@ -146,7 +147,7 @@ fit1 <- tree_spec %>%
 
 ```{r}
 fit1 %>% extract_fit_engine() %>%
-  rpart.plot(roundint = FALSE)
+  plot()
 ```
 
 ```{r}
