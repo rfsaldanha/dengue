@@ -4,6 +4,8 @@ author: "Raphael Saldanha"
 date: last-modified
 ---
 
+This notebook prepares a data-set with dengue cases and covariates of interest per municipality, for modeling purposes.
+
 ## Packages
 
 ```{r}
@@ -19,6 +21,8 @@ library(timetk)
 
 ### Dengue
 
+Load dengue cases data and aggregate per week.
+
 ```{r}
 dengue <- read_parquet("../dengue-data/parquet_aggregated/dengue_md.parquet") %>%
   group_by(mun) %>%
@@ -29,13 +33,19 @@ dengue <- read_parquet("../dengue-data/parquet_aggregated/dengue_md.parquet") %>
 
 ### Population
 
+Load municipality population data for the years present at the dengue cases data.
+
 ```{r}
 pop <- mun_pop_totals() %>%
   filter(year %in% seq(year(min(dengue$date)), year(max(dengue$date)))) %>%
   mutate(mun = as.character(mun))
 ```
 
-### Precipitation
+### Weather variables
+
+Load weather variables and group per week.
+
+#### Precipitation
 
 ```{r}
 prec <- open_dataset(sources = "../weather-data/parquet/brdwgd/pr.parquet") %>%
@@ -47,7 +57,11 @@ prec <- open_dataset(sources = "../weather-data/parquet/brdwgd/pr.parquet") %>%
   rename(prec = value)
 ```
 
-### Average maximum temperature
+::: callout-note
+As precipitation is a volume, the `sum` function is used.
+:::
+
+#### Average maximum temperature
 
 ```{r}
 tmax <- open_dataset(sources = "../weather-data/parquet/brdwgd/tmax.parquet") %>%
@@ -61,6 +75,8 @@ tmax <- open_dataset(sources = "../weather-data/parquet/brdwgd/tmax.parquet") %>
 
 ### Join data
 
+Join dengue cases, population and weather variables.
+
 ```{r}
 tdengue <- dengue %>%
   mutate(dengue_year = year(date)) %>%
@@ -72,7 +88,13 @@ tdengue <- dengue %>%
 rm(dengue, prec, tmax)
 ```
 
+::: callout-note
+The population estimate is constant over each year.
+:::
+
 ### Cleaning and basic features
+
+Due the sparsity of dengue cases, only municipalities with more than 100,000 inhabitants are filtered.
 
 ```{r}
 # List municipalities with moren than 100k inhab
@@ -95,7 +117,7 @@ tdengue <- tdengue %>%
   # Remove population
   select(-pop) %>%
   # Round values
-mutate(across(c(cases, prec, tmax), ~ round(.x, digits = 2))) %>%
+  mutate(across(c(cases, prec, tmax), ~ round(.x, digits = 2))) %>%
   # Pad weeks 
   group_by(mun) %>%
   pad_by_time(date, .by = "week", .pad_value = 0, .start_date = min(tdengue$date), .end_date = max(tdengue$date)) %>%
@@ -103,6 +125,10 @@ mutate(across(c(cases, prec, tmax), ~ round(.x, digits = 2))) %>%
 ```
 
 Municipalities remaining at the dataset: `r length(unique(tdengue$mun))`
+
+::: callout-warning
+The computation of dengue incidence (cases per population) is commented to keep the raw cases count. Dengue incidence is to be used after notebooks validation.
+:::
 
 ### Standardize measures
 
@@ -113,7 +139,13 @@ Municipalities remaining at the dataset: `r length(unique(tdengue$mun))`
 #   ungroup()
 ```
 
+::: callout-warning
+Commented out procedure, until validation of notebooks takes place.
+:::
+
 ### Lag and rolling lag variables
+
+-   Creates lag variables with cases and weather variables from 1 to 54 weeks (roughly, two years).
 
 ```{r}
 tdengue <- tdengue %>%
@@ -128,6 +160,10 @@ tdengue <- tdengue %>%
   # ) %>%
   ungroup()
 ```
+
+::: callout-warning
+Rolling window calculation procedure is commented out, until validation of notebooks takes place.
+:::
 
 ## Overview
 

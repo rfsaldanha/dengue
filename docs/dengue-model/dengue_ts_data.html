@@ -464,8 +464,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   <ul class="collapse">
   <li><a href="#dengue" id="toc-dengue" class="nav-link" data-scroll-target="#dengue">Dengue</a></li>
   <li><a href="#population" id="toc-population" class="nav-link" data-scroll-target="#population">Population</a></li>
-  <li><a href="#precipitation" id="toc-precipitation" class="nav-link" data-scroll-target="#precipitation">Precipitation</a></li>
-  <li><a href="#average-maximum-temperature" id="toc-average-maximum-temperature" class="nav-link" data-scroll-target="#average-maximum-temperature">Average maximum temperature</a></li>
+  <li><a href="#weather-variables" id="toc-weather-variables" class="nav-link" data-scroll-target="#weather-variables">Weather variables</a></li>
   <li><a href="#join-data" id="toc-join-data" class="nav-link" data-scroll-target="#join-data">Join data</a></li>
   <li><a href="#cleaning-and-basic-features" id="toc-cleaning-and-basic-features" class="nav-link" data-scroll-target="#cleaning-and-basic-features">Cleaning and basic features</a></li>
   <li><a href="#standardize-measures" id="toc-standardize-measures" class="nav-link" data-scroll-target="#standardize-measures">Standardize measures</a></li>
@@ -499,7 +498,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last run</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 4, 2023 | 11:51:08 +02:00</p>
+      <p class="date">July 4, 2023 | 16:17:55 +02:00</p>
     </div>
   </div>
   
@@ -509,6 +508,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 
 </header>
 
+<p>This notebook prepares a data-set with dengue cases and covariates of interest per municipality, for modeling purposes.</p>
 <section id="packages" class="level2">
 <h2 class="anchored" data-anchor-id="packages">Packages</h2>
 <div class="cell">
@@ -523,6 +523,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="data">Data</h2>
 <section id="dengue" class="level3">
 <h3 class="anchored" data-anchor-id="dengue">Dengue</h3>
+<p>Load dengue cases data and aggregate per week.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"../dengue-data/parquet_aggregated/dengue_md.parquet"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mun) <span class="sc">%&gt;%</span></span>
@@ -533,14 +534,18 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </section>
 <section id="population" class="level3">
 <h3 class="anchored" data-anchor-id="population">Population</h3>
+<p>Load municipality population data for the years present at the dengue cases data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pop <span class="ot">&lt;-</span> <span class="fu">mun_pop_totals</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">seq</span>(<span class="fu">year</span>(<span class="fu">min</span>(dengue<span class="sc">$</span>date)), <span class="fu">year</span>(<span class="fu">max</span>(dengue<span class="sc">$</span>date)))) <span class="sc">%&gt;%</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">mun =</span> <span class="fu">as.character</span>(mun))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="precipitation" class="level3">
-<h3 class="anchored" data-anchor-id="precipitation">Precipitation</h3>
+<section id="weather-variables" class="level3">
+<h3 class="anchored" data-anchor-id="weather-variables">Weather variables</h3>
+<p>Load weather variables and group per week.</p>
+<section id="precipitation" class="level4">
+<h4 class="anchored" data-anchor-id="precipitation">Precipitation</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>prec <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> <span class="st">"../weather-data/parquet/brdwgd/pr.parquet"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">"pr_sum"</span>) <span class="sc">%&gt;%</span></span>
@@ -550,9 +555,22 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_by_time</span>(<span class="at">.date_var =</span> date, <span class="at">.by =</span> <span class="st">"week"</span>, <span class="at">value =</span> <span class="fu">sum</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">prec =</span> value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>As precipitation is a volume, the <code>sum</code> function is used.</p>
+</div>
+</div>
 </section>
-<section id="average-maximum-temperature" class="level3">
-<h3 class="anchored" data-anchor-id="average-maximum-temperature">Average maximum temperature</h3>
+<section id="average-maximum-temperature" class="level4">
+<h4 class="anchored" data-anchor-id="average-maximum-temperature">Average maximum temperature</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tmax <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> <span class="st">"../weather-data/parquet/brdwgd/tmax.parquet"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">"Tmax_mean"</span>) <span class="sc">%&gt;%</span></span>
@@ -563,8 +581,10 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">tmax =</span> value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+</section>
 <section id="join-data" class="level3">
 <h3 class="anchored" data-anchor-id="join-data">Join data</h3>
+<p>Join dengue cases, population and weather variables.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> dengue <span class="sc">%&gt;%</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dengue_year =</span> <span class="fu">year</span>(date)) <span class="sc">%&gt;%</span></span>
@@ -575,9 +595,23 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(dengue, prec, tmax)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The population estimate is constant over each year.</p>
+</div>
+</div>
 </section>
 <section id="cleaning-and-basic-features" class="level3">
 <h3 class="anchored" data-anchor-id="cleaning-and-basic-features">Cleaning and basic features</h3>
+<p>Due the sparsity of dengue cases, only municipalities with more than 100,000 inhabitants are filtered.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List municipalities with moren than 100k inhab</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>mun_vec <span class="ot">&lt;-</span> pop <span class="sc">%&gt;%</span></span>
@@ -598,13 +632,26 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remove population</span></span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>pop) <span class="sc">%&gt;%</span></span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Round values</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(cases, prec, tmax), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="at">digits =</span> <span class="dv">2</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(cases, prec, tmax), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="at">digits =</span> <span class="dv">2</span>))) <span class="sc">%&gt;%</span></span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pad weeks </span></span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mun) <span class="sc">%&gt;%</span></span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pad_by_time</span>(date, <span class="at">.by =</span> <span class="st">"week"</span>, <span class="at">.pad_value =</span> <span class="dv">0</span>, <span class="at">.start_date =</span> <span class="fu">min</span>(tdengue<span class="sc">$</span>date), <span class="at">.end_date =</span> <span class="fu">max</span>(tdengue<span class="sc">$</span>date)) <span class="sc">%&gt;%</span></span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Municipalities remaining at the dataset: 326</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The computation of dengue incidence (cases per population) is commented to keep the raw cases count. Dengue incidence is to be used after notebooks validation.</p>
+</div>
+</div>
 </section>
 <section id="standardize-measures" class="level3">
 <h3 class="anchored" data-anchor-id="standardize-measures">Standardize measures</h3>
@@ -614,9 +661,25 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(across(c(cases, prec, tmax), ~ standardize_vec(.x, silent = TRUE))) %&gt;%</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   ungroup()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Commented out procedure, until validation of notebooks takes place.</p>
+</div>
+</div>
 </section>
 <section id="lag-and-rolling-lag-variables" class="level3">
 <h3 class="anchored" data-anchor-id="lag-and-rolling-lag-variables">Lag and rolling lag variables</h3>
+<ul>
+<li>Creates lag variables with cases and weather variables from 1 to 54 weeks (roughly, two years).</li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> tdengue <span class="sc">%&gt;%</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mun) <span class="sc">%&gt;%</span></span>
@@ -629,6 +692,19 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   .align   = "center"</span></span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ) %&gt;%</span></span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Rolling window calculation procedure is commented out, until validation of notebooks takes place.</p>
+</div>
 </div>
 </section>
 </section>

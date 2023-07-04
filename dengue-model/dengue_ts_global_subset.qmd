@@ -4,7 +4,11 @@ author: "Raphael Saldanha"
 date: last-modified
 ---
 
-Reference: https://blog.bguarisma.com/series/time-series-forecasting
+This notebooks aims to reproduce the metodology of the paper submitted to the SBD2023 conference, implementing the global and subset modelling.
+
+This methodology aims to compare the perfomance of models trained with data from all municipalities time-series (*global models*) and models trained with subset of munipalities time-series (*subset models*).
+
+Those subset will be created by a clustering algorithm considering the municipalities cases time-series.
 
 ## Packages
 
@@ -24,17 +28,29 @@ library(tictoc)
 
 ## Load data
 
-And remove rows with NAs
-
 ```{r}
 tdengue <- read_parquet(file = "tdengue.parquet") %>%
   drop_na() %>%
   select(mun, date, starts_with("cases"))
 ```
 
+::: callout-note
+-   NA values are created when the lagged variables were calculated. The rows containing those NA values are dropped.
+
+-   For validation purposes, only the `cases` and `cases_lag*` covariates variables are keep.
+:::
+
+```{r}
+glimpse(tdengue)
+```
+
 ## Clustering
 
+This procedure goal is to cluster the municipalities considering the cases time-series similarities between them.
+
 ### Prepare data
+
+Prepare the data for use with the `dtwclust` package, pivoting the panel data to a wide format and matrix object.
 
 ```{r}
 cdengue <- tdengue %>%
@@ -48,6 +64,10 @@ cdengue <- tdengue %>%
 ```
 
 ### SBD method
+
+The SBD method is used to cluster the municipalities, considering a shape-bases distance (k-Shape clustering algorithm). More details on the [publicated methodology](https://doi.org/10.1145/2723372.2737793).
+
+The clustering algorithm is applied with a varying number of $k$ partitions from 3 to 8.
 
 ```{r}
 k_seq <- 3:8
@@ -64,6 +84,8 @@ toc()
 ```
 
 ### Cluster Validity Indices (CVI)
+
+To choose the number of partitions, the Silhouette statistic is observed.
 
 ```{r}
 names(clust) <- paste0("k_", k_seq)
@@ -87,14 +109,14 @@ plot(sel_clust)
 
 ### Identify municipalities and cluster id
 
+Finally, the cluster partition ID is added to the main dataset.
+
 ```{r}
 cluster_ids <- tibble(
   mun = names(cdengue) %>% substr(3, 9),
   group = as.character(sel_clust@cluster)
 ) 
 ```
-
-### Add partition information to dataset
 
 ```{r}
 tdengue <- left_join(tdengue, cluster_ids, by = "mun")
@@ -174,9 +196,9 @@ rf_spec <- rand_forest(
 ### LightGBM
 
 ```{r}
-lgbm_spec <- boost_tree() %>%
-  set_engine("lightgbm") %>%
-  set_mode("regression")
+# lgbm_spec <- boost_tree() %>%
+#   set_engine("lightgbm") %>%
+#   set_mode("regression")
 ```
 
 ## Workflow set
@@ -280,3 +302,8 @@ ggplot(data = models_accuracy, aes(x = .model_id, y = rmse, fill = .model_desc))
 ```{r}
 sessionInfo()
 ```
+
+## References
+
+-   <https://blog.bguarisma.com/series/time-series-forecasting>
+-   <https://business-science.github.io/modeltime/articles/modeling-panel-data.html>
