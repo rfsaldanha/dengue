@@ -22,7 +22,7 @@ library(timetk)
 ```{r}
 dengue <- read_parquet("../dengue-data/parquet_aggregated/dengue_md.parquet") %>%
   group_by(mun) %>%
-  summarise_by_time(.date_var = date, .by = "month", freq = sum(freq, na.rm = TRUE)) %>%
+  summarise_by_time(.date_var = date, .by = "week", freq = sum(freq, na.rm = TRUE)) %>%
   ungroup() %>%
   rename(cases = freq)
 ```
@@ -43,7 +43,7 @@ prec <- open_dataset(sources = "../weather-data/parquet/brdwgd/pr.parquet") %>%
   select(date, value) %>%
   collect() %>%
   filter(date >= min(dengue$date) & date <= max(dengue$date)) %>%
-  summarise_by_time(.date_var = date, .by = "month", value = sum(value, na.rm = TRUE)) %>%
+  summarise_by_time(.date_var = date, .by = "week", value = sum(value, na.rm = TRUE)) %>%
   rename(prec = value)
 ```
 
@@ -55,7 +55,7 @@ tmax <- open_dataset(sources = "../weather-data/parquet/brdwgd/tmax.parquet") %>
   select(date, value) %>%
   collect() %>%
   filter(date >= min(dengue$date) & date <= max(dengue$date)) %>%
-  summarise_by_time(.date_var = date, .by = "month", value = mean(value, na.rm = TRUE)) %>%
+  summarise_by_time(.date_var = date, .by = "week", value = mean(value, na.rm = TRUE)) %>%
   rename(tmax = value)
 ```
 
@@ -75,10 +75,10 @@ rm(dengue, prec, tmax)
 ### Cleaning and basic features
 
 ```{r}
-# List municipalities with moren than 500k inhab
+# List municipalities with moren than 100k inhab
 mun_vec <- pop %>%
   filter(year == max(year)) %>%
-  filter(pop >= 500000) %>%
+  filter(pop >= 100000) %>%
   pull(mun)
 
 rm(pop)
@@ -96,9 +96,9 @@ tdengue <- tdengue %>%
   select(-pop) %>%
   # Round values
 mutate(across(c(cases, prec, tmax), ~ round(.x, digits = 2))) %>%
-  # Pad months 
+  # Pad weeks 
   group_by(mun) %>%
-  pad_by_time(date, .by = "month", .pad_value = 0, .start_date = min(tdengue$date), .end_date = max(tdengue$date)) %>%
+  pad_by_time(date, .by = "week", .pad_value = 0, .start_date = min(tdengue$date), .end_date = max(tdengue$date)) %>%
   ungroup()
 ```
 
@@ -118,7 +118,7 @@ Municipalities remaining at the dataset: `r length(unique(tdengue$mun))`
 ```{r}
 tdengue <- tdengue %>%
   group_by(mun) %>%
-  tk_augment_lags(.value = c(cases, prec, tmax), .lags = 1:12) %>%
+  tk_augment_lags(.value = c(cases, prec, tmax), .lags = 1:54) %>%
   # tk_augment_slidify(
   #   .value = contains("_lag"), 
   #   .period = c(2, 3, 4, 6, 8, 12), 

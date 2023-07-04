@@ -13,6 +13,7 @@ Reference: https://blog.bguarisma.com/series/time-series-forecasting
 library(tidyverse)
 library(arrow)
 library(tidymodels)
+library(bonsai)
 library(finetune)
 library(modeltime)
 library(timetk)
@@ -105,7 +106,7 @@ tdengue <- left_join(tdengue, cluster_ids, by = "mun")
 tdengue_split <- tdengue %>%
   time_series_split(
     date_var = date, 
-    assess = 3,
+    assess = 54*2,
     cumulative = TRUE
   )
 ```
@@ -114,7 +115,7 @@ tdengue_split <- tdengue %>%
 
 ```{r}
 tdengue_split_folds <- training(tdengue_split) %>%
-  vfold_cv(v = 5)
+  vfold_cv(v = 10)
 ```
 
 ## Recipes
@@ -130,7 +131,7 @@ Using data from all municipalities.
 ```{r}
 recipe_global <- recipe(cases ~ ., data = training(tdengue_split)) %>%
   step_rm(date, group) %>%
-  step_dummy(mun, one_hot = TRUE)
+  update_role(mun, new_role = "id variable")
 
 recipes_list <- append(recipes_list, list(global = recipe_global))
 
@@ -146,7 +147,7 @@ for(g in unique(tdengue$group)){
   tmp <- recipe(cases ~ ., data = training(tdengue_split)) %>%
     step_filter(group == !!g) %>%
     step_rm(date, group) %>%
-    step_dummy(mun, one_hot = TRUE)
+    update_role(mun, new_role = "id variable")
   
   tmp <- list(tmp)
   tmp <- setNames(tmp, paste0("g", g))
@@ -170,11 +171,11 @@ rf_spec <- rand_forest(
   set_mode("regression")
 ```
 
-### Decision tree
+### LightGBM
 
 ```{r}
-dt_spec <- decision_tree() %>%
-  set_engine("rpart") %>%
+lgbm_spec <- boost_tree() %>%
+  set_engine("lightgbm") %>%
   set_mode("regression")
 ```
 
@@ -183,7 +184,7 @@ dt_spec <- decision_tree() %>%
 ```{r}
 all_workflows <- workflow_set(
   preproc = recipes_list, 
-  models = list(rf = rf_spec, dt = dt_spec), 
+  models = list(rf = rf_spec), 
   cross = TRUE
 )
 ```
@@ -200,14 +201,14 @@ race_results <-
     "tune_race_anova",
     seed = 345,
     resamples = tdengue_split_folds,
-    grid = 3,
+    grid = 10,
     control = control_race(parallel_over = "everything"),
     verbose = TRUE
   )
 toc()
 ```
 
-## Fit train data
+## Fit
 
 For combination of each municipality, model and recipe.
 
@@ -223,7 +224,19 @@ for(w in unique(race_results$wflow_id)){
     finalize_workflow(best_tune) %>%
     fit(training(tdengue_split))
   
-  final_fit <- list(final_fit)
+  mold <- extract_mold(final_fit)
+  train_ids <- mold$extras$roles$`id variable` %>%
+    distinct() %>%
+    pull() %>%
+    as.character()
+  
+  final_fit <- list(
+    list(
+      "final_fit" = final_fit, 
+      "train_ids" = train_ids
+    )
+  )
+  
   final_fit <- setNames(final_fit, paste0(w))
   
   trained_models <- append(trained_models, final_fit)
@@ -233,11 +246,15 @@ for(w in unique(race_results$wflow_id)){
 ```{r}
 models_accuracy <- tibble()
 for(t in 1:length(trained_models)){
-  model_tbl <- modeltime_table(trained_models[[t]]) 
+  
+  model_tbl <- modeltime_table(trained_models[[t]][[1]]) 
+  testing_set <- testing(tdengue_split) %>%
+    filter(mun %in% trained_models[[t]][[2]])
+  
 
   calib_tbl <- model_tbl %>%
       modeltime_calibrate(
-        new_data = testing(tdengue_split), 
+        new_data = testing_set, 
         id       = "mun"
       )
   
