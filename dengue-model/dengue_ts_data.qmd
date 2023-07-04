@@ -75,10 +75,10 @@ rm(dengue, prec, tmax)
 ### Cleaning and basic features
 
 ```{r}
-# List municipalities with moren than 100k inhab
+# List municipalities with moren than 500k inhab
 mun_vec <- pop %>%
   filter(year == max(year)) %>%
-  filter(pop >= 100000) %>%
+  filter(pop >= 500000) %>%
   pull(mun)
 
 rm(pop)
@@ -91,7 +91,7 @@ tdengue <- tdengue %>%
   # Keep only municipalities in the list
    filter(mun %in% mun_vec) %>%
   # Compute dengue rate per population
-  mutate(cases = cases/pop*100000) %>%
+  # mutate(cases = cases/pop*100000) %>%
   # Remove population
   select(-pop) %>%
   # Round values

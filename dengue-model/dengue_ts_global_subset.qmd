@@ -129,7 +129,8 @@ Using data from all municipalities.
 
 ```{r}
 recipe_global <- recipe(cases ~ ., data = training(tdengue_split)) %>%
-  step_rm(mun, date, group)
+  step_rm(date, group) %>%
+  step_dummy(mun, one_hot = TRUE)
 
 recipes_list <- append(recipes_list, list(global = recipe_global))
 
@@ -143,8 +144,9 @@ One recipe for each group, with data only from the group.
 ```{r}
 for(g in unique(tdengue$group)){
   tmp <- recipe(cases ~ ., data = training(tdengue_split)) %>%
-    step_filter(group == g) %>%
-    step_rm(mun, date, group)
+    step_filter(group == !!g) %>%
+    step_rm(date, group) %>%
+    step_dummy(mun, one_hot = TRUE)
   
   tmp <- list(tmp)
   tmp <- setNames(tmp, paste0("g", g))
@@ -161,8 +163,8 @@ for(g in unique(tdengue$group)){
 
 ```{r}
 rf_spec <- rand_forest(
-  trees = tune(),
-  min_n = tune()
+  # trees = tune(),
+  # min_n = tune()
 ) %>%
   set_engine("ranger") %>%
   set_mode("regression")

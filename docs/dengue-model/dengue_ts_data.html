@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.150">
+<meta name="generator" content="quarto-1.4.163">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -438,7 +438,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../presentations/presentation_test.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Building and Selecting Specialized AI Models</span></a>
+ <span class="menu-text">Teste de apresentação</span></a>
   </div>
 </li>
       </ul>
@@ -499,7 +499,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last run</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 3, 2023 | 16:50:49 +02:00</p>
+      <p class="date">July 4, 2023 | 03:28:38 +02:00</p>
     </div>
   </div>
   
@@ -579,10 +579,10 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <section id="cleaning-and-basic-features" class="level3">
 <h3 class="anchored" data-anchor-id="cleaning-and-basic-features">Cleaning and basic features</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List municipalities with moren than 100k inhab</span></span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List municipalities with moren than 500k inhab</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>mun_vec <span class="ot">&lt;-</span> pop <span class="sc">%&gt;%</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="fu">max</span>(year)) <span class="sc">%&gt;%</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pop <span class="sc">&gt;=</span> <span class="dv">100000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pop <span class="sc">&gt;=</span> <span class="dv">500000</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(mun)</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(pop)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -594,7 +594,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Keep only municipalities in the list</span></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(mun <span class="sc">%in%</span> mun_vec) <span class="sc">%&gt;%</span></span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Compute dengue rate per population</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cases =</span> cases<span class="sc">/</span>pop<span class="sc">*</span><span class="dv">100000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(cases = cases/pop*100000) %&gt;%</span></span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remove population</span></span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>pop) <span class="sc">%&gt;%</span></span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Round values</span></span>
@@ -604,7 +604,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pad_by_time</span>(date, <span class="at">.by =</span> <span class="st">"month"</span>, <span class="at">.pad_value =</span> <span class="dv">0</span>, <span class="at">.start_date =</span> <span class="fu">min</span>(tdengue<span class="sc">$</span>date), <span class="at">.end_date =</span> <span class="fu">max</span>(tdengue<span class="sc">$</span>date)) <span class="sc">%&gt;%</span></span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Municipalities remaining at the dataset: 326</p>
+<p>Municipalities remaining at the dataset: 49</p>
 </section>
 <section id="standardize-measures" class="level3">
 <h3 class="anchored" data-anchor-id="standardize-measures">Standardize measures</h3>
@@ -637,47 +637,47 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(tdengue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 37,490
+<pre><code>Rows: 5,635
 Columns: 41
-$ mun         &lt;chr&gt; "110002", "110002", "110002", "110002", "110002", "110002"…
+$ mun         &lt;chr&gt; "110020", "110020", "110020", "110020", "110020", "110020"…
 $ date        &lt;date&gt; 2011-01-01, 2011-02-01, 2011-03-01, 2011-04-01, 2011-05-0…
-$ cases       &lt;dbl&gt; 8.50, 7.44, 6.37, 2.12, 3.19, 0.00, 0.00, 0.00, 1.06, 0.00…
+$ cases       &lt;dbl&gt; 33, 29, 33, 12, 5, 2, 3, 5, 5, 9, 7, 5, 17, 6, 13, 8, 3, 2…
 $ prec        &lt;dbl&gt; 29442223, 27648413, 30775654, 22400880, 13694424, 8046289,…
 $ tmax        &lt;dbl&gt; 30.52, 30.57, 29.35, 28.96, 26.87, 26.17, 26.73, 28.43, 29…
-$ cases_lag1  &lt;dbl&gt; NA, 8.50, 7.44, 6.37, 2.12, 3.19, 0.00, 0.00, 0.00, 1.06, …
+$ cases_lag1  &lt;dbl&gt; NA, 33, 29, 33, 12, 5, 2, 3, 5, 5, 9, 7, 5, 17, 6, 13, 8, …
 $ prec_lag1   &lt;dbl&gt; NA, 29442223, 27648413, 30775654, 22400880, 13694424, 8046…
 $ tmax_lag1   &lt;dbl&gt; NA, 30.52, 30.57, 29.35, 28.96, 26.87, 26.17, 26.73, 28.43…
-$ cases_lag2  &lt;dbl&gt; NA, NA, 8.50, 7.44, 6.37, 2.12, 3.19, 0.00, 0.00, 0.00, 1.…
+$ cases_lag2  &lt;dbl&gt; NA, NA, 33, 29, 33, 12, 5, 2, 3, 5, 5, 9, 7, 5, 17, 6, 13,…
 $ prec_lag2   &lt;dbl&gt; NA, NA, 29442223, 27648413, 30775654, 22400880, 13694424, …
 $ tmax_lag2   &lt;dbl&gt; NA, NA, 30.52, 30.57, 29.35, 28.96, 26.87, 26.17, 26.73, 2…
-$ cases_lag3  &lt;dbl&gt; NA, NA, NA, 8.50, 7.44, 6.37, 2.12, 3.19, 0.00, 0.00, 0.00…
+$ cases_lag3  &lt;dbl&gt; NA, NA, NA, 33, 29, 33, 12, 5, 2, 3, 5, 5, 9, 7, 5, 17, 6,…
 $ prec_lag3   &lt;dbl&gt; NA, NA, NA, 29442223, 27648413, 30775654, 22400880, 136944…
 $ tmax_lag3   &lt;dbl&gt; NA, NA, NA, 30.52, 30.57, 29.35, 28.96, 26.87, 26.17, 26.7…
-$ cases_lag4  &lt;dbl&gt; NA, NA, NA, NA, 8.50, 7.44, 6.37, 2.12, 3.19, 0.00, 0.00, …
+$ cases_lag4  &lt;dbl&gt; NA, NA, NA, NA, 33, 29, 33, 12, 5, 2, 3, 5, 5, 9, 7, 5, 17…
 $ prec_lag4   &lt;dbl&gt; NA, NA, NA, NA, 29442223, 27648413, 30775654, 22400880, 13…
 $ tmax_lag4   &lt;dbl&gt; NA, NA, NA, NA, 30.52, 30.57, 29.35, 28.96, 26.87, 26.17, …
-$ cases_lag5  &lt;dbl&gt; NA, NA, NA, NA, NA, 8.50, 7.44, 6.37, 2.12, 3.19, 0.00, 0.…
+$ cases_lag5  &lt;dbl&gt; NA, NA, NA, NA, NA, 33, 29, 33, 12, 5, 2, 3, 5, 5, 9, 7, 5…
 $ prec_lag5   &lt;dbl&gt; NA, NA, NA, NA, NA, 29442223, 27648413, 30775654, 22400880…
 $ tmax_lag5   &lt;dbl&gt; NA, NA, NA, NA, NA, 30.52, 30.57, 29.35, 28.96, 26.87, 26.…
-$ cases_lag6  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, 8.50, 7.44, 6.37, 2.12, 3.19, 0.00…
+$ cases_lag6  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, 33, 29, 33, 12, 5, 2, 3, 5, 5, 9, …
 $ prec_lag6   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, 29442223, 27648413, 30775654, 2240…
 $ tmax_lag6   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, 30.52, 30.57, 29.35, 28.96, 26.87,…
-$ cases_lag7  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, 8.50, 7.44, 6.37, 2.12, 3.19, …
+$ cases_lag7  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, 33, 29, 33, 12, 5, 2, 3, 5, 5,…
 $ prec_lag7   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, 29442223, 27648413, 30775654, …
 $ tmax_lag7   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, 30.52, 30.57, 29.35, 28.96, 26…
-$ cases_lag8  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, 8.50, 7.44, 6.37, 2.12, 3.…
+$ cases_lag8  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, 33, 29, 33, 12, 5, 2, 3, 5…
 $ prec_lag8   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, 29442223, 27648413, 307756…
 $ tmax_lag8   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, 30.52, 30.57, 29.35, 28.96…
-$ cases_lag9  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, 8.50, 7.44, 6.37, 2.12…
+$ cases_lag9  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, 33, 29, 33, 12, 5, 2, …
 $ prec_lag9   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, 29442223, 27648413, 30…
 $ tmax_lag9   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, 30.52, 30.57, 29.35, 2…
-$ cases_lag10 &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 8.50, 7.44, 6.37, …
+$ cases_lag10 &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 33, 29, 33, 12, 5,…
 $ prec_lag10  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 29442223, 27648413…
 $ tmax_lag10  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 30.52, 30.57, 29.3…
-$ cases_lag11 &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 8.50, 7.44, 6.…
+$ cases_lag11 &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 33, 29, 33, 12…
 $ prec_lag11  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 29442223, 2764…
 $ tmax_lag11  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 30.52, 30.57, …
-$ cases_lag12 &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 8.50, 7.44…
+$ cases_lag12 &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 33, 29, 33…
 $ prec_lag12  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 29442223, …
 $ tmax_lag12  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 30.52, 30.…</code></pre>
 </div>
@@ -694,21 +694,16 @@ $ tmax_lag12  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 30.52,
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>R version 4.1.2 (2021-11-01)
-Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 22.04.2 LTS
+<pre><code>R version 4.2.0 (2022-04-22)
+Platform: aarch64-apple-darwin20 (64-bit)
+Running under: macOS 13.4
 
 Matrix products: default
-BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0
-LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0
+BLAS:   /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRlapack.dylib
 
 locale:
- [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
@@ -724,11 +719,11 @@ other attached packages:
 
 loaded via a namespace (and not attached):
  [1] xts_0.13.1          bit64_4.0.5         DiceDesign_1.9     
- [4] padr_0.6.2          tools_4.1.2         backports_1.4.1    
- [7] utf8_1.2.3          R6_2.5.1            rpart_4.1.16       
-[10] colorspace_2.1-0    nnet_7.3-17         withr_2.5.0        
-[13] tidyselect_1.2.0    bit_4.0.5           compiler_4.1.2     
-[16] cli_3.6.1           digest_0.6.32       rmarkdown_2.23     
+ [4] padr_0.6.2          tools_4.2.0         backports_1.4.1    
+ [7] utf8_1.2.3          R6_2.5.1            rpart_4.1.19       
+[10] colorspace_2.1-0    nnet_7.3-19         withr_2.5.0        
+[13] tidyselect_1.2.0    bit_4.0.5           compiler_4.2.0     
+[16] cli_3.6.1           digest_0.6.31       rmarkdown_2.23     
 [19] pkgconfig_2.0.3     htmltools_0.5.5     parallelly_1.36.0  
 [22] lhs_1.1.6           fastmap_1.1.1       htmlwidgets_1.6.2  
 [25] rlang_1.1.1         rstudioapi_0.14     generics_0.1.3     
@@ -736,15 +731,15 @@ loaded via a namespace (and not attached):
 [31] Matrix_1.5-4.1      Rcpp_1.0.10         munsell_0.5.0      
 [34] fansi_1.0.4         GPfit_1.0-8         lifecycle_1.0.3    
 [37] furrr_0.3.1         stringi_1.7.12      yaml_2.3.7         
-[40] MASS_7.3-55         grid_4.1.2          parallel_4.1.2     
-[43] listenv_0.9.0       lattice_0.20-45     splines_4.1.2      
+[40] MASS_7.3-60         grid_4.2.0          parallel_4.2.0     
+[43] listenv_0.9.0       lattice_0.21-8      splines_4.2.0      
 [46] hms_1.1.3           anytime_0.3.9       knitr_1.43         
-[49] pillar_1.9.0        future.apply_1.11.0 codetools_0.2-18   
+[49] pillar_1.9.0        future.apply_1.11.0 codetools_0.2-19   
 [52] glue_1.6.2          evaluate_0.21       data.table_1.14.8  
 [55] vctrs_0.6.3         tzdb_0.4.0          foreach_1.5.2      
 [58] gtable_0.3.3        future_1.33.0       assertthat_0.2.1   
 [61] xfun_0.39           gower_1.0.1         prodlim_2023.03.31 
-[64] class_7.3-20        survival_3.2-13     timeDate_4022.108  
+[64] class_7.3-22        survival_3.5-5      timeDate_4022.108  
 [67] iterators_1.0.14    hardhat_1.3.0       lava_1.7.2.1       
 [70] timechange_0.2.0    globals_0.16.2      ipred_0.9-14       </code></pre>
 </div>
