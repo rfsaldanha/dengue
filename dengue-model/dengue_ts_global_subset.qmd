@@ -124,6 +124,8 @@ tdengue <- left_join(tdengue, cluster_ids, by = "mun")
 
 ## Train and test split
 
+Split the data into training and testing. The function `time_series_split` handles the time series, not shuffling them, and considering the panel data format, as depicted in the message about overlapping timestamps detected.
+
 ```{r}
 tdengue_split <- tdengue %>%
   time_series_split(
@@ -137,7 +139,7 @@ tdengue_split <- tdengue %>%
 
 ```{r}
 tdengue_split_folds <- training(tdengue_split) %>%
-  vfold_cv(v = 10)
+  vfold_cv(v = 5)
 ```
 
 ## Recipes
@@ -186,8 +188,8 @@ for(g in unique(tdengue$group)){
 
 ```{r}
 rf_spec <- rand_forest(
-  # trees = tune(),
-  # min_n = tune()
+  trees = tune(),
+  min_n = tune()
 ) %>%
   set_engine("ranger") %>%
   set_mode("regression")

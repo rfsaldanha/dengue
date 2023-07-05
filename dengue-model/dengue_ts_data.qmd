@@ -133,24 +133,20 @@ The computation of dengue incidence (cases per population) is commented to keep 
 ### Standardize measures
 
 ```{r}
-# tdengue <- tdengue %>%
-#   group_by(mun) %>%
-#   mutate(across(c(cases, prec, tmax), ~ standardize_vec(.x, silent = TRUE))) %>%
-#   ungroup()
+tdengue <- tdengue %>%
+  group_by(mun) %>%
+  mutate(across(c(cases, prec, tmax), ~ standardize_vec(.x, silent = TRUE))) %>%
+  ungroup()
 ```
-
-::: callout-warning
-Commented out procedure, until validation of notebooks takes place.
-:::
 
 ### Lag and rolling lag variables
 
--   Creates lag variables with cases and weather variables from 1 to 54 weeks (roughly, two years).
+-   Creates lag variables with cases and weather variables from 1 to 6 weeks.
 
 ```{r}
 tdengue <- tdengue %>%
   group_by(mun) %>%
-  tk_augment_lags(.value = c(cases, prec, tmax), .lags = 1:54) %>%
+  tk_augment_lags(.value = c(cases, prec, tmax), .lags = 1:6) %>%
   # tk_augment_slidify(
   #   .value = contains("_lag"), 
   #   .period = c(2, 3, 4, 6, 8, 12), 
