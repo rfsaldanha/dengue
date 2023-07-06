@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.163">
+<meta name="generator" content="quarto-1.4.150">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -471,6 +471,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   <li><a href="#sbd-method" id="toc-sbd-method" class="nav-link" data-scroll-target="#sbd-method">SBD method</a></li>
   <li><a href="#cluster-validity-indices-cvi" id="toc-cluster-validity-indices-cvi" class="nav-link" data-scroll-target="#cluster-validity-indices-cvi">Cluster Validity Indices (CVI)</a></li>
   <li><a href="#select-cluster-with-higher-silhouette-statistic" id="toc-select-cluster-with-higher-silhouette-statistic" class="nav-link" data-scroll-target="#select-cluster-with-higher-silhouette-statistic">Select cluster with higher Silhouette statistic</a></li>
+  <li><a href="#cluster-sizes" id="toc-cluster-sizes" class="nav-link" data-scroll-target="#cluster-sizes">Cluster sizes</a></li>
   <li><a href="#identify-municipalities-and-cluster-id" id="toc-identify-municipalities-and-cluster-id" class="nav-link" data-scroll-target="#identify-municipalities-and-cluster-id">Identify municipalities and cluster id</a></li>
   </ul></li>
   <li><a href="#train-and-test-split" id="toc-train-and-test-split" class="nav-link" data-scroll-target="#train-and-test-split">Train and test split</a></li>
@@ -480,7 +481,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   <li><a href="#global" id="toc-global" class="nav-link" data-scroll-target="#global">Global</a></li>
   <li><a href="#groups" id="toc-groups" class="nav-link" data-scroll-target="#groups">Groups</a></li>
   </ul></li>
-  <li><a href="#models-specification" id="toc-models-specification" class="nav-link" data-scroll-target="#models-specification">Models specification</a>
+  <li><a href="#regressors-specification" id="toc-regressors-specification" class="nav-link" data-scroll-target="#regressors-specification">Regressors specification</a>
   <ul class="collapse">
   <li><a href="#random-forest" id="toc-random-forest" class="nav-link" data-scroll-target="#random-forest">Random forest</a></li>
   <li><a href="#lightgbm" id="toc-lightgbm" class="nav-link" data-scroll-target="#lightgbm">LightGBM</a></li>
@@ -488,6 +489,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   <li><a href="#workflow-set" id="toc-workflow-set" class="nav-link" data-scroll-target="#workflow-set">Workflow set</a></li>
   <li><a href="#tune" id="toc-tune" class="nav-link" data-scroll-target="#tune">Tune</a></li>
   <li><a href="#fit" id="toc-fit" class="nav-link" data-scroll-target="#fit">Fit</a></li>
+  <li><a href="#accuracy" id="toc-accuracy" class="nav-link" data-scroll-target="#accuracy">Accuracy</a></li>
   <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info">Session info</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
@@ -515,7 +517,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last run</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 5, 2023 | 18:07:12 +02:00</p>
+      <p class="date">July 6, 2023 | 09:43:22 +02:00</p>
     </div>
   </div>
   
@@ -561,7 +563,7 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li><p>NA values are created when the lagged variables were calculated. The rows containing those NA values are dropped.</p></li>
+<li><p>NA values are created when the lagged variables were calculated. The rows containing those NA values are dropped due machine learning regressors constraints.</p></li>
 <li><p>For validation purposes, only the <code>cases</code> and <code>cases_lag*</code> covariates variables are keep.</p></li>
 </ul>
 </div>
@@ -585,7 +587,7 @@ $ cases_lag6 &lt;dbl&gt; -0.51044592, 0.66804904, 0.66804904, 0.07880156, 0.6680
 </section>
 <section id="clustering" class="level2">
 <h2 class="anchored" data-anchor-id="clustering">Clustering</h2>
-<p>This procedure goal is to cluster the municipalities considering the cases time-series similarities between them.</p>
+<p>This procedure goal is to cluster the municipalities considering the cases time series similarities between them.</p>
 <section id="prepare-data" class="level3">
 <h3 class="anchored" data-anchor-id="prepare-data">Prepare data</h3>
 <p>Prepare the data for use with the <code>dtwclust</code> package, pivoting the panel data to a wide format and matrix object.</p>
@@ -603,6 +605,7 @@ $ cases_lag6 &lt;dbl&gt; -0.51044592, 0.66804904, 0.66804904, 0.07880156, 0.6680
 <section id="sbd-method" class="level3">
 <h3 class="anchored" data-anchor-id="sbd-method">SBD method</h3>
 <p>The SBD method is used to cluster the municipalities, considering a shape-bases distance (k-Shape clustering algorithm). More details on the <a href="https://doi.org/10.1145/2723372.2737793">publicated methodology</a>.</p>
+<p><code>r``length(unique(tdengue$mun))</code> municipalities will be clustered.</p>
 <p>The clustering algorithm is applied with a varying number of <span class="math inline">\(k\)</span> partitions from 3 to 8.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>k_seq <span class="ot">&lt;-</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">8</span></span>
@@ -617,7 +620,7 @@ $ cases_lag6 &lt;dbl&gt; -0.51044592, 0.66804904, 0.66804904, 0.07880156, 0.6680
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>0.285 sec elapsed</code></pre>
+<pre><code>0.245 sec elapsed</code></pre>
 </div>
 </div>
 </section>
@@ -727,17 +730,28 @@ $ cases_lag6 &lt;dbl&gt; -0.51044592, 0.66804904, 0.66804904, 0.07880156, 0.6680
 </div>
 </div>
 </section>
+<section id="cluster-sizes" class="level3">
+<h3 class="anchored" data-anchor-id="cluster-sizes">Cluster sizes</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sel_clust<span class="sc">@</span>cluster)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  1   2   3 
+ 34 251  41 </code></pre>
+</div>
+</div>
+</section>
 <section id="identify-municipalities-and-cluster-id" class="level3">
 <h3 class="anchored" data-anchor-id="identify-municipalities-and-cluster-id">Identify municipalities and cluster id</h3>
 <p>Finally, the cluster partition ID is added to the main dataset.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>cluster_ids <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">mun =</span> <span class="fu">names</span>(cdengue) <span class="sc">%&gt;%</span> <span class="fu">substr</span>(<span class="dv">3</span>, <span class="dv">9</span>),</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">as.character</span>(sel_clust<span class="sc">@</span>cluster)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cluster_ids <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">mun =</span> <span class="fu">names</span>(cdengue) <span class="sc">%&gt;%</span> <span class="fu">substr</span>(<span class="dv">3</span>, <span class="dv">9</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">as.character</span>(sel_clust<span class="sc">@</span>cluster)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> <span class="fu">left_join</span>(tdengue, cluster_ids, <span class="at">by =</span> <span class="st">"mun"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> <span class="fu">left_join</span>(tdengue, cluster_ids, <span class="at">by =</span> <span class="st">"mun"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -745,222 +759,254 @@ $ cases_lag6 &lt;dbl&gt; -0.51044592, 0.66804904, 0.66804904, 0.07880156, 0.6680
 <h2 class="anchored" data-anchor-id="train-and-test-split">Train and test split</h2>
 <p>Split the data into training and testing. The function <code>time_series_split</code> handles the time series, not shuffling them, and considering the panel data format, as depicted in the message about overlapping timestamps detected.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tdengue_split <span class="ot">&lt;-</span> tdengue <span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">time_series_split</span>(</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_var =</span> date, </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">assess =</span> <span class="dv">54</span><span class="sc">*</span><span class="dv">2</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">cumulative =</span> <span class="cn">TRUE</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>tdengue_split <span class="ot">&lt;-</span> tdengue <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">time_series_split</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_var =</span> date, </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">assess =</span> <span class="dv">52</span><span class="sc">*</span><span class="dv">2</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">cumulative =</span> <span class="cn">TRUE</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Data is not ordered by the 'date_var'. Resamples will be arranged by `date`.</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Overlapping Timestamps Detected. Processing overlapping time series together using sliding windows.</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>tdengue_split</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;Analysis/Assess/Total&gt;
+&lt;127466/33904/161370&gt;</code></pre>
+</div>
 </div>
 </section>
 <section id="k-folds" class="level2">
 <h2 class="anchored" data-anchor-id="k-folds">K-folds</h2>
+<p>The training set will be split into k folds.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tdengue_split_folds <span class="ot">&lt;-</span> <span class="fu">training</span>(tdengue_split) <span class="sc">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vfold_cv</span>(<span class="at">v =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>tdengue_split_folds <span class="ot">&lt;-</span> <span class="fu">training</span>(tdengue_split) <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vfold_cv</span>(<span class="at">v =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="recipes" class="level2">
 <h2 class="anchored" data-anchor-id="recipes">Recipes</h2>
+<p>The global and subset models training specification are called recipes. The procedure bellow creates a list of those recipes.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>recipes_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>recipes_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="global" class="level3">
 <h3 class="anchored" data-anchor-id="global">Global</h3>
-<p>Using data from all municipalities.</p>
+<p>The global training recipe uses data from all municipalities for training the models.</p>
+<ul>
+<li><p>The date and group variables are removed prior training</p></li>
+<li><p>The municipality identification variable is treated as an Id variable, taking no place as a predictor in the training process</p></li>
+</ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>recipe_global <span class="ot">&lt;-</span> <span class="fu">recipe</span>(cases <span class="sc">~</span> ., <span class="at">data =</span> <span class="fu">training</span>(tdengue_split)) <span class="sc">%&gt;%</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(date, group) <span class="sc">%&gt;%</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">update_role</span>(mun, <span class="at">new_role =</span> <span class="st">"id variable"</span>)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>recipes_list <span class="ot">&lt;-</span> <span class="fu">append</span>(recipes_list, <span class="fu">list</span>(<span class="at">global =</span> recipe_global))</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(recipe_global)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>recipe_global <span class="ot">&lt;-</span> <span class="fu">recipe</span>(cases <span class="sc">~</span> ., <span class="at">data =</span> <span class="fu">training</span>(tdengue_split)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(date, group) <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">update_role</span>(mun, <span class="at">new_role =</span> <span class="st">"id variable"</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>recipes_list <span class="ot">&lt;-</span> <span class="fu">append</span>(recipes_list, <span class="fu">list</span>(<span class="at">global =</span> recipe_global))</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(recipe_global)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="groups" class="level3">
 <h3 class="anchored" data-anchor-id="groups">Groups</h3>
-<p>One recipe for each group, with data only from the group.</p>
+<ul>
+<li><p>For each group created by the clustering process, a specific training recipe will be created. For this, the first step is to filter rows from the training set, keep only the rows belonging to the group in the loop</p></li>
+<li><p>The date and group variables are removed prior training</p></li>
+<li><p>The municipality identification variable is treated as an Id variable, taking no place as a predictor in the training process</p></li>
+</ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(g <span class="cf">in</span> <span class="fu">unique</span>(tdengue<span class="sc">$</span>group)){</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  tmp <span class="ot">&lt;-</span> <span class="fu">recipe</span>(cases <span class="sc">~</span> ., <span class="at">data =</span> <span class="fu">training</span>(tdengue_split)) <span class="sc">%&gt;%</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_filter</span>(group <span class="sc">==</span> <span class="sc">!!</span>g) <span class="sc">%&gt;%</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_rm</span>(date, group) <span class="sc">%&gt;%</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">update_role</span>(mun, <span class="at">new_role =</span> <span class="st">"id variable"</span>)</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  tmp <span class="ot">&lt;-</span> <span class="fu">list</span>(tmp)</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  tmp <span class="ot">&lt;-</span> <span class="fu">setNames</span>(tmp, <span class="fu">paste0</span>(<span class="st">"g"</span>, g))</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  recipes_list <span class="ot">&lt;-</span> <span class="fu">append</span>(recipes_list, tmp)</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span>(tmp)</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(g <span class="cf">in</span> <span class="fu">unique</span>(tdengue<span class="sc">$</span>group)){</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  tmp <span class="ot">&lt;-</span> <span class="fu">recipe</span>(cases <span class="sc">~</span> ., <span class="at">data =</span> <span class="fu">training</span>(tdengue_split)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_filter</span>(group <span class="sc">==</span> <span class="sc">!!</span>g) <span class="sc">%&gt;%</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">step_rm</span>(date, group) <span class="sc">%&gt;%</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">update_role</span>(mun, <span class="at">new_role =</span> <span class="st">"id variable"</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  tmp <span class="ot">&lt;-</span> <span class="fu">list</span>(tmp)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  tmp <span class="ot">&lt;-</span> <span class="fu">setNames</span>(tmp, <span class="fu">paste0</span>(<span class="st">"g"</span>, g))</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  recipes_list <span class="ot">&lt;-</span> <span class="fu">append</span>(recipes_list, tmp)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span>(tmp)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
-<section id="models-specification" class="level2">
-<h2 class="anchored" data-anchor-id="models-specification">Models specification</h2>
+<section id="regressors-specification" class="level2">
+<h2 class="anchored" data-anchor-id="regressors-specification">Regressors specification</h2>
 <section id="random-forest" class="level3">
 <h3 class="anchored" data-anchor-id="random-forest">Random forest</h3>
+<p>A Random Forest spefication using the <code>ranger</code> engine. The <code>trees</code> and <code>min_n</code> hyperparameters will be tuned.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">trees =</span> <span class="fu">tune</span>(),</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_n =</span> <span class="fu">tune</span>()</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">trees =</span> <span class="fu">tune</span>(),</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_n =</span> <span class="fu">tune</span>()</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"ranger"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="lightgbm" class="level3">
 <h3 class="anchored" data-anchor-id="lightgbm">LightGBM</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lgbm_spec &lt;- boost_tree() %&gt;%</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   set_engine("lightgbm") %&gt;%</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   set_mode("regression")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lgbm_spec &lt;- boost_tree() %&gt;%</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   set_engine("lightgbm") %&gt;%</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   set_mode("regression")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="workflow-set" class="level2">
 <h2 class="anchored" data-anchor-id="workflow-set">Workflow set</h2>
+<p>This step creates a workflow set, combining the training recipes and regressors specifications.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>all_workflows <span class="ot">&lt;-</span> <span class="fu">workflow_set</span>(</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">preproc =</span> recipes_list, </span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">models =</span> <span class="fu">list</span>(<span class="at">rf =</span> rf_spec), </span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cross =</span> <span class="cn">TRUE</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>all_workflows <span class="ot">&lt;-</span> <span class="fu">workflow_set</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">preproc =</span> recipes_list, </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">models =</span> <span class="fu">list</span>(<span class="at">rf =</span> rf_spec), </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">cross =</span> <span class="cn">TRUE</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="tune" class="level2">
 <h2 class="anchored" data-anchor-id="tune">Tune</h2>
+<p>This step tunes the training hyperparameters of each workflow.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">registerDoParallel</span>()</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>race_results <span class="ot">&lt;-</span> </span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  all_workflows <span class="sc">%&gt;%</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow_map</span>(</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"tune_race_anova"</span>,</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">345</span>,</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> tdengue_split_folds,</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">grid =</span> <span class="dv">10</span>,</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> <span class="fu">control_race</span>(<span class="at">parallel_over =</span> <span class="st">"everything"</span>),</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">registerDoParallel</span>()</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>race_results <span class="ot">&lt;-</span> </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  all_workflows <span class="sc">%&gt;%</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow_map</span>(</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"tune_race_anova"</span>,</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">345</span>,</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> tdengue_split_folds,</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">grid =</span> <span class="dv">10</span>,</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> <span class="fu">control_race</span>(<span class="at">parallel_over =</span> <span class="st">"everything"</span>),</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>i 1 of 4 tuning:     global_rf</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>✔ 1 of 4 tuning:     global_rf (35m 42s)</code></pre>
+<pre><code>Warning in mclapply(argsList, FUN, mc.preschedule = preschedule, mc.set.seed =
+set.seed, : scheduled core 5 did not deliver a result, all values of the job
+will be affected</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ 1 of 4 tuning:     global_rf (23m 20.7s)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>i 2 of 4 tuning:     g3_rf</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>✔ 2 of 4 tuning:     g3_rf (3m 1.5s)</code></pre>
+<pre><code>✔ 2 of 4 tuning:     g3_rf (2m 17.7s)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>i 3 of 4 tuning:     g1_rf</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>✔ 3 of 4 tuning:     g1_rf (2m 33s)</code></pre>
+<pre><code>✔ 3 of 4 tuning:     g1_rf (1m 18s)</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>i 4 of 4 tuning:     g2_rf</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>✔ 4 of 4 tuning:     g2_rf (24m 58.5s)</code></pre>
+<pre><code>✔ 4 of 4 tuning:     g2_rf (18m 1.7s)</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>3975.631 sec elapsed</code></pre>
+<pre><code>2698.898 sec elapsed</code></pre>
 </div>
 </div>
 </section>
 <section id="fit" class="level2">
 <h2 class="anchored" data-anchor-id="fit">Fit</h2>
-<p>For combination of each municipality, model and recipe.</p>
+<p>Each workflow will be trained using the tuned hyperparameters, considering the RMSE metric as reference.</p>
+<p>This procedure creates a list of trained models, containing the fit results and a list of the municipalities used on the training of each workflow.</p>
+<p>The global workflow is trained with data from all municipalities and the subsets workflows are trained using the respective municipalities list given by the cluster algorithm.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>trained_models <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(w <span class="cf">in</span> <span class="fu">unique</span>(race_results<span class="sc">$</span>wflow_id)){</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  best_tune <span class="ot">&lt;-</span> race_results <span class="sc">%&gt;%</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">extract_workflow_set_result</span>(w) <span class="sc">%&gt;%</span></span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select_best</span>(<span class="st">"rmse"</span>)</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  final_fit <span class="ot">&lt;-</span> race_results <span class="sc">%&gt;%</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">extract_workflow</span>(w) <span class="sc">%&gt;%</span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">finalize_workflow</span>(best_tune) <span class="sc">%&gt;%</span></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fit</span>(<span class="fu">training</span>(tdengue_split))</span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  mold <span class="ot">&lt;-</span> <span class="fu">extract_mold</span>(final_fit)</span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  train_ids <span class="ot">&lt;-</span> mold<span class="sc">$</span>extras<span class="sc">$</span>roles<span class="sc">$</span><span class="st">`</span><span class="at">id variable</span><span class="st">`</span> <span class="sc">%&gt;%</span></span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.character</span>()</span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>  final_fit <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
-<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>      <span class="st">"final_fit"</span> <span class="ot">=</span> final_fit, </span>
-<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>      <span class="st">"train_ids"</span> <span class="ot">=</span> train_ids</span>
-<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>  final_fit <span class="ot">&lt;-</span> <span class="fu">setNames</span>(final_fit, <span class="fu">paste0</span>(w))</span>
-<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a>  trained_models <span class="ot">&lt;-</span> <span class="fu">append</span>(trained_models, final_fit)</span>
-<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>trained_models <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(w <span class="cf">in</span> <span class="fu">unique</span>(race_results<span class="sc">$</span>wflow_id)){</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  best_tune <span class="ot">&lt;-</span> race_results <span class="sc">%&gt;%</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">extract_workflow_set_result</span>(w) <span class="sc">%&gt;%</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select_best</span>(<span class="st">"rmse"</span>)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  final_fit <span class="ot">&lt;-</span> race_results <span class="sc">%&gt;%</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">extract_workflow</span>(w) <span class="sc">%&gt;%</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">finalize_workflow</span>(best_tune) <span class="sc">%&gt;%</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fit</span>(<span class="fu">training</span>(tdengue_split))</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>  mold <span class="ot">&lt;-</span> <span class="fu">extract_mold</span>(final_fit)</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>  train_ids <span class="ot">&lt;-</span> mold<span class="sc">$</span>extras<span class="sc">$</span>roles<span class="sc">$</span><span class="st">`</span><span class="at">id variable</span><span class="st">`</span> <span class="sc">%&gt;%</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.character</span>()</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>  final_fit <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>      <span class="st">"final_fit"</span> <span class="ot">=</span> final_fit, </span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>      <span class="st">"train_ids"</span> <span class="ot">=</span> train_ids</span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>  final_fit <span class="ot">&lt;-</span> <span class="fu">setNames</span>(final_fit, <span class="fu">paste0</span>(w))</span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a>  trained_models <span class="ot">&lt;-</span> <span class="fu">append</span>(trained_models, final_fit)</span>
+<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="accuracy" class="level2">
+<h2 class="anchored" data-anchor-id="accuracy">Accuracy</h2>
+<p>After training each workflow, the accuracy of the models are obtained applying the fitted models on the testing set.</p>
+<p>For the global model, all municipalities are using for testing. For the subsets models, only data from the subset’s municipalities are considered for testing.</p>
+<p>The RMSE metric is obtained for each workflow and municipality.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>models_accuracy <span class="ot">&lt;-</span> <span class="fu">tibble</span>()</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(trained_models)){</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  model_tbl <span class="ot">&lt;-</span> <span class="fu">modeltime_table</span>(trained_models[[t]][[<span class="dv">1</span>]]) </span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  testing_set <span class="ot">&lt;-</span> <span class="fu">testing</span>(tdengue_split) <span class="sc">%&gt;%</span></span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(mun <span class="sc">%in%</span> trained_models[[t]][[<span class="dv">2</span>]])</span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  calib_tbl <span class="ot">&lt;-</span> model_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">modeltime_calibrate</span>(</span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">new_data =</span> testing_set, </span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">id       =</span> <span class="st">"mun"</span></span>
-<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> calib_tbl <span class="sc">%&gt;%</span> </span>
-<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">modeltime_accuracy</span>(</span>
-<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">acc_by_id =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">metric_set =</span> <span class="fu">metric_set</span>(rmse)</span>
-<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>  res<span class="sc">$</span>.model_id <span class="ot">&lt;-</span> <span class="fu">word</span>(<span class="fu">names</span>(trained_models[t]), <span class="dv">1</span>, <span class="at">sep =</span> <span class="st">"_"</span>)</span>
-<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>  models_accuracy <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(models_accuracy, res)</span>
-<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>models_accuracy <span class="ot">&lt;-</span> <span class="fu">tibble</span>()</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(t <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(trained_models)){</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  model_tbl <span class="ot">&lt;-</span> <span class="fu">modeltime_table</span>(trained_models[[t]][[<span class="dv">1</span>]]) </span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  testing_set <span class="ot">&lt;-</span> <span class="fu">testing</span>(tdengue_split) <span class="sc">%&gt;%</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(mun <span class="sc">%in%</span> trained_models[[t]][[<span class="dv">2</span>]])</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>  calib_tbl <span class="ot">&lt;-</span> model_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">modeltime_calibrate</span>(</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">new_data =</span> testing_set, </span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">id       =</span> <span class="st">"mun"</span></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> calib_tbl <span class="sc">%&gt;%</span> </span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">modeltime_accuracy</span>(</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">acc_by_id =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">metric_set =</span> <span class="fu">metric_set</span>(rmse)</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>  res<span class="sc">$</span>.model_id <span class="ot">&lt;-</span> <span class="fu">word</span>(<span class="fu">names</span>(trained_models[t]), <span class="dv">1</span>, <span class="at">sep =</span> <span class="st">"_"</span>)</span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>  models_accuracy <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(models_accuracy, res)</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>This plot presents the RMSE distribution across the workflows.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> models_accuracy, <span class="fu">aes</span>(<span class="at">x =</span> .model_id, <span class="at">y =</span> rmse, <span class="at">fill =</span> .model_desc)) <span class="sc">+</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> models_accuracy, <span class="fu">aes</span>(<span class="at">x =</span> .model_id, <span class="at">y =</span> rmse, <span class="at">fill =</span> .model_desc)) <span class="sc">+</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="dengue_ts_global_subset_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
+<p><img src="dengue_ts_global_subset_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
 <section id="session-info" class="level2">
 <h2 class="anchored" data-anchor-id="session-info">Session info</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>R version 4.2.0 (2022-04-22)
-Platform: aarch64-apple-darwin20 (64-bit)
-Running under: macOS 13.4
+<pre><code>R version 4.1.2 (2021-11-01)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 22.04.2 LTS
 
 Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRblas.0.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRlapack.dylib
+BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0
+LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0
 
 Random number generation:
  RNG:     L'Ecuyer-CMRG 
@@ -968,7 +1014,12 @@ Random number generation:
  Sample:  Rejection 
  
 locale:
-[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+ [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
@@ -976,7 +1027,7 @@ attached base packages:
 other attached packages:
  [1] rlang_1.1.1        ranger_0.15.1      tictoc_1.2         kableExtra_1.3.4  
  [5] dtwclust_5.5.12    dtw_1.23-1         proxy_0.4-27       timetk_2.8.3      
- [9] modeltime_1.2.6    finetune_1.1.0     bonsai_0.2.1       yardstick_1.2.0   
+ [9] modeltime_1.2.7    finetune_1.1.0     bonsai_0.2.1       yardstick_1.2.0   
 [13] workflowsets_1.0.1 workflows_1.1.3    tune_1.1.1         rsample_1.1.1     
 [17] recipes_1.0.6      parsnip_1.1.0      modeldata_1.1.0    infer_1.0.4       
 [21] dials_1.2.0        scales_1.2.1       broom_1.0.5        tidymodels_1.1.0  
@@ -986,48 +1037,48 @@ other attached packages:
 
 loaded via a namespace (and not attached):
   [1] backports_1.4.1     systemfonts_1.0.4   plyr_1.8.8         
-  [4] splines_4.2.0       listenv_0.9.0       digest_0.6.31      
+  [4] splines_4.1.2       listenv_0.9.0       digest_0.6.32      
   [7] foreach_1.5.2       htmltools_0.5.5     fansi_1.0.4        
- [10] magrittr_2.0.3      cluster_2.1.4       doParallel_1.0.17  
+ [10] magrittr_2.0.3      cluster_2.1.2       doParallel_1.0.17  
  [13] tzdb_0.4.0          globals_0.16.2      gower_1.0.1        
  [16] RcppParallel_5.1.7  xts_0.13.1          svglite_2.1.1      
  [19] hardhat_1.3.0       timechange_0.2.0    prettyunits_1.1.1  
  [22] colorspace_2.1-0    rvest_1.0.3         ggrepel_0.9.3      
- [25] xfun_0.39           jsonlite_1.8.7      lme4_1.1-33        
- [28] survival_3.5-5      zoo_1.8-12          iterators_1.0.14   
+ [25] xfun_0.39           jsonlite_1.8.7      lme4_1.1-34        
+ [28] survival_3.2-13     zoo_1.8-12          iterators_1.0.14   
  [31] glue_1.6.2          gtable_0.3.3        ipred_0.9-14       
  [34] webshot_0.5.5       future.apply_1.11.0 Rcpp_1.0.10        
  [37] viridisLite_0.4.2   xtable_1.8-4        clue_0.3-64        
- [40] GPfit_1.0-8         bit_4.0.5           stats4_4.2.0       
+ [40] GPfit_1.0-8         bit_4.0.5           stats4_4.1.2       
  [43] lava_1.7.2.1        StanHeaders_2.26.27 prodlim_2023.03.31 
  [46] htmlwidgets_1.6.2   httr_1.4.6          modeltools_0.2-23  
  [49] ellipsis_0.3.2      pkgconfig_2.0.3     farver_2.1.1       
- [52] nnet_7.3-19         utf8_1.2.3          tidyselect_1.2.0   
+ [52] nnet_7.3-17         utf8_1.2.3          tidyselect_1.2.0   
  [55] labeling_0.4.2      DiceDesign_1.9      reshape2_1.4.4     
- [58] later_1.3.1         munsell_0.5.0       tools_4.2.0        
+ [58] later_1.3.1         munsell_0.5.0       tools_4.1.2        
  [61] cli_3.6.1           generics_0.1.3      evaluate_0.21      
  [64] fastmap_1.1.1       yaml_2.3.7          knitr_1.43         
- [67] bit64_4.0.5         nlme_3.1-162        future_1.33.0      
+ [67] bit64_4.0.5         nlme_3.1-155        future_1.33.0      
  [70] mime_0.12           xml2_1.3.4          flexclust_1.4-1    
- [73] compiler_4.2.0      rstudioapi_0.14     lhs_1.1.6          
+ [73] compiler_4.1.2      rstudioapi_0.14     lhs_1.1.6          
  [76] stringi_1.7.12      highr_0.10          RSpectra_0.16-1    
- [79] lattice_0.21-8      Matrix_1.5-4.1      nloptr_2.0.3       
+ [79] lattice_0.20-45     Matrix_1.5-4.1      nloptr_2.0.3       
  [82] shinyjs_2.1.0       vctrs_0.6.3         pillar_1.9.0       
  [85] lifecycle_1.0.3     furrr_0.3.1         data.table_1.14.8  
  [88] httpuv_1.6.11       R6_2.5.1            promises_1.2.0.1   
- [91] parallelly_1.36.0   codetools_0.2-19    boot_1.3-28.1      
- [94] MASS_7.3-60         assertthat_0.2.1    withr_2.5.0        
- [97] parallel_4.2.0      hms_1.1.3           grid_4.2.0         
-[100] rpart_4.1.19        timeDate_4022.108   minqa_1.2.5        
-[103] class_7.3-22        rmarkdown_2.23      shiny_1.7.4        </code></pre>
+ [91] parallelly_1.36.0   codetools_0.2-18    boot_1.3-28        
+ [94] MASS_7.3-55         assertthat_0.2.1    withr_2.5.0        
+ [97] parallel_4.1.2      hms_1.1.3           grid_4.1.2         
+[100] rpart_4.1.16        timeDate_4022.108   minqa_1.2.5        
+[103] class_7.3-20        rmarkdown_2.23      shiny_1.7.4        </code></pre>
 </div>
 </div>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
 <ul>
-<li><a href="https://blog.bguarisma.com/series/time-series-forecasting" class="uri">https://blog.bguarisma.com/series/time-series-forecasting</a></li>
-<li><a href="https://business-science.github.io/modeltime/articles/modeling-panel-data.html" class="uri">https://business-science.github.io/modeltime/articles/modeling-panel-data.html</a></li>
+<li><p><a href="https://business-science.github.io/modeltime/articles/modeling-panel-data.html" class="uri">https://business-science.github.io/modeltime/articles/modeling-panel-data.html</a></p></li>
+<li><p><a href="https://blog.bguarisma.com/series/time-series-forecasting" class="uri">https://blog.bguarisma.com/series/time-series-forecasting</a></p></li>
 </ul>
 
 

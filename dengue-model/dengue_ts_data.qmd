@@ -127,10 +127,16 @@ tdengue <- tdengue %>%
 Municipalities remaining at the dataset: `r length(unique(tdengue$mun))`
 
 ::: callout-warning
-The computation of dengue incidence (cases per population) is commented to keep the raw cases count. Dengue incidence is to be used after notebooks validation.
+The computation of dengue incidence (cases per population) is commented to keep the raw cases count.
 :::
 
 ### Standardize measures
+
+Center around mean with a unit standard deviation.
+
+$$
+x' = \frac{x - \mu}{\sigma} 
+$$
 
 ```{r}
 tdengue <- tdengue %>%
@@ -141,7 +147,7 @@ tdengue <- tdengue %>%
 
 ### Lag and rolling lag variables
 
--   Creates lag variables with cases and weather variables from 1 to 6 weeks.
+Creates lagged variables from dengue cases and weather variables, from 1 to 6 weeks.
 
 ```{r}
 tdengue <- tdengue %>%
@@ -149,7 +155,7 @@ tdengue <- tdengue %>%
   tk_augment_lags(.value = c(cases, prec, tmax), .lags = 1:6) %>%
   # tk_augment_slidify(
   #   .value = contains("_lag"), 
-  #   .period = c(2, 3, 4, 6, 8, 12), 
+  #   .period = c(2, 4, 6), 
   #   .f = ~ mean(.x, na.rm = TRUE), 
   #   .partial = TRUE,
   #   .align   = "center"
@@ -158,7 +164,7 @@ tdengue <- tdengue %>%
 ```
 
 ::: callout-warning
-Rolling window calculation procedure is commented out, until validation of notebooks takes place.
+Rolling window calculation procedure is commented out.
 :::
 
 ## Overview

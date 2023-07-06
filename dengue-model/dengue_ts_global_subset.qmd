@@ -35,7 +35,7 @@ tdengue <- read_parquet(file = "tdengue.parquet") %>%
 ```
 
 ::: callout-note
--   NA values are created when the lagged variables were calculated. The rows containing those NA values are dropped.
+-   NA values are created when the lagged variables were calculated. The rows containing those NA values are dropped due machine learning regressors constraints.
 
 -   For validation purposes, only the `cases` and `cases_lag*` covariates variables are keep.
 :::
@@ -46,7 +46,7 @@ glimpse(tdengue)
 
 ## Clustering
 
-This procedure goal is to cluster the municipalities considering the cases time-series similarities between them.
+This procedure goal is to cluster the municipalities considering the cases time series similarities between them.
 
 ### Prepare data
 
@@ -66,6 +66,8 @@ cdengue <- tdengue %>%
 ### SBD method
 
 The SBD method is used to cluster the municipalities, considering a shape-bases distance (k-Shape clustering algorithm). More details on the [publicated methodology](https://doi.org/10.1145/2723372.2737793).
+
+`r``length(unique(tdengue$mun))` municipalities will be clustered.
 
 The clustering algorithm is applied with a varying number of $k$ partitions from 3 to 8.
 
@@ -107,6 +109,12 @@ sel_clust <- clust[[res_cvi[[1,1]]]]
 plot(sel_clust)
 ```
 
+### Cluster sizes
+
+```{r}
+table(sel_clust@cluster)
+```
+
 ### Identify municipalities and cluster id
 
 Finally, the cluster partition ID is added to the main dataset.
@@ -130,12 +138,16 @@ Split the data into training and testing. The function `time_series_split` handl
 tdengue_split <- tdengue %>%
   time_series_split(
     date_var = date, 
-    assess = 54*2,
+    assess = 52*2,
     cumulative = TRUE
   )
+
+tdengue_split
 ```
 
 ## K-folds
+
+The training set will be split into k folds.
 
 ```{r}
 tdengue_split_folds <- training(tdengue_split) %>%
@@ -144,13 +156,19 @@ tdengue_split_folds <- training(tdengue_split) %>%
 
 ## Recipes
 
+The global and subset models training specification are called recipes. The procedure bellow creates a list of those recipes.
+
 ```{r}
 recipes_list <- list()
 ```
 
 ### Global
 
-Using data from all municipalities.
+The global training recipe uses data from all municipalities for training the models.
+
+-   The date and group variables are removed prior training
+
+-   The municipality identification variable is treated as an Id variable, taking no place as a predictor in the training process
 
 ```{r}
 recipe_global <- recipe(cases ~ ., data = training(tdengue_split)) %>%
@@ -164,7 +182,11 @@ rm(recipe_global)
 
 ### Groups
 
-One recipe for each group, with data only from the group.
+-   For each group created by the clustering process, a specific training recipe will be created. For this, the first step is to filter rows from the training set, keep only the rows belonging to the group in the loop
+
+-   The date and group variables are removed prior training
+
+-   The municipality identification variable is treated as an Id variable, taking no place as a predictor in the training process
 
 ```{r}
 for(g in unique(tdengue$group)){
@@ -182,9 +204,11 @@ for(g in unique(tdengue$group)){
 }
 ```
 
-## Models specification
+## Regressors specification
 
 ### Random forest
+
+A Random Forest spefication using the `ranger` engine. The `trees` and `min_n` hyperparameters will be tuned.
 
 ```{r}
 rf_spec <- rand_forest(
@@ -205,6 +229,8 @@ rf_spec <- rand_forest(
 
 ## Workflow set
 
+This step creates a workflow set, combining the training recipes and regressors specifications.
+
 ```{r}
 all_workflows <- workflow_set(
   preproc = recipes_list, 
@@ -214,6 +240,8 @@ all_workflows <- workflow_set(
 ```
 
 ## Tune
+
+This step tunes the training hyperparameters of each workflow.
 
 ```{r}
 doParallel::registerDoParallel()
@@ -234,7 +262,11 @@ toc()
 
 ## Fit
 
-For combination of each municipality, model and recipe.
+Each workflow will be trained using the tuned hyperparameters, considering the RMSE metric as reference.
+
+This procedure creates a list of trained models, containing the fit results and a list of the municipalities used on the training of each workflow.
+
+The global workflow is trained with data from all municipalities and the subsets workflows are trained using the respective municipalities list given by the cluster algorithm.
 
 ```{r}
 trained_models <- list()
@@ -267,6 +299,14 @@ for(w in unique(race_results$wflow_id)){
 }
 ```
 
+## Accuracy
+
+After training each workflow, the accuracy of the models are obtained applying the fitted models on the testing set.
+
+For the global model, all municipalities are using for testing. For the subsets models, only data from the subset's municipalities are considered for testing.
+
+The RMSE metric is obtained for each workflow and municipality.
+
 ```{r}
 models_accuracy <- tibble()
 for(t in 1:length(trained_models)){
@@ -294,6 +334,8 @@ for(t in 1:length(trained_models)){
 }
 ```
 
+This plot presents the RMSE distribution across the workflows.
+
 ```{r}
 ggplot(data = models_accuracy, aes(x = .model_id, y = rmse, fill = .model_desc)) +
   geom_boxplot()
@@ -307,5 +349,6 @@ sessionInfo()
 
 ## References
 
--   <https://blog.bguarisma.com/series/time-series-forecasting>
 -   <https://business-science.github.io/modeltime/articles/modeling-panel-data.html>
+
+-   <https://blog.bguarisma.com/series/time-series-forecasting>
