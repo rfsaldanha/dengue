@@ -1,10 +1,10 @@
 ---
-title: "Data preparing"
+title: "Bundled data"
 author: "Raphael Saldanha"
 date: last-modified
 ---
 
-This notebook prepares a data-set with dengue cases and covariates of interest per municipality, for modeling purposes.
+This notebook prepares a data-set with dengue cases and covariates of interest per municipality.
 
 ## Packages
 
@@ -24,7 +24,7 @@ library(timetk)
 Load dengue cases data and aggregate per week.
 
 ```{r}
-dengue <- read_parquet("../dengue-data/parquet_aggregated/dengue_md.parquet") %>%
+dengue <- read_parquet("dengue-data/parquet_aggregated/dengue_md.parquet") %>%
   group_by(mun) %>%
   summarise_by_time(.date_var = date, .by = "week", freq = sum(freq, na.rm = TRUE)) %>%
   ungroup() %>%
@@ -48,7 +48,7 @@ Load weather variables and group per week.
 #### Precipitation
 
 ```{r}
-prec <- open_dataset(sources = "../weather-data/parquet/brdwgd/pr.parquet") %>%
+prec <- open_dataset(sources = "weather-data/parquet/brdwgd/pr.parquet") %>%
   filter(name == "pr_sum") %>%
   select(date, value) %>%
   collect() %>%
@@ -64,7 +64,7 @@ As precipitation is a volume, the `sum` function is used.
 #### Average maximum temperature
 
 ```{r}
-tmax <- open_dataset(sources = "../weather-data/parquet/brdwgd/tmax.parquet") %>%
+tmax <- open_dataset(sources = "weather-data/parquet/brdwgd/tmax.parquet") %>%
   filter(name == "Tmax_mean") %>%
   select(date, value) %>%
   collect() %>%

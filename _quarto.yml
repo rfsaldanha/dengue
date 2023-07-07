@@ -53,6 +53,7 @@ website:
                 - dengue-data/aggregated_database.qmd
             - weather_data.qmd
             - socioeconomic-data/socioeconomic_data.qmd
+            - bundled_data.qmd
         - section: "Cluster analysis"
           contents: 
               - cluster_analysis.qmd
@@ -76,7 +77,6 @@ website:
               - section: "Dengue time series modelling"
                 contents:
                     - dengue-model/dengue_ts_overview.qmd
-                    - dengue-model/dengue_ts_data.qmd
                     - dengue-model/dengue_ts_global_subset.qmd
               
         - software.qmd
