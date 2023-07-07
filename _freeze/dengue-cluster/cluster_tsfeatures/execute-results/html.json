@@ -1,0 +1,16 @@
+{
+  "hash": "021e09766e475ad9ca5d163126e7f5f7",
+  "result": {
+    "markdown": "---\ntitle: \"Time series features\"\nauthor: \"Raphael Saldanha\"\ndate: last-modified\n---\n\n\nThis notebook aims to explore time series features of dengue cases that may guide the clustering procedures.\n\n## Packages\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(tidyverse)\nlibrary(arrow)\nlibrary(tsfeatures)\n```\n:::\n\n\n## Load data\n\nLoad the bundled data with standardized cases and keep only the municipality code, date and cases variables.\n\n\n::: {.cell}\n\n```{.r .cell-code}\ntdengue <- read_parquet(\"../tdengue.parquet\") %>%\n  select(mun, date, cases)\n```\n:::\n\n\n## Prepare data\n\nConvert panel data to a list of `ts` objects.\n\n\n::: {.cell}\n\n```{.r .cell-code}\ntdengue_df <- tdengue %>%\n  arrange(mun, date) %>%\n  select(-date) %>%\n  nest(data = cases, .by = mun)\n\ntdengue_list <- lapply(tdengue_df$data, ts)\n```\n:::\n\n\n## Time series features\n\n\n::: {.cell}\n\n```{.r .cell-code}\ntsf <- tsfeatures(\n  tslist = tdengue_list, \n  features = c(\"entropy\", \"stability\", \"lumpiness\", \"flat_spots\")\n  )\ntsf$mun <- tdengue_df$mun\n```\n:::\n\n\n### Entropy\n\n$$\n-\\int^\\pi_{-\\pi}\\hat{f}(\\lambda)\\log\\hat{f}(\\lambda) d\\lambda\n$$\n\n> Measures the \"forecastability\" of a time series, where low values indicate a high signal-to-noise ratio, and large values occur when a series is difficult to forecast.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nggplot(tsf, aes(x = entropy)) +\n  geom_histogram(bins = 50, alpha = .7, fill = \"purple\") +\n  theme_bw()\n```\n\n::: {.cell-output-display}\n![](cluster_tsfeatures_files/figure-html/unnamed-chunk-5-1.png){width=672}\n:::\n:::\n\n\n### Stability & lumpiness\n\n> Stability and lumpiness are two time series features based on tiled (non-overlapping) windows. Means or variances are produced for all tiled windows. Then stability is the variance of the means, while lumpiness is the variance of the variances.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nggplot(tsf, aes(x = stability)) +\n  geom_histogram(bins = 50, alpha = .7, fill = \"purple\") +\n  theme_bw()\n```\n\n::: {.cell-output-display}\n![](cluster_tsfeatures_files/figure-html/unnamed-chunk-6-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nggplot(tsf, aes(x = lumpiness)) +\n  geom_histogram(bins = 50, alpha = .7, fill = \"purple\") +\n  theme_bw()\n```\n\n::: {.cell-output-display}\n![](cluster_tsfeatures_files/figure-html/unnamed-chunk-7-1.png){width=672}\n:::\n:::\n\n\n### Flat spots\n\n> Flat_spots are computed by dividing the sample space of a time series into ten equal-sized intervals, and computing the maximum run length within any single interval.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nggplot(tsf, aes(x = flat_spots)) +\n  geom_histogram(bins = 50, alpha = .7, fill = \"purple\") +\n  theme_bw()\n```\n\n::: {.cell-output-display}\n![](cluster_tsfeatures_files/figure-html/unnamed-chunk-8-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "cluster_tsfeatures_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
