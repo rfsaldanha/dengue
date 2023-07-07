@@ -84,7 +84,7 @@ div.csl-indent {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../dengue-cluster/cluster_mun_year.html" rel="next">
+<link href="../dengue-cluster/cluster_long_scaled_hier.html" rel="next">
 <link href="../dengue-cluster/cluster_long_scaled.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -327,6 +327,12 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
  <span class="menu-text">Time series features</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_long_scaled_hier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hierarchical clustering</span></a>
+  </div>
+</li>
       </ul>
   </li>
           <li class="sidebar-item sidebar-item-section">
@@ -504,6 +510,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Time series features</h1>
+<p class="subtitle lead">with scaled cases</p>
 </div>
 
 
@@ -520,7 +527,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 7, 2023 | 11:25:22 +02:00</p>
+      <p class="date">July 7, 2023 | 12:03:01 +02:00</p>
     </div>
   </div>
   
@@ -610,7 +617,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <section id="flat-spots" class="level3">
 <h3 class="anchored" data-anchor-id="flat-spots">Flat spots</h3>
 <blockquote class="blockquote">
-<p>Flat_spots are computed by dividing the sample space of a time series into ten equal-sized intervals, and computing the maximum run length within any single interval.</p>
+<p>Flat spots are computed by dividing the sample space of a time series into ten equal-sized intervals, and computing the maximum run length within any single interval.</p>
 </blockquote>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tsf, <span class="fu">aes</span>(<span class="at">x =</span> flat_spots)) <span class="sc">+</span></span>
@@ -934,8 +941,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../dengue-cluster/cluster_mun_year.html" class="pagination-link">
-        <span class="nav-page-text">Yearly time series</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../dengue-cluster/cluster_long_scaled_hier.html" class="pagination-link">
+        <span class="nav-page-text">Hierarchical clustering</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -1,0 +1,16 @@
+{
+  "hash": "12e8ec9e5ad1af0bd5cb4b7c734efbd9",
+  "result": {
+    "markdown": "---\ntitle: \"Hierarchical clustering\"\nsubtitle: \"with scaled cases\"\nauthor: \"Raphael Saldanha\"\ndate: last-modified\n---\n\n\nThis notebooks aims to explore hierarchical clustering of municipalities considering scaled dengue cases time series.\n\n## Packages\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(tidyverse)\nlibrary(lubridate)\nlibrary(arrow)\nlibrary(timetk)\nlibrary(dtwclust)\nlibrary(kableExtra)\nlibrary(tictoc)\n```\n:::\n\n\n## Load data\n\nLoad the bundled data (326 municipalities, pop $\\geq$ 100k inhab.) with standardized cases and keep only the municipality code, date and cases variables.\n\n\n::: {.cell}\n\n```{.r .cell-code}\ntdengue <- read_parquet(\"../tdengue.parquet\") %>%\n  select(mun, date, cases)\n```\n:::\n\n\n## Prepare data\n\n\n::: {.cell}\n\n```{.r .cell-code}\ntdengue <- tdengue %>%\n  mutate(mun = paste0(\"m_\", mun)) %>%\n  arrange(mun, date) %>%\n  pivot_wider(names_from = mun, values_from = cases) %>%\n  select(-date) %>%\n  t() %>%\n  tslist()\n```\n:::\n\n\n## Clustering\n\n\n::: {.cell}\n\n```{.r .cell-code}\ntic()\nclust <- tsclust(\n  series = tdengue, \n  type = \"hierarchical\", \n  k = 5,\n  distance = \"dtw_basic\",\n  seed = 123,\n  control = hierarchical_control(method = \"average\")\n)\ntoc()\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n10.553 sec elapsed\n```\n:::\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nggdendro::ggdendrogram(clust, size = .3, labels = F)\n```\n\n::: {.cell-output-display}\n![](cluster_long_scaled_hier_files/figure-html/unnamed-chunk-5-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "cluster_long_scaled_hier_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
