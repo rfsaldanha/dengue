@@ -224,13 +224,13 @@ rf_spec <- rand_forest(
 ### LightGBM
 
 ```{r}
-lgbm_spec <- boost_tree(
-  trees = tune(),
-  min_n = tune(),
-  tree_depth = tune()
-) %>%
-  set_engine("lightgbm") %>%
-  set_mode("regression")
+# lgbm_spec <- boost_tree(
+#   trees = tune(),
+#   min_n = tune(),
+#   tree_depth = tune()
+# ) %>%
+#   set_engine("lightgbm") %>%
+#   set_mode("regression")
 ```
 
 ## Workflow set
@@ -240,7 +240,7 @@ This step creates a workflow set, combining the training recipes and regressors 
 ```{r}
 all_workflows <- workflow_set(
   preproc = recipes_list, 
-  models = list(rf = rf_spec, lgbm = lgbm_spec), 
+  models = list(rf = rf_spec), 
   cross = TRUE
 )
 ```
