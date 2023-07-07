@@ -116,7 +116,7 @@
     "href": "publications.html",
     "title": "Publications",
     "section": "",
-    "text": "Back to top"
+    "text": "Data paper. Zonal statistics datasets of weather indicators for Brazilian municipalities.\nShort paper. Subset Modelling: A Domain Partitioning Strategy for Data-efficient Machine-Learning. As co-author."
   },
   {
     "objectID": "socioeconomic-data/socioeconomic_data.html",
@@ -1027,5 +1027,19 @@
     "title": "Global and subset models",
     "section": "References",
     "text": "References\n\nhttps://business-science.github.io/modeltime/articles/modeling-panel-data.html\nhttps://blog.bguarisma.com/series/time-series-forecasting"
+  },
+  {
+    "objectID": "publications.html#submitted",
+    "href": "publications.html#submitted",
+    "title": "Publications",
+    "section": "",
+    "text": "Data paper. Zonal statistics datasets of weather indicators for Brazilian municipalities.\nShort paper. Subset Modelling: A Domain Partitioning Strategy for Data-efficient Machine-Learning. As co-author."
+  },
+  {
+    "objectID": "publications.html#work-in-progress",
+    "href": "publications.html#work-in-progress",
+    "title": "Publications",
+    "section": "Work in progress",
+    "text": "Work in progress\n\nResearch paper. Dengue profiles: clustering of time series of dengue cases per municipalities."
   }
 ]
