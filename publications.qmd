@@ -11,3 +11,7 @@ title: "Publications"
 ## Work in progress
 
 -   Research paper. *Dengue profiles: clustering of time series of dengue cases per municipalities*.
+
+-   Research paper. *Dengue and weather covariates: a time lagged relationship analysis.*
+
+-   Research paper. *Inconclusive dengue cases diagnosis reclassification by symptoms and clinical conditions.*
