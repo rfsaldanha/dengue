@@ -31,3 +31,7 @@ arrow::read_parquet(file = "dengue-data/parquet_classification/dengue_cases_clas
 ::: {style="text-align: center;"}
 [![](images/inr_logo_rouge.png){width="200"}](https://www.inria.fr) [![](images/MARCACOMPLETA_LNCC_HORIZONTAL_FINAL_PNG_azul.png){width="200"}](https://www.gov.br/lncc)
 :::
+
+::: {style="text-align: center"}
+[![](images/logo-pcdas.png){width="110"}](https://pcdas.icict.fiocruz.br/)
+:::
