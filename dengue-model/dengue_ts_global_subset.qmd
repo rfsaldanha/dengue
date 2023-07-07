@@ -29,7 +29,7 @@ library(tictoc)
 ## Load data
 
 ```{r}
-tdengue <- read_parquet(file = "tdengue.parquet") %>%
+tdengue <- read_parquet(file = "../tdengue.parquet") %>%
   drop_na() %>%
   select(mun, date, starts_with("cases"))
 ```
