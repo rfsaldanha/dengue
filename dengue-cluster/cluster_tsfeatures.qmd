@@ -1,5 +1,6 @@
 ---
 title: "Time series features"
+subtitle: "with scaled cases"
 author: "Raphael Saldanha"
 date: last-modified
 bibliography: references.bib
