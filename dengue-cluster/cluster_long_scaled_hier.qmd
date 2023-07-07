@@ -1,0 +1,62 @@
+---
+title: "Hierarchical clustering"
+subtitle: "with scaled cases"
+author: "Raphael Saldanha"
+date: last-modified
+---
+
+This notebooks aims to explore hierarchical clustering of municipalities considering scaled dengue cases time series.
+
+## Packages
+
+```{r}
+#| message: false
+library(tidyverse)
+library(lubridate)
+library(arrow)
+library(timetk)
+library(dtwclust)
+library(kableExtra)
+library(tictoc)
+```
+
+## Load data
+
+Load the bundled data (326 municipalities, pop $\geq$ 100k inhab.) with standardized cases and keep only the municipality code, date and cases variables.
+
+```{r}
+tdengue <- read_parquet("../tdengue.parquet") %>%
+  select(mun, date, cases)
+```
+
+## Prepare data
+
+```{r}
+tdengue <- tdengue %>%
+  mutate(mun = paste0("m_", mun)) %>%
+  arrange(mun, date) %>%
+  pivot_wider(names_from = mun, values_from = cases) %>%
+  select(-date) %>%
+  t() %>%
+  tslist()
+```
+
+## Clustering
+
+```{r}
+tic()
+clust <- tsclust(
+  series = tdengue, 
+  type = "hierarchical", 
+  k = 5,
+  distance = "dtw_basic",
+  seed = 123,
+  control = hierarchical_control(method = "average")
+)
+toc()
+```
+
+```{r}
+#| fig-height: 10
+ggdendro::ggdendrogram(clust, size = .3, labels = F)
+```
