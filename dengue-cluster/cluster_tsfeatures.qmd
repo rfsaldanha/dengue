@@ -17,7 +17,7 @@ library(tsfeatures)
 
 ## Load data
 
-Load the bundled data with standardized cases and keep only the municipality code, date and cases variables.
+Load the bundled data (326 municipalities, pop $\geq$ 100k inhab.) with standardized cases and keep only the municipality code, date and cases variables.
 
 ```{r}
 tdengue <- read_parquet("../tdengue.parquet") %>%
