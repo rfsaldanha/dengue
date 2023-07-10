@@ -730,49 +730,49 @@
   {
     "objectID": "presentations/presentation_test.html#building-and-selecting-specialized-ai-models-for-predicting-dengue-disease",
     "href": "presentations/presentation_test.html#building-and-selecting-specialized-ai-models-for-predicting-dengue-disease",
-    "title": "Building and Selecting Specialized AI Models",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Building and Selecting Specialized AI Models for Predicting Dengue Disease",
     "text": "Building and Selecting Specialized AI Models for Predicting Dengue Disease\n\nSALDANHA, Raphael\nAKBARINIA, Reza\nPENA, Eduardo\nRIBEIRO, Victor\nPORTO, Fabio"
   },
   {
     "objectID": "presentations/presentation_test.html#context",
     "href": "presentations/presentation_test.html#context",
-    "title": "Building and Selecting Specialized AI Models",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Context",
     "text": "Context\n\nRaphael SALDANHA: Degrees on Geography, Statistics, Public Health and Health Information\nPostdoc call from International Relations Department of Inria. Duration of 24 months (2023-2024)\nSupervisors: Prof. Reza Akbarinia (Inria) and Prof. Fabio Porto (LNCC)"
   },
   {
     "objectID": "presentations/presentation_test.html#motivation",
     "href": "presentations/presentation_test.html#motivation",
-    "title": "Building and Selecting Specialized AI Models",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Motivation",
-    "text": "Motivation\n\nDengue, Zika, Chikungunya, and other arboviruses imposes a significant burden over populations health\nEndemic vector borne disease (Aedes mosquitoes)\nImpacts all geographic regions in Brazil, with its continental extension\nFollow spatial and seasonal trends"
+    "text": "Motivation\n\nGeneral models tend to ignore the diversity of the territory\n\nDifferent or even contradictory predictors relationship with the outcome\nDengue transmission follows different rules, affected by climate and culture\n\nLocal models are basically restricted, not useful for different regions and dengue transmission regimes\nA single machine-learning model is not a good option due the Brazilian diversity"
   },
   {
     "objectID": "presentations/presentation_test.html#motivation-1",
     "href": "presentations/presentation_test.html#motivation-1",
-    "title": "Building and Selecting Specialized AI Models",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Motivation",
     "text": "Motivation\n\nPrediction of dengue cases may help local managers and health policies\nGeneral models tend to ignore the diversity of the territory\n\nDifferent or even contradictory predictors relationship with the outcome\nDengue transmission follows different rules, affected by climate and culture\n\nLocal models are basically restricted, not useful for different regions and dengue transmission regimes\nA single machine-learning model is not a good option due the Brazilian diversity"
   },
   {
     "objectID": "presentations/presentation_test.html#aproach",
     "href": "presentations/presentation_test.html#aproach",
-    "title": "Building and Selecting Specialized AI Models",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Aproach",
     "text": "Aproach\n\nSeparate Brazilian municipalities into clusters, maximizing their similarity regarding dengue transmissions and its covariate’s importance and signals\nTrain several ML models of different strategies for each cluster\nConsidering a query region r, select models with the best accuracy from related clusters to r, and ensemble the models into a single model, tailored for the specific region\nPredict cases using the ensemble model and compare its results with a baseline model trained with all data"
   },
   {
     "objectID": "presentations/presentation_test.html#problem-definition",
     "href": "presentations/presentation_test.html#problem-definition",
-    "title": "Building and Selecting Specialized AI Models",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Problem definition",
     "text": "Problem definition\n\nGiven : sets of models \\(M\\), trained for a set of regions \\(R\\)\nGoal: predict the propagation of Dengue for a query region \\(r (∉ R)\\) by choosing the best models from \\(M\\)"
   },
   {
     "objectID": "presentations/presentation_test.html#expected-results",
     "href": "presentations/presentation_test.html#expected-results",
-    "title": "Building and Selecting Specialized AI Models",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Expected results",
     "text": "Expected results\n\nMore precise predictions for regions, with data “closer” to the training data.\nParallelism in training models on different regions, less costs.\nReduce the impact of concep-drift models of the affected regions.\nProvide health managers with tools, predictions and scenarios adequate to different scales of health surveillance, preparedness and field action _ Contribute to public health policies formulation and implementation"
   },
@@ -1041,5 +1041,166 @@
     "title": "Publications",
     "section": "Work in progress",
     "text": "Work in progress\n\nResearch paper. Dengue profiles: clustering of time series of dengue cases per municipalities.\nResearch paper. Dengue and weather covariates: a time lagged relationship analysis.\nResearch paper. Inconclusive dengue cases diagnosis reclassification by symptoms and clinical conditions."
+  },
+  {
+    "objectID": "presentations/presentation_test.html#dengue-spread",
+    "href": "presentations/presentation_test.html#dengue-spread",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Dengue spread",
+    "text": "Dengue spread"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#arboviruses",
+    "href": "presentations/presentation_test.html#arboviruses",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Arboviruses",
+    "text": "Arboviruses\n\nDengue, Zika, Chikungunya, and other arboviruses imposes a significant burden over populations health\nEndemic vector borne disease (Aedes mosquitoes)\nImpacts all geographic regions in Brazil, with its continental extension\nFollow spatial and seasonal trends"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#dengue-transmission-and-symptons",
+    "href": "presentations/presentation_test.html#dengue-transmission-and-symptons",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Dengue transmission and symptons",
+    "text": "Dengue transmission and symptons"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#dengue-transmission-cycle",
+    "href": "presentations/presentation_test.html#dengue-transmission-cycle",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Dengue transmission cycle",
+    "text": "Dengue transmission cycle"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#dengue-symptons",
+    "href": "presentations/presentation_test.html#dengue-symptons",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Dengue symptons",
+    "text": "Dengue symptons"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#aedes-breeding-sites",
+    "href": "presentations/presentation_test.html#aedes-breeding-sites",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Aedes breeding sites",
+    "text": "Aedes breeding sites\n\nNo need of clean water\nEggs sticks to container walls lige glue\nThey can survive drying out for up to 8 months"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#probable-dengue-cases-in-brazil",
+    "href": "presentations/presentation_test.html#probable-dengue-cases-in-brazil",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Probable dengue cases in Brazil",
+    "text": "Probable dengue cases in Brazil\nper epidemiological week of symptoms onset"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#dengue-on-the-news",
+    "href": "presentations/presentation_test.html#dengue-on-the-news",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Dengue on the news",
+    "text": "Dengue on the news"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#dengue-outbreaks-over-time",
+    "href": "presentations/presentation_test.html#dengue-outbreaks-over-time",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Dengue outbreaks over time",
+    "text": "Dengue outbreaks over time"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#dengue-and-weather-covariates",
+    "href": "presentations/presentation_test.html#dengue-and-weather-covariates",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Dengue and weather covariates",
+    "text": "Dengue and weather covariates"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#dengue-over-time-and-different-regions",
+    "href": "presentations/presentation_test.html#dengue-over-time-and-different-regions",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Dengue over time and different regions",
+    "text": "Dengue over time and different regions"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#dengue-over-time",
+    "href": "presentations/presentation_test.html#dengue-over-time",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Dengue over time",
+    "text": "Dengue over time\nand different regions"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#territory-diversity",
+    "href": "presentations/presentation_test.html#territory-diversity",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Territory diversity",
+    "text": "Territory diversity\n\nOn rainy season, water accumulates on cans, pots and litter present at backyards and on the streets."
+  },
+  {
+    "objectID": "presentations/presentation_test.html#health-problems-related-to-trash-and-sanitation",
+    "href": "presentations/presentation_test.html#health-problems-related-to-trash-and-sanitation",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Health problems related to trash and sanitation",
+    "text": "Health problems related to trash and sanitation\n\nFortaleza, jan. 2016."
+  },
+  {
+    "objectID": "presentations/presentation_test.html#territory-diversity-1",
+    "href": "presentations/presentation_test.html#territory-diversity-1",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Territory diversity",
+    "text": "Territory diversity\n\nOn dry season or droughts, water is stored on drums without lid.\nThe same predictor (ie. rain) may have different signal, in respect to other conditions."
+  },
+  {
+    "objectID": "presentations/presentation_test.html#territory-diversity-modeling",
+    "href": "presentations/presentation_test.html#territory-diversity-modeling",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Territory diversity modeling",
+    "text": "Territory diversity modeling\n\nThe same predictor (ie. rain) may have different signal, in respect to other conditions."
+  },
+  {
+    "objectID": "presentations/presentation_test.html#modeling-dengue-cases",
+    "href": "presentations/presentation_test.html#modeling-dengue-cases",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Modeling dengue cases",
+    "text": "Modeling dengue cases\n\nDengue cases as target variable\nPredictors\n\nTemperature, droughts, rainfall, floods, land use, deforestation\nLiving conditions, urban environment\nWater supply, water rationing+"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#intuition",
+    "href": "presentations/presentation_test.html#intuition",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Intuition",
+    "text": "Intuition\n\nGeneral models tend to ignore the diversity of the territory\n\nDifferent or even contradictory predictors relationship with the outcome\nDengue transmission follows different rules, affected by climate and culture\n\nLocal models are basically restricted, not useful for different regions and dengue transmission regimes\nA single machine-learning model is not a good option due the Brazilian diversity"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#modeling-intuition",
+    "href": "presentations/presentation_test.html#modeling-intuition",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Modeling intuition",
+    "text": "Modeling intuition\n\nGeneral models tend to ignore the diversity of the territory\n\nDifferent or even contradictory predictors relationship with the outcome\nDengue transmission follows different rules, affected by climate and culture\n\nLocal models are basically restricted, not useful for different regions and dengue transmission regimes\nA single machine-learning model is not a good option due the Brazilian diversity"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#global-and-subsets-models",
+    "href": "presentations/presentation_test.html#global-and-subsets-models",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Global and subsets models",
+    "text": "Global and subsets models"
+  },
+  {
+    "objectID": "presentations/presentation_test.html",
+    "href": "presentations/presentation_test.html",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "",
+    "text": "SALDANHA, Raphael\nAKBARINIA, Reza\nPENA, Eduardo\nRIBEIRO, Victor\nPORTO, Fabio"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#workflow",
+    "href": "presentations/presentation_test.html#workflow",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Workflow",
+    "text": "Workflow\n\n\n\n\nflowchart TD\n  Y0[Dengue data] --&gt; | Filter municipalities \\n with 100k inhab| Y[Subset dengue data]\n  X1[Weather data]\n  X2[Other covariates]\n  X1 --&gt; A[Dataset]\n  X2 --&gt; A\n  Y --&gt; B[Clustering algorithm \\n assign k partitions] \n  B --&gt; |Add cluster ID \\n variable| A\n  A --&gt; A2[Time lag \\n outcome and predictors]\n  A2 --&gt; |Drop date variable| D{Split}\n  D --&gt; E[Train dataset]\n  D --&gt; F[Test dataset]\n  E --&gt; G[Global model \\n specification]\n  G --&gt; |Drop \\ncluster ID| H[Tune hyperparameters]\n  E --&gt; I[Subsets k  \\nmodel specification]\n  I --&gt; |k models| H\n  H --&gt; J[Predict with \\n global model training]\n  F --&gt; J\n  H --&gt; K[Predict with k \\n subsets trainings]\n  F --&gt; K\n  J --&gt; L[Collect metrics for each municipality \\n and compare models performance]\n  K --&gt; L"
+  },
+  {
+    "objectID": "presentations/presentation_test.html#current-stage",
+    "href": "presentations/presentation_test.html#current-stage",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "Current stage",
+    "text": "Current stage"
   }
 ]

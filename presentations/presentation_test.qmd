@@ -1,11 +1,10 @@
 ---
-title: "Building and Selecting Specialized AI Models"
-subtitle: "for Predicting Dengue Disease"
+title: "Specialized AI Models for Predicting Dengue Disease"
 author: "Saldanha, Raphael et al"
 institute: "Inria, LNCC"
 format:
   revealjs: 
-    theme: solarized
+    theme: default
 ---
 
 ## Building and Selecting Specialized AI Models for Predicting Dengue Disease
@@ -22,21 +21,87 @@ format:
 -   Postdoc call from International Relations Department of Inria. Duration of 24 months (2023-2024)
 -   Supervisors: Prof. Reza Akbarinia (Inria) and Prof. Fabio Porto (LNCC)
 
-## Motivation
+## Arboviruses
 
 -   Dengue, Zika, Chikungunya, and other arboviruses imposes a significant burden over populations health
 -   Endemic vector borne disease (Aedes mosquitoes)
 -   Impacts all geographic regions in Brazil, with its continental extension
 -   Follow spatial and seasonal trends
 
-## Motivation
+## Dengue spread
 
--   Prediction of dengue cases may help local managers and health policies
--   General models tend to ignore the diversity of the territory
+![](images/Screenshot%20from%202023-07-10%2015-55-01.png)
+
+## Dengue transmission cycle
+
+![](images/Screenshot%20from%202023-07-10%2015-57-15.png){width="400"}
+
+## Dengue symptons
+
+![](images/Screenshot%20from%202023-07-10%2015-57-54.png){width="200"}
+
+## Aedes breeding sites
+
+-   No need of clean water
+
+-   Eggs sticks to container walls lige glue
+
+-   They can survive drying out for up to **8 months**
+
+![](images/Screenshot%20from%202023-07-10%2016-01-57.png){width="350"}![](images/Screenshot%20from%202023-07-10%2016-02-10.png){width="400"}
+
+## Probable dengue cases in Brazil
+
+per epidemiological week of symptoms onset
+
+![](images/Screenshot%20from%202023-07-10%2016-22-24.png)
+
+## Dengue on the news
+
+![](images/Screenshot%20from%202023-07-10%2016-24-05.png){width="600"}![](images/Screenshot%20from%202023-07-10%2016-24-15.png){width="600"}![](images/Screenshot%20from%202023-07-10%2016-24-25.png){width="600"}![](images/Screenshot%20from%202023-07-10%2016-24-33.png)
+
+## Dengue outbreaks over time
+
+![](images/Screenshot%20from%202023-07-10%2016-25-49.png)
+
+## Dengue and weather covariates
+
+![](images/Screenshot%20from%202023-07-10%2016-26-38-01.png)
+
+## Dengue over time
+
+and different regions
+
+![](images/Screenshot%20from%202023-07-10%2016-27-52.png)
+
+## Territory diversity
+
+-   On rainy season, water accumulates on cans, pots and litter present at backyards and on the streets.
+
+![Fortaleza, jan. 2016](images/Screenshot%20from%202023-07-10%2016-30-06.png){fig-alt="Harvard-Brazil Collaborative Public Health Field Course" fig-align="center" width="500"} ![Fortaleza, jan. 2016.](images/Screenshot%20from%202023-07-10%2016-30-31.png){fig-align="center" width="500"}
+
+## Territory diversity
+
+-   On dry season or droughts, water is stored on drums without lid.
+-   The same predictor (ie. rain) may have different signal, in respect to other conditions.
+
+![](images/Screenshot%20from%202023-07-10%2016-36-25.png){width="300"} ![](images/Screenshot%20from%202023-07-10%2016-36-38.png){width="600"}
+
+## Modeling dengue cases
+
+-   Dengue cases as target variable
+-   Predictors
+    -   Temperature, droughts, rainfall, floods, land use, deforestation
+    -   Living conditions, urban environment
+    -   Water supply, water rationing+
+
+## Modeling intuition
+
+-   **General models** tend to ignore the **diversity** of the territory
     -   Different or even contradictory predictors relationship with the outcome
     -   Dengue transmission follows different rules, affected by climate and culture
--   Local models are basically restricted, not useful for different regions and dengue transmission regimes
--   A single machine-learning model is not a good option due the Brazilian diversity
+-   **Local models** are basically **restricted**, not useful for different regions and dengue transmission regimes
+-   A **single** machine-learning model is not a good option due the Brazilian diversity
 
 ## Aproach
 
@@ -45,21 +110,43 @@ format:
 -   Considering a query region r, select models with the best accuracy from related clusters to r, and ensemble the models into a single model, tailored for the specific region
 -   Predict cases using the ensemble model and compare its results with a baseline model trained with all data
 
-## Problem definition
+## Global and subsets models
 
--   Given : sets of models $M$, trained for a set of regions $R$
--   Goal: predict the propagation of Dengue for a query region $r (∉ R)$ by choosing the best models from $M$ 
+![](images/Screenshot%20from%202023-07-10%2016-48-24.png){fig-align="center"}
+
+## Workflow
+
+```{mermaid}
+%%| fig-width: 6.5
+flowchart TD
+  Y0[Dengue data] --> | Filter municipalities \n with 100k inhab| Y[Subset dengue data]
+  X1[Weather data]
+  X2[Other covariates]
+  X1 --> A[Dataset]
+  X2 --> A
+  Y --> B[Clustering algorithm \n assign k partitions] 
+  B --> |Add cluster ID \n variable| A
+  A --> A2[Time lag \n outcome and predictors]
+  A2 --> |Drop date variable| D{Split}
+  D --> E[Train dataset]
+  D --> F[Test dataset]
+  E --> G[Global model \n specification]
+  G --> |Drop \ncluster ID| H[Tune hyperparameters]
+  E --> I[Subsets k  \nmodel specification]
+  I --> |k models| H
+  H --> J[Predict with \n global model training]
+  F --> J
+  H --> K[Predict with k \n subsets trainings]
+  F --> K
+  J --> L[Collect metrics for each municipality \n and compare models performance]
+  K --> L
+```
 
 ## Expected results
 
 -   More precise predictions for regions, with data "closer" to the training data.
 -   Parallelism in training models on different regions, less costs.
 -   Reduce the impact of concep-drift models of the affected regions.
--   Provide health managers with tools, predictions and scenarios adequate to different scales of health surveillance, preparedness and field action
-_   Contribute to public health policies formulation and implementation
+-   Provide health managers with tools, predictions and scenarios adequate to different scales of health surveillance, preparedness and field action \_ Contribute to public health policies formulation and implementation
 
-
-
-
-
-
+## Current stage

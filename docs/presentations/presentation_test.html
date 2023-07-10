@@ -11,7 +11,7 @@
   <meta name="generator" content="quarto-1.4.150">
 
   <meta name="author" content="Saldanha, Raphael et al">
-  <title>Dengue AI - Building and Selecting Specialized AI Models</title>
+  <title>Dengue AI - Specialized AI Models for Predicting Dengue Disease</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -329,14 +329,16 @@
       margin-right: 0; 
     }
   </style>
+  <script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 </head>
 <body class="quarto-light">
   <div class="reveal">
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Building and Selecting Specialized AI Models</h1>
-  <p class="subtitle">for Predicting Dengue Disease</p>
+  <h1 class="title">Specialized AI Models for Predicting Dengue Disease</h1>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -368,8 +370,8 @@ Saldanha, Raphael et al
 <li>Supervisors: Prof.&nbsp;Reza Akbarinia (Inria) and Prof.&nbsp;Fabio Porto (LNCC)</li>
 </ul>
 </section>
-<section id="motivation" class="slide level2">
-<h2>Motivation</h2>
+<section id="arboviruses" class="slide level2">
+<h2>Arboviruses</h2>
 <ul>
 <li>Dengue, Zika, Chikungunya, and other arboviruses imposes a significant burden over populations health</li>
 <li>Endemic vector borne disease (Aedes mosquitoes)</li>
@@ -377,17 +379,86 @@ Saldanha, Raphael et al
 <li>Follow spatial and seasonal trends</li>
 </ul>
 </section>
-<section id="motivation-1" class="slide level2">
-<h2>Motivation</h2>
+<section id="dengue-spread" class="slide level2">
+<h2>Dengue spread</h2>
+
+<img data-src="images/Screenshot from 2023-07-10 15-55-01.png" class="r-stretch"></section>
+<section id="dengue-transmission-cycle" class="slide level2">
+<h2>Dengue transmission cycle</h2>
+
+<img data-src="images/Screenshot from 2023-07-10 15-57-15.png" width="400" class="r-stretch"></section>
+<section id="dengue-symptons" class="slide level2">
+<h2>Dengue symptons</h2>
+
+<img data-src="images/Screenshot from 2023-07-10 15-57-54.png" width="200" class="r-stretch"></section>
+<section id="aedes-breeding-sites" class="slide level2">
+<h2>Aedes breeding sites</h2>
 <ul>
-<li>Prediction of dengue cases may help local managers and health policies</li>
-<li>General models tend to ignore the diversity of the territory
+<li><p>No need of clean water</p></li>
+<li><p>Eggs sticks to container walls lige glue</p></li>
+<li><p>They can survive drying out for up to <strong>8 months</strong></p></li>
+</ul>
+<p><img data-src="images/Screenshot from 2023-07-10 16-01-57.png" width="350"><img data-src="images/Screenshot from 2023-07-10 16-02-10.png" width="400"></p>
+</section>
+<section id="probable-dengue-cases-in-brazil" class="slide level2">
+<h2>Probable dengue cases in Brazil</h2>
+<p>per epidemiological week of symptoms onset</p>
+
+<img data-src="images/Screenshot from 2023-07-10 16-22-24.png" class="r-stretch"></section>
+<section id="dengue-on-the-news" class="slide level2">
+<h2>Dengue on the news</h2>
+<p><img data-src="images/Screenshot from 2023-07-10 16-24-05.png" width="600"><img data-src="images/Screenshot from 2023-07-10 16-24-15.png" width="600"><img data-src="images/Screenshot from 2023-07-10 16-24-25.png" width="600"><img data-src="images/Screenshot from 2023-07-10 16-24-33.png"></p>
+</section>
+<section id="dengue-outbreaks-over-time" class="slide level2">
+<h2>Dengue outbreaks over time</h2>
+
+<img data-src="images/Screenshot from 2023-07-10 16-25-49.png" class="r-stretch"></section>
+<section id="dengue-and-weather-covariates" class="slide level2">
+<h2>Dengue and weather covariates</h2>
+
+<img data-src="images/Screenshot from 2023-07-10 16-26-38-01.png" class="r-stretch"></section>
+<section id="dengue-over-time" class="slide level2">
+<h2>Dengue over time</h2>
+<p>and different regions</p>
+
+<img data-src="images/Screenshot from 2023-07-10 16-27-52.png" class="r-stretch"></section>
+<section id="territory-diversity" class="slide level2">
+<h2>Territory diversity</h2>
+<ul>
+<li>On rainy season, water accumulates on cans, pots and litter present at backyards and on the streets.</li>
+</ul>
+<p><img data-src="images/Screenshot from 2023-07-10 16-30-06.png" data-fig-align="center" alt="Harvard-Brazil Collaborative Public Health Field Course" width="500"> <img data-src="images/Screenshot from 2023-07-10 16-30-31.png" data-fig-align="center" width="500" alt="Fortaleza, jan. 2016."></p>
+</section>
+<section id="territory-diversity-1" class="slide level2">
+<h2>Territory diversity</h2>
+<ul>
+<li>On dry season or droughts, water is stored on drums without lid.</li>
+<li>The same predictor (ie. rain) may have different signal, in respect to other conditions.</li>
+</ul>
+<p><img data-src="images/Screenshot from 2023-07-10 16-36-25.png" width="300"> <img data-src="images/Screenshot from 2023-07-10 16-36-38.png" width="600"></p>
+</section>
+<section id="modeling-dengue-cases" class="slide level2">
+<h2>Modeling dengue cases</h2>
+<ul>
+<li>Dengue cases as target variable</li>
+<li>Predictors
+<ul>
+<li>Temperature, droughts, rainfall, floods, land use, deforestation</li>
+<li>Living conditions, urban environment</li>
+<li>Water supply, water rationing+</li>
+</ul></li>
+</ul>
+</section>
+<section id="modeling-intuition" class="slide level2">
+<h2>Modeling intuition</h2>
+<ul>
+<li><strong>General models</strong> tend to ignore the <strong>diversity</strong> of the territory
 <ul>
 <li>Different or even contradictory predictors relationship with the outcome</li>
 <li>Dengue transmission follows different rules, affected by climate and culture</li>
 </ul></li>
-<li>Local models are basically restricted, not useful for different regions and dengue transmission regimes</li>
-<li>A single machine-learning model is not a good option due the Brazilian diversity</li>
+<li><strong>Local models</strong> are basically <strong>restricted</strong>, not useful for different regions and dengue transmission regimes</li>
+<li>A <strong>single</strong> machine-learning model is not a good option due the Brazilian diversity</li>
 </ul>
 </section>
 <section id="aproach" class="slide level2">
@@ -399,12 +470,43 @@ Saldanha, Raphael et al
 <li>Predict cases using the ensemble model and compare its results with a baseline model trained with all data</li>
 </ul>
 </section>
-<section id="problem-definition" class="slide level2">
-<h2>Problem definition</h2>
-<ul>
-<li>Given : sets of models <span class="math inline">\(M\)</span>, trained for a set of regions <span class="math inline">\(R\)</span></li>
-<li>Goal: predict the propagation of Dengue for a query region <span class="math inline">\(r (∉ R)\)</span> by choosing the best models from <span class="math inline">\(M\)</span></li>
-</ul>
+<section id="global-and-subsets-models" class="slide level2">
+<h2>Global and subsets models</h2>
+
+<img data-src="images/Screenshot from 2023-07-10 16-48-24.png" class="r-stretch quarto-figure-center"></section>
+<section id="workflow" class="slide level2">
+<h2>Workflow</h2>
+<div class="cell" data-reveal="true" data-fig-width="6.5">
+<div class="cell-output-display">
+<div>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+  Y0[Dengue data] --&gt; | Filter municipalities \n with 100k inhab| Y[Subset dengue data]
+  X1[Weather data]
+  X2[Other covariates]
+  X1 --&gt; A[Dataset]
+  X2 --&gt; A
+  Y --&gt; B[Clustering algorithm \n assign k partitions] 
+  B --&gt; |Add cluster ID \n variable| A
+  A --&gt; A2[Time lag \n outcome and predictors]
+  A2 --&gt; |Drop date variable| D{Split}
+  D --&gt; E[Train dataset]
+  D --&gt; F[Test dataset]
+  E --&gt; G[Global model \n specification]
+  G --&gt; |Drop \ncluster ID| H[Tune hyperparameters]
+  E --&gt; I[Subsets k  \nmodel specification]
+  I --&gt; |k models| H
+  H --&gt; J[Predict with \n global model training]
+  F --&gt; J
+  H --&gt; K[Predict with k \n subsets trainings]
+  F --&gt; K
+  J --&gt; L[Collect metrics for each municipality \n and compare models performance]
+  K --&gt; L
+</pre>
+</div>
+</div>
+</div>
+</div>
 </section>
 <section id="expected-results" class="slide level2">
 <h2>Expected results</h2>
@@ -414,6 +516,9 @@ Saldanha, Raphael et al
 <li>Reduce the impact of concep-drift models of the affected regions.</li>
 <li>Provide health managers with tools, predictions and scenarios adequate to different scales of health surveillance, preparedness and field action _ Contribute to public health policies formulation and implementation</li>
 </ul>
+</section>
+<section id="current-stage" class="slide level2">
+<h2>Current stage</h2>
 
 <div class="footer footer-default">
 
