@@ -472,7 +472,10 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
    
   <ul>
   <li><a href="#packages" id="toc-packages" class="nav-link active" data-scroll-target="#packages">Packages</a></li>
-  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a>
+  <ul class="collapse">
+  <li><a href="#sampling" id="toc-sampling" class="nav-link" data-scroll-target="#sampling">Sampling</a></li>
+  </ul></li>
   <li><a href="#modeling" id="toc-modeling" class="nav-link" data-scroll-target="#modeling">Modeling</a>
   <ul class="collapse">
   <li><a href="#train-and-test-dataset-split" id="toc-train-and-test-dataset-split" class="nav-link" data-scroll-target="#train-and-test-dataset-split">Train and test dataset split</a></li>
@@ -510,7 +513,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 3, 2023 | 16:13:48 +02:00</p>
+      <p class="date">July 10, 2023 | 15:12:18 +02:00</p>
     </div>
   </div>
   
@@ -520,6 +523,8 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 
 </header>
 
+<p>The objective of this notebook is to predict a dengue suspected case based on its symptoms, clinical conditions and other patient related variables.</p>
+<p>This trained model may be used to reclassify suspected dengue cases with inconclusive diagnosis.</p>
 <section id="packages" class="level2">
 <h2 class="anchored" data-anchor-id="packages">Packages</h2>
 <div class="cell">
@@ -536,6 +541,11 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </section>
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
+<ul>
+<li><p>Data prior to 2016 does not have patient symptoms and clinical conditions.</p></li>
+<li><p>Cases classified as inconclusive are discarded for model training.</p></li>
+<li><p>The data set is sampled for faster performance.</p></li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data sources</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>files_list <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
@@ -560,7 +570,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare data</span></span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">open_dataset</span>(<span class="at">sources =</span> files_list) <span class="sc">%&gt;%</span></span>
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Select variables</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(<span class="fu">c</span>(<span class="st">"CLASSI_FIN"</span>, <span class="st">"COMUNINF"</span>, <span class="st">"DT_SIN_PRI"</span>, x_vars))) <span class="sc">%&gt;%</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(<span class="fu">c</span>(<span class="st">"CLASSI_FIN"</span>, <span class="st">"COMUNINF"</span>, <span class="st">"IDADEanos"</span>, <span class="st">"DT_SIN_PRI"</span>, x_vars))) <span class="sc">%&gt;%</span></span>
 <span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Filter out "Inconclusivo" cases</span></span>
 <span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CLASSI_FIN <span class="sc">!=</span> <span class="st">"Inconclusivo"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Collect data from parquet files</span></span>
@@ -575,20 +585,26 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">COMUNINF =</span> <span class="fu">as.factor</span>(COMUNINF)) <span class="sc">%&gt;%</span></span>
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="at">.vars =</span> x_vars, <span class="at">.funs =</span> <span class="sc">~</span> . <span class="sc">==</span> <span class="st">"Sim"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<section id="sampling" class="level3">
+<h3 class="anchored" data-anchor-id="sampling">Sampling</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Smaller dataset for tests</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">sample_n</span>(dengue, <span class="dv">5000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+</section>
 <section id="modeling" class="level2">
 <h2 class="anchored" data-anchor-id="modeling">Modeling</h2>
 <section id="train-and-test-dataset-split" class="level3">
 <h3 class="anchored" data-anchor-id="train-and-test-dataset-split">Train and test dataset split</h3>
+<ul>
+<li>Proportion between training and test: 3/4</li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>dengue_split <span class="ot">&lt;-</span> dengue <span class="sc">%&gt;%</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">initial_split</span>(<span class="at">strata =</span> CLASSI_FIN)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">initial_split</span>(<span class="at">prop =</span> <span class="dv">3</span><span class="sc">/</span><span class="dv">4</span>, <span class="at">strata =</span> CLASSI_FIN)</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>dengue_train <span class="ot">&lt;-</span> <span class="fu">training</span>(dengue_split)</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>dengue_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(dengue_split)</span>
@@ -600,16 +616,12 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <section id="recipes" class="level3">
 <h3 class="anchored" data-anchor-id="recipes">Recipes</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># All variables</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>dengue_rec_1 <span class="ot">&lt;-</span> </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">recipe</span>(CLASSI_FIN <span class="sc">~</span> . , <span class="at">data =</span> dengue_train) <span class="sc">%&gt;%</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_date</span>(DT_SIN_PRI, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"month"</span>, <span class="st">"week"</span>, <span class="st">"semester"</span>, <span class="st">"quarter"</span>), <span class="at">keep_original_cols =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_integer</span>(<span class="fu">all_predictors</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Without municipality code</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>dengue_rec_2 <span class="ot">&lt;-</span> dengue_rec_1 <span class="sc">%&gt;%</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(COMUNINF)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dengue_rec_1 <span class="ot">&lt;-</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">recipe</span>(CLASSI_FIN <span class="sc">~</span> . , <span class="at">data =</span> dengue_train) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(COMUNINF) <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(DT_SIN_PRI) <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#step_date(DT_SIN_PRI, features = c("month", "week", "semester", "quarter"), keep_original_cols = FALSE) %&gt;%</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_integer</span>(<span class="fu">all_predictors</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="specifications" class="level3">
@@ -617,93 +629,92 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <section id="xgb" class="level4">
 <h4 class="anchored" data-anchor-id="xgb">XGB</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>xgb_spec <span class="ot">&lt;-</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boost_tree</span>(</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">trees =</span> <span class="fu">tune</span>(),</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_n =</span> <span class="fu">tune</span>(),</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mtry =</span> <span class="fu">tune</span>(),</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">learn_rate =</span> <span class="fl">0.01</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"xgboost"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>xgb_spec <span class="ot">&lt;-</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boost_tree</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">trees =</span> <span class="fu">tune</span>(),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_n =</span> <span class="fu">tune</span>(),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mtry =</span> <span class="fu">tune</span>()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"xgboost"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="decision-tree" class="level4">
 <h4 class="anchored" data-anchor-id="decision-tree">Decision tree</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>cart_spec <span class="ot">&lt;-</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">decision_tree</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cost_complexity =</span> <span class="fu">tune</span>(), </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_n =</span> <span class="fu">tune</span>()</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cart_spec <span class="ot">&lt;-</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">decision_tree</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cost_complexity =</span> <span class="fu">tune</span>(), </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_n =</span> <span class="fu">tune</span>()</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"rpart"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="workflows" class="level3">
 <h3 class="anchored" data-anchor-id="workflows">Workflows</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>all_workflows <span class="ot">&lt;-</span> </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow_set</span>(</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">preproc =</span> <span class="fu">list</span>(<span class="at">recipe_1 =</span> dengue_rec_1, <span class="at">recipe_2 =</span> dengue_rec_2),</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">models =</span> <span class="fu">list</span>(<span class="at">xgb =</span> xgb_spec, <span class="at">cart =</span> cart_spec)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>all_workflows <span class="ot">&lt;-</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow_set</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">preproc =</span> <span class="fu">list</span>(<span class="at">recipe_1 =</span> dengue_rec_1),</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">models =</span> <span class="fu">list</span>(<span class="at">xgb =</span> xgb_spec, <span class="at">cart =</span> cart_spec)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="tuning" class="level3">
 <h3 class="anchored" data-anchor-id="tuning">Tuning</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">registerDoParallel</span>()</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>race_ctrl <span class="ot">&lt;-</span> <span class="fu">control_race</span>(<span class="at">parallel_over =</span> <span class="st">"everything"</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>race_results <span class="ot">&lt;-</span> </span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  all_workflows <span class="sc">%&gt;%</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow_map</span>(</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"tune_race_anova"</span>,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">345</span>,</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> dengue_folds,</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">grid =</span> <span class="dv">10</span>,</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> race_ctrl</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>doParallel<span class="sc">::</span><span class="fu">registerDoParallel</span>()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>race_ctrl <span class="ot">&lt;-</span> <span class="fu">control_race</span>(<span class="at">parallel_over =</span> <span class="st">"everything"</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>race_results <span class="ot">&lt;-</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  all_workflows <span class="sc">%&gt;%</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow_map</span>(</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"tune_race_anova"</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">345</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> dengue_folds,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">grid =</span> <span class="dv">10</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> race_ctrl</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>i Creating pre-processing data to finalize unknown parameter: mtry
-i Creating pre-processing data to finalize unknown parameter: mtry</code></pre>
+<pre><code>i Creating pre-processing data to finalize unknown parameter: mtry</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>147.58 sec elapsed</code></pre>
+<pre><code>40.789 sec elapsed</code></pre>
 </div>
 </div>
 <section id="race-metrics" class="level4">
 <h4 class="anchored" data-anchor-id="race-metrics">Race metrics</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>train_rank_results <span class="ot">&lt;-</span> <span class="fu">rank_results</span>(race_results, <span class="at">rank_metric =</span> <span class="st">"roc_auc"</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>train_rank_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>train_rank_results <span class="ot">&lt;-</span> <span class="fu">rank_results</span>(race_results, <span class="at">rank_metric =</span> <span class="st">"roc_auc"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>train_rank_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 46 × 9
-   wflow_id     .config     .metric  mean std_err     n preprocessor model  rank
-   &lt;chr&gt;        &lt;chr&gt;       &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;        &lt;chr&gt; &lt;int&gt;
- 1 recipe_1_xgb Preprocess… accura… 0.845 0.00556    10 recipe       boos…     1
- 2 recipe_1_xgb Preprocess… roc_auc 0.896 0.00619    10 recipe       boos…     1
- 3 recipe_1_xgb Preprocess… accura… 0.847 0.00538    10 recipe       boos…     2
- 4 recipe_1_xgb Preprocess… roc_auc 0.896 0.00561    10 recipe       boos…     2
- 5 recipe_1_xgb Preprocess… accura… 0.845 0.00570    10 recipe       boos…     3
- 6 recipe_1_xgb Preprocess… roc_auc 0.896 0.00595    10 recipe       boos…     3
- 7 recipe_1_xgb Preprocess… accura… 0.845 0.00573    10 recipe       boos…     4
- 8 recipe_1_xgb Preprocess… roc_auc 0.896 0.00546    10 recipe       boos…     4
- 9 recipe_1_xgb Preprocess… accura… 0.844 0.00595    10 recipe       boos…     5
-10 recipe_1_xgb Preprocess… roc_auc 0.894 0.00515    10 recipe       boos…     5
-# ℹ 36 more rows</code></pre>
+<pre><code># A tibble: 12 × 9
+   wflow_id      .config    .metric  mean std_err     n preprocessor model  rank
+   &lt;chr&gt;         &lt;chr&gt;      &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;        &lt;chr&gt; &lt;int&gt;
+ 1 recipe_1_xgb  Preproces… accura… 0.607 0.00803    10 recipe       boos…     1
+ 2 recipe_1_xgb  Preproces… roc_auc 0.610 0.00804    10 recipe       boos…     1
+ 3 recipe_1_xgb  Preproces… accura… 0.608 0.00509    10 recipe       boos…     2
+ 4 recipe_1_xgb  Preproces… roc_auc 0.609 0.00789    10 recipe       boos…     2
+ 5 recipe_1_cart Preproces… accura… 0.615 0.00832    10 recipe       deci…     3
+ 6 recipe_1_cart Preproces… roc_auc 0.609 0.00953    10 recipe       deci…     3
+ 7 recipe_1_cart Preproces… accura… 0.604 0.00796    10 recipe       deci…     4
+ 8 recipe_1_cart Preproces… roc_auc 0.607 0.00877    10 recipe       deci…     4
+ 9 recipe_1_cart Preproces… accura… 0.602 0.00728    10 recipe       deci…     5
+10 recipe_1_cart Preproces… roc_auc 0.602 0.00800    10 recipe       deci…     5
+11 recipe_1_cart Preproces… accura… 0.598 0.00620    10 recipe       deci…     6
+12 recipe_1_cart Preproces… roc_auc 0.599 0.00867    10 recipe       deci…     6</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(race_results, <span class="at">metric =</span> <span class="st">"roc_auc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(race_results, <span class="at">metric =</span> <span class="st">"roc_auc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="dengue_classification_symptoms_conditions_multi_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+<p><img src="dengue_classification_symptoms_conditions_multi_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -711,64 +722,64 @@ i Creating pre-processing data to finalize unknown parameter: mtry</code></pre>
 <section id="last-fit" class="level3">
 <h3 class="anchored" data-anchor-id="last-fit">Last fit</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>selection_train <span class="ot">&lt;-</span> train_rank_results <span class="sc">%&gt;%</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>mean) <span class="sc">%&gt;%</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(wflow_id) <span class="sc">%&gt;%</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">first</span>()</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>selection_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>selection_train <span class="ot">&lt;-</span> train_rank_results <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>mean) <span class="sc">%&gt;%</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(wflow_id) <span class="sc">%&gt;%</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">first</span>()</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>selection_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "recipe_1_xgb"</code></pre>
+<pre><code>[1] "recipe_1_cart"</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>best_results <span class="ot">&lt;-</span> race_results <span class="sc">%&gt;%</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow_set_result</span>(selection_train) <span class="sc">%&gt;%</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="st">"accuracy"</span>)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>best_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>best_results <span class="ot">&lt;-</span> race_results <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow_set_result</span>(selection_train) <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="st">"accuracy"</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>best_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 4
-   mtry trees min_n .config              
-  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;                
-1     9   310    17 Preprocessor1_Model04</code></pre>
+<pre><code># A tibble: 1 × 3
+  cost_complexity min_n .config              
+            &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;                
+1        0.000950    19 Preprocessor1_Model02</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>last_fit <span class="ot">&lt;-</span> race_results <span class="sc">%&gt;%</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow</span>(selection_train) <span class="sc">%&gt;%</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(best_results) <span class="sc">%&gt;%</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(dengue_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>last_fit <span class="ot">&lt;-</span> race_results <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow</span>(selection_train) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(best_results) <span class="sc">%&gt;%</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(dengue_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="evaluate-on-test" class="level3">
 <h3 class="anchored" data-anchor-id="evaluate-on-test">Evaluate on test</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(last_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(last_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 4
   .metric  .estimator .estimate .config             
   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-1 accuracy binary         0.846 Preprocessor1_Model1
-2 roc_auc  binary         0.892 Preprocessor1_Model1</code></pre>
+1 accuracy binary         0.599 Preprocessor1_Model1
+2 roc_auc  binary         0.581 Preprocessor1_Model1</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_predictions</span>(last_fit) <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">conf_mat</span>(CLASSI_FIN, .pred_class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_predictions</span>(last_fit) <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">conf_mat</span>(CLASSI_FIN, .pred_class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          Truth
 Prediction FALSE TRUE
-     FALSE   508  180
-     TRUE     13  549</code></pre>
+     FALSE   175  149
+     TRUE    352  574</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>last_fit <span class="sc">%&gt;%</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_engine</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>last_fit <span class="sc">%&gt;%</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_engine</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="dengue_classification_symptoms_conditions_multi_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+<p><img src="dengue_classification_symptoms_conditions_multi_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -776,7 +787,7 @@ Prediction FALSE TRUE
 <section id="session-info" class="level2">
 <h2 class="anchored" data-anchor-id="session-info">Session info</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.1.2 (2021-11-01)
 Platform: x86_64-pc-linux-gnu (64-bit)
@@ -811,29 +822,28 @@ loaded via a namespace (and not attached):
  [1] nlme_3.1-155        bit64_4.0.5         doParallel_1.0.17  
  [4] DiceDesign_1.9      tools_4.1.2         backports_1.4.1    
  [7] utf8_1.2.3          R6_2.5.1            colorspace_2.1-0   
-[10] nnet_7.3-17         withr_2.5.0         clock_0.7.0        
-[13] gridExtra_2.3       tidyselect_1.2.0    bit_4.0.5          
-[16] compiler_4.1.2      cli_3.6.1           labeling_0.4.2     
-[19] digest_0.6.32       minqa_1.2.5         rmarkdown_2.23     
-[22] pkgconfig_2.0.3     htmltools_0.5.5     lme4_1.1-33        
-[25] parallelly_1.36.0   lhs_1.1.6           fastmap_1.1.1      
-[28] htmlwidgets_1.6.2   rstudioapi_0.14     farver_2.1.1       
-[31] generics_0.1.3      jsonlite_1.8.7      magrittr_2.0.3     
-[34] Matrix_1.5-4.1      Rcpp_1.0.10         munsell_0.5.0      
-[37] fansi_1.0.4         GPfit_1.0-8         lifecycle_1.0.3    
-[40] furrr_0.3.1         stringi_1.7.12      yaml_2.3.7         
-[43] MASS_7.3-55         grid_4.1.2          parallel_4.1.2     
-[46] listenv_0.9.0       lattice_0.20-45     splines_4.1.2      
-[49] hms_1.1.3           pillar_1.9.0        boot_1.3-28        
-[52] future.apply_1.11.0 codetools_0.2-18    glue_1.6.2         
-[55] evaluate_0.21       data.table_1.14.8   nloptr_2.0.3       
-[58] vctrs_0.6.3         tzdb_0.4.0          foreach_1.5.2      
-[61] gtable_0.3.3        future_1.33.0       assertthat_0.2.1   
-[64] xfun_0.39           gower_1.0.1         prodlim_2023.03.31 
-[67] class_7.3-20        survival_3.2-13     timeDate_4022.108  
-[70] iterators_1.0.14    hardhat_1.3.0       lava_1.7.2.1       
-[73] timechange_0.2.0    globals_0.16.2      ellipsis_0.3.2     
-[76] ipred_0.9-14       </code></pre>
+[10] nnet_7.3-17         withr_2.5.0         gridExtra_2.3      
+[13] tidyselect_1.2.0    bit_4.0.5           compiler_4.1.2     
+[16] cli_3.6.1           labeling_0.4.2      digest_0.6.33      
+[19] minqa_1.2.5         rmarkdown_2.23      pkgconfig_2.0.3    
+[22] htmltools_0.5.5     lme4_1.1-34         parallelly_1.36.0  
+[25] lhs_1.1.6           fastmap_1.1.1       htmlwidgets_1.6.2  
+[28] rstudioapi_0.15.0   farver_2.1.1        generics_0.1.3     
+[31] jsonlite_1.8.7      magrittr_2.0.3      Matrix_1.6-0       
+[34] Rcpp_1.0.11         munsell_0.5.0       fansi_1.0.4        
+[37] GPfit_1.0-8         lifecycle_1.0.3     furrr_0.3.1        
+[40] stringi_1.7.12      yaml_2.3.7          MASS_7.3-55        
+[43] grid_4.1.2          parallel_4.1.2      listenv_0.9.0      
+[46] lattice_0.20-45     splines_4.1.2       hms_1.1.3          
+[49] pillar_1.9.0        boot_1.3-28         future.apply_1.11.0
+[52] codetools_0.2-18    glue_1.6.2          evaluate_0.21      
+[55] data.table_1.14.8   nloptr_2.0.3        vctrs_0.6.3        
+[58] tzdb_0.4.0          foreach_1.5.2       gtable_0.3.3       
+[61] future_1.33.0       assertthat_0.2.1    xfun_0.39          
+[64] gower_1.0.1         prodlim_2023.03.31  class_7.3-20       
+[67] survival_3.2-13     timeDate_4022.108   iterators_1.0.14   
+[70] hardhat_1.3.0       lava_1.7.2.1        timechange_0.2.0   
+[73] globals_0.16.2      ellipsis_0.3.2      ipred_0.9-14       </code></pre>
 </div>
 </div>
 
