@@ -472,10 +472,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
    
   <ul>
   <li><a href="#packages" id="toc-packages" class="nav-link active" data-scroll-target="#packages">Packages</a></li>
-  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a>
-  <ul class="collapse">
-  <li><a href="#sampling" id="toc-sampling" class="nav-link" data-scroll-target="#sampling">Sampling</a></li>
-  </ul></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
   <li><a href="#modeling" id="toc-modeling" class="nav-link" data-scroll-target="#modeling">Modeling</a>
   <ul class="collapse">
   <li><a href="#train-and-test-dataset-split" id="toc-train-and-test-dataset-split" class="nav-link" data-scroll-target="#train-and-test-dataset-split">Train and test dataset split</a></li>
@@ -513,7 +510,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 10, 2023 | 15:12:18 +02:00</p>
+      <p class="date">July 10, 2023 | 15:17:22 +02:00</p>
     </div>
   </div>
   
@@ -544,7 +541,6 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <ul>
 <li><p>Data prior to 2016 does not have patient symptoms and clinical conditions.</p></li>
 <li><p>Cases classified as inconclusive are discarded for model training.</p></li>
-<li><p>The data set is sampled for faster performance.</p></li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data sources</span></span>
@@ -585,13 +581,10 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">COMUNINF =</span> <span class="fu">as.factor</span>(COMUNINF)) <span class="sc">%&gt;%</span></span>
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="at">.vars =</span> x_vars, <span class="at">.funs =</span> <span class="sc">~</span> . <span class="sc">==</span> <span class="st">"Sim"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="sampling" class="level3">
-<h3 class="anchored" data-anchor-id="sampling">Sampling</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Smaller dataset for tests</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">sample_n</span>(dengue, <span class="dv">5000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">sample_n</span>(dengue, <span class="dv">500000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
 </section>
 <section id="modeling" class="level2">
 <h2 class="anchored" data-anchor-id="modeling">Modeling</h2>
@@ -684,7 +677,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </div>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>40.789 sec elapsed</code></pre>
+<pre><code>1867.215 sec elapsed</code></pre>
 </div>
 </div>
 <section id="race-metrics" class="level4">
@@ -694,21 +687,13 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>train_rank_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 12 × 9
-   wflow_id      .config    .metric  mean std_err     n preprocessor model  rank
-   &lt;chr&gt;         &lt;chr&gt;      &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;        &lt;chr&gt; &lt;int&gt;
- 1 recipe_1_xgb  Preproces… accura… 0.607 0.00803    10 recipe       boos…     1
- 2 recipe_1_xgb  Preproces… roc_auc 0.610 0.00804    10 recipe       boos…     1
- 3 recipe_1_xgb  Preproces… accura… 0.608 0.00509    10 recipe       boos…     2
- 4 recipe_1_xgb  Preproces… roc_auc 0.609 0.00789    10 recipe       boos…     2
- 5 recipe_1_cart Preproces… accura… 0.615 0.00832    10 recipe       deci…     3
- 6 recipe_1_cart Preproces… roc_auc 0.609 0.00953    10 recipe       deci…     3
- 7 recipe_1_cart Preproces… accura… 0.604 0.00796    10 recipe       deci…     4
- 8 recipe_1_cart Preproces… roc_auc 0.607 0.00877    10 recipe       deci…     4
- 9 recipe_1_cart Preproces… accura… 0.602 0.00728    10 recipe       deci…     5
-10 recipe_1_cart Preproces… roc_auc 0.602 0.00800    10 recipe       deci…     5
-11 recipe_1_cart Preproces… accura… 0.598 0.00620    10 recipe       deci…     6
-12 recipe_1_cart Preproces… roc_auc 0.599 0.00867    10 recipe       deci…     6</code></pre>
+<pre><code># A tibble: 4 × 9
+  wflow_id      .config     .metric  mean std_err     n preprocessor model  rank
+  &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;        &lt;chr&gt; &lt;int&gt;
+1 recipe_1_xgb  Preprocess… accura… 0.621 7.98e-4    10 recipe       boos…     1
+2 recipe_1_xgb  Preprocess… roc_auc 0.634 8.22e-4    10 recipe       boos…     1
+3 recipe_1_cart Preprocess… accura… 0.615 5.03e-4    10 recipe       deci…     2
+4 recipe_1_cart Preprocess… roc_auc 0.624 7.14e-4    10 recipe       deci…     2</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -729,7 +714,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>selection_train</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "recipe_1_cart"</code></pre>
+<pre><code>[1] "recipe_1_xgb"</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -739,10 +724,10 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>best_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 3
-  cost_complexity min_n .config              
-            &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;                
-1        0.000950    19 Preprocessor1_Model02</code></pre>
+<pre><code># A tibble: 1 × 4
+   mtry trees min_n .config              
+  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;                
+1     3   174     8 Preprocessor1_Model02</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -760,8 +745,8 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <pre><code># A tibble: 2 × 4
   .metric  .estimator .estimate .config             
   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-1 accuracy binary         0.599 Preprocessor1_Model1
-2 roc_auc  binary         0.581 Preprocessor1_Model1</code></pre>
+1 accuracy binary         0.621 Preprocessor1_Model1
+2 roc_auc  binary         0.635 Preprocessor1_Model1</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -769,9 +754,9 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">conf_mat</span>(CLASSI_FIN, .pred_class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          Truth
-Prediction FALSE TRUE
-     FALSE   175  149
-     TRUE    352  574</code></pre>
+Prediction FALSE  TRUE
+     FALSE 16535 10711
+     TRUE  36701 61054</code></pre>
 </div>
 </div>
 <div class="cell">
