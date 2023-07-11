@@ -9,11 +9,11 @@ format:
 
 ## Building and Selecting Specialized AI Models for Predicting Dengue Disease
 
--   SALDANHA, Raphael
--   AKBARINIA, Reza
--   PENA, Eduardo
--   RIBEIRO, Victor
--   PORTO, Fabio
+-   SALDANHA, Raphael (Inria)
+-   AKBARINIA, Reza (Inria)
+-   PENA, Eduardo (UTFPR)
+-   RIBEIRO, Victor (LNCC)
+-   PORTO, Fabio (LNCC)
 
 ## Context
 
@@ -30,15 +30,15 @@ format:
 
 ## Dengue spread
 
-![](images/Screenshot%20from%202023-07-10%2015-55-01.png)
+![Guzman; Harris, 2015](images/Screenshot%20from%202023-07-10%2015-55-01.png){fig-align="center"}
 
 ## Dengue transmission cycle
 
-![](images/Screenshot%20from%202023-07-10%2015-57-15.png){width="400"}
+![mosquitoalert.com](images/Screenshot%20from%202023-07-10%2015-57-15.png){fig-align="center" width="800"}
 
 ## Dengue symptons
 
-![](images/Screenshot%20from%202023-07-10%2015-57-54.png){width="200"}
+![mosquitoalert.com](images/Screenshot%20from%202023-07-10%2015-57-54.png){fig-align="center" width="600"}
 
 ## Aedes breeding sites
 
@@ -48,41 +48,43 @@ format:
 
 -   They can survive drying out for up to **8 months**
 
-![](images/Screenshot%20from%202023-07-10%2016-01-57.png){width="350"}![](images/Screenshot%20from%202023-07-10%2016-02-10.png){width="400"}
+![WHO](images/Screenshot%20from%202023-07-10%2016-01-57.png){width="350"}![cdc.gov](images/Screenshot%20from%202023-07-10%2016-02-10.png){width="400"}
 
 ## Probable dengue cases in Brazil
 
 per epidemiological week of symptoms onset
 
-![](images/Screenshot%20from%202023-07-10%2016-22-24.png)
+![MS. Boletim epidemiológico vol. 54 n. 1 (2023)](images/Screenshot%20from%202023-07-10%2016-22-24.png){fig-align="center"}
 
 ## Dengue on the news
 
-![](images/Screenshot%20from%202023-07-10%2016-24-05.png){width="600"}![](images/Screenshot%20from%202023-07-10%2016-24-15.png){width="600"}![](images/Screenshot%20from%202023-07-10%2016-24-25.png){width="600"}![](images/Screenshot%20from%202023-07-10%2016-24-33.png)
+![](images/Screenshot%20from%202023-07-10%2016-24-05.png){width="600"} ![](images/Screenshot%20from%202023-07-10%2016-24-15.png){width="600"} ![](images/Screenshot%20from%202023-07-10%2016-24-25.png){width="600"}![](images/Screenshot%20from%202023-07-10%2016-24-33.png)
 
 ## Dengue outbreaks over time
 
-![](images/Screenshot%20from%202023-07-10%2016-25-49.png)
+![Azevedo et al, 2020](images/Screenshot%20from%202023-07-10%2016-25-49.png){fig-align="center"}
 
 ## Dengue and weather covariates
 
-![](images/Screenshot%20from%202023-07-10%2016-26-38-01.png)
+![LSE Blogs](images/Screenshot%20from%202023-07-10%2016-26-38-01.png){fig-align="center"}
 
 ## Dengue over time
 
 and different regions
 
-![](images/Screenshot%20from%202023-07-10%2016-27-52.png)
+![Brito et al. 2021](images/Screenshot%20from%202023-07-10%2016-27-52.png){fig-align="center"}
 
 ## Territory diversity
 
--   On rainy season, water accumulates on cans, pots and litter present at backyards and on the streets.
+-   On rainy season, water accumulates on cans, pots and litter present at backyards, junkyards and on the streets.
 
 ![Fortaleza, jan. 2016](images/Screenshot%20from%202023-07-10%2016-30-06.png){fig-alt="Harvard-Brazil Collaborative Public Health Field Course" fig-align="center" width="500"} ![Fortaleza, jan. 2016.](images/Screenshot%20from%202023-07-10%2016-30-31.png){fig-align="center" width="500"}
 
+~Fortaleza,\ jan.\ 2016.~
+
 ## Territory diversity
 
--   On dry season or droughts, water is stored on drums without lid.
+-   On dry season or droughts, water is stored on open drums.
 -   The same predictor (ie. rain) may have different signal, in respect to other conditions.
 
 ![](images/Screenshot%20from%202023-07-10%2016-36-25.png){width="300"} ![](images/Screenshot%20from%202023-07-10%2016-36-38.png){width="600"}
@@ -94,6 +96,7 @@ and different regions
     -   Temperature, droughts, rainfall, floods, land use, deforestation
     -   Living conditions, urban environment
     -   Water supply, water rationing+
+    -   Mosquito infestation? Only few and localized data available.
 
 ## Modeling intuition
 
@@ -105,48 +108,55 @@ and different regions
 
 ## Aproach
 
--   Separate Brazilian municipalities into clusters, maximizing their similarity regarding dengue transmissions and its covariate's importance and signals
+-   Separate Brazilian municipalities into clusters
+    -   Maximizing their similarity regarding dengue transmissions and its covariate's importance and signals
 -   Train several ML models of different strategies for each cluster
--   Considering a query region r, select models with the best accuracy from related clusters to r, and ensemble the models into a single model, tailored for the specific region
+-   Considering a query region $r$, select models with the best accuracy from related clusters to $r$, and ensemble the models into a single model, tailored for the specific region
 -   Predict cases using the ensemble model and compare its results with a baseline model trained with all data
 
 ## Global and subsets models
+
+~Consider\ each\ square\ as\ a\ municipality~
 
 ![](images/Screenshot%20from%202023-07-10%2016-48-24.png){fig-align="center"}
 
 ## Workflow
 
+~Short\ version~
+
 ```{mermaid}
-%%| fig-width: 6.5
-flowchart TD
-  Y0[Dengue data] --> | Filter municipalities \n with 100k inhab| Y[Subset dengue data]
-  X1[Weather data]
-  X2[Other covariates]
-  X1 --> A[Dataset]
-  X2 --> A
-  Y --> B[Clustering algorithm \n assign k partitions] 
-  B --> |Add cluster ID \n variable| A
-  A --> A2[Time lag \n outcome and predictors]
-  A2 --> |Drop date variable| D{Split}
-  D --> E[Train dataset]
-  D --> F[Test dataset]
-  E --> G[Global model \n specification]
-  G --> |Drop \ncluster ID| H[Tune hyperparameters]
-  E --> I[Subsets k  \nmodel specification]
-  I --> |k models| H
-  H --> J[Predict with \n global model training]
-  F --> J
-  H --> K[Predict with k \n subsets trainings]
-  F --> K
-  J --> L[Collect metrics for each municipality \n and compare models performance]
-  K --> L
+flowchart LR
+A[All data] --> G[Global Model]
+A --> C(Clustering)
+C --> K1[Model Cluster 1]
+C --> K2[Model Cluster 1]
+C --> Kn[Model Cluster n]
+G --> P1[Predictions]
+K1 --> P2[Predictions]
+K2 --> P2
+Kn --> P2
+P1 --> AC[Accuracy comparison]
+P2 --> AC
 ```
+
+## Key decisions
+
+-   How to cluster municipalities?
+
+    -   Time series
+
+    -   Outcome (dengue cases)
+
+    -   Predictors
+
+-   What are the best predictors for **forecast**?
+
+    -   Lags and rolling windows
 
 ## Expected results
 
 -   More precise predictions for regions, with data "closer" to the training data.
 -   Parallelism in training models on different regions, less costs.
 -   Reduce the impact of concep-drift models of the affected regions.
--   Provide health managers with tools, predictions and scenarios adequate to different scales of health surveillance, preparedness and field action \_ Contribute to public health policies formulation and implementation
-
-## Current stage
+-   Provide health managers with tools, predictions and scenarios adequate to different scales of health surveillance, preparedness and field action
+-   Contribute to public health policies formulation and implementation
