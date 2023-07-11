@@ -87,7 +87,7 @@ website:
         - section: "Presentations"
           contents: 
               - presentations.qmd
-              - presentations/presentation_test.qmd
+              - presentations/project_presentation.qmd
         - publications.qmd
 
   
