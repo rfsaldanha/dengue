@@ -80,7 +80,7 @@ and different regions
 
 ![Fortaleza, jan. 2016](images/Screenshot%20from%202023-07-10%2016-30-06.png){fig-alt="Harvard-Brazil Collaborative Public Health Field Course" fig-align="center" width="500"} ![Fortaleza, jan. 2016.](images/Screenshot%20from%202023-07-10%2016-30-31.png){fig-align="center" width="500"}
 
-~Fortaleza,\ jan.\ 2016.~
+~Fortaleza, jan. 2016.~
 
 ## Territory diversity
 
@@ -116,13 +116,13 @@ and different regions
 
 ## Global and subsets models
 
-~Consider\ each\ square\ as\ a\ municipality~
+~Consider each square as a municipality~
 
 ![](images/Screenshot%20from%202023-07-10%2016-48-24.png){fig-align="center"}
 
 ## Workflow
 
-~Short\ version~
+~Short version~
 
 ```{mermaid}
 flowchart LR
