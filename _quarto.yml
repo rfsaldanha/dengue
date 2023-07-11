@@ -87,7 +87,8 @@ website:
         - section: "Presentations"
           contents: 
               - presentations.qmd
-              - presentations/project_presentation.qmd
+              - href: presentations/project_presentation.qmd
+                target: _blank
         - publications.qmd
 
   
