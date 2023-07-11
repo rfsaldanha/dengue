@@ -72,7 +72,7 @@ dengue <- arrow::open_dataset(sources = files_list) %>%
 
 ```{r}
 # Smaller dataset for tests
-dengue <- sample_n(dengue, 500)
+dengue <- sample_n(dengue, 500000)
 ```
 
 ## Modeling

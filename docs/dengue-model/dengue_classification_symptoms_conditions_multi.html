@@ -510,7 +510,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 11, 2023 | 15:03:32 +02:00</p>
+      <p class="date">July 11, 2023 | 15:09:47 +02:00</p>
     </div>
   </div>
   
@@ -583,7 +583,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Smaller dataset for tests</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">sample_n</span>(dengue, <span class="dv">500</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">sample_n</span>(dengue, <span class="dv">500000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="modeling" class="level2">
@@ -677,7 +677,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </div>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>31.539 sec elapsed</code></pre>
+<pre><code>1651.906 sec elapsed</code></pre>
 </div>
 </div>
 <section id="race-metrics" class="level4">
@@ -687,25 +687,13 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>train_rank_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 16 × 9
-   wflow_id      .config    .metric  mean std_err     n preprocessor model  rank
-   &lt;chr&gt;         &lt;chr&gt;      &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;        &lt;chr&gt; &lt;int&gt;
- 1 recipe_1_xgb  Preproces… accura… 0.613  0.0167    10 recipe       boos…     1
- 2 recipe_1_xgb  Preproces… roc_auc 0.603  0.0252    10 recipe       boos…     1
- 3 recipe_1_xgb  Preproces… accura… 0.599  0.0149    10 recipe       boos…     2
- 4 recipe_1_xgb  Preproces… roc_auc 0.601  0.0295    10 recipe       boos…     2
- 5 recipe_1_xgb  Preproces… accura… 0.610  0.0245    10 recipe       boos…     3
- 6 recipe_1_xgb  Preproces… roc_auc 0.593  0.0338    10 recipe       boos…     3
- 7 recipe_1_xgb  Preproces… accura… 0.597  0.0173    10 recipe       boos…     4
- 8 recipe_1_xgb  Preproces… roc_auc 0.592  0.0219    10 recipe       boos…     4
- 9 recipe_1_xgb  Preproces… accura… 0.597  0.0213    10 recipe       boos…     5
-10 recipe_1_xgb  Preproces… roc_auc 0.584  0.0358    10 recipe       boos…     5
-11 recipe_1_xgb  Preproces… accura… 0.596  0.0105    10 recipe       boos…     6
-12 recipe_1_xgb  Preproces… roc_auc 0.564  0.0202    10 recipe       boos…     6
-13 recipe_1_cart Preproces… accura… 0.591  0.0174    10 recipe       deci…     7
-14 recipe_1_cart Preproces… roc_auc 0.557  0.0243    10 recipe       deci…     7
-15 recipe_1_cart Preproces… accura… 0.559  0.0197    10 recipe       deci…     8
-16 recipe_1_cart Preproces… roc_auc 0.530  0.0175    10 recipe       deci…     8</code></pre>
+<pre><code># A tibble: 4 × 9
+  wflow_id      .config     .metric  mean std_err     n preprocessor model  rank
+  &lt;chr&gt;         &lt;chr&gt;       &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;        &lt;chr&gt; &lt;int&gt;
+1 recipe_1_xgb  Preprocess… accura… 0.620 7.72e-4    10 recipe       boos…     1
+2 recipe_1_xgb  Preprocess… roc_auc 0.633 1.10e-3    10 recipe       boos…     1
+3 recipe_1_cart Preprocess… accura… 0.615 7.98e-4    10 recipe       deci…     2
+4 recipe_1_cart Preprocess… roc_auc 0.622 1.42e-3    10 recipe       deci…     2</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -757,8 +745,8 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <pre><code># A tibble: 2 × 4
   .metric  .estimator .estimate .config             
   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-1 accuracy binary         0.611 Preprocessor1_Model1
-2 roc_auc  binary         0.642 Preprocessor1_Model1</code></pre>
+1 accuracy binary         0.620 Preprocessor1_Model1
+2 roc_auc  binary         0.635 Preprocessor1_Model1</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -766,9 +754,9 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">conf_mat</span>(CLASSI_FIN, .pred_class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          Truth
-Prediction FALSE TRUE
-     FALSE    20   17
-     TRUE     32   57</code></pre>
+Prediction FALSE  TRUE
+     FALSE 16696 10861
+     TRUE  36661 60782</code></pre>
 </div>
 </div>
 <div class="cell">
