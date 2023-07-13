@@ -7,8 +7,6 @@ bibliography: references.bib
 
 This notebooks aims to implement the global and subset modelling, adopting a clustering strategy based on time series features extraction, with the `{tsfeatures}` package.
 
-An interesting approach to cluster time series based on feature extraction may be found on @tiano2021.
-
 ## Packages
 
 ```{r}
