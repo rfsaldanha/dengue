@@ -177,7 +177,7 @@ ggplot(tsf, aes(x = diff2_acf10)) +
   theme_bw()
 ```
 
-### Session info
+## Session info
 
 ```{r}
 sessionInfo()
