@@ -1,0 +1,407 @@
+---
+title: "Time series features clustering, with robust sparse k-means"
+author: "Raphael Saldanha"
+date: last-modified
+bibliography: references.bib
+---
+
+This notebooks aims to implement the global and subset modelling, adopting a clustering strategy based on time series features extraction, with the `{tsfeatures}` package.
+
+An interesting approach to cluster time series based on feature extraction may be found on @tiano2021. We approximate this strategy by using a robust implementation of sparse $k$-means clustering [@witten2010; @kondoRobustSparseKmeans2012].
+
+## Packages
+
+```{r}
+#| message: false
+library(tidyverse)
+library(arrow)
+library(tidymodels)
+library(bonsai)
+library(finetune)
+library(modeltime)
+library(timetk)
+library(tsfeatures)
+library(sparcl)
+library(kableExtra)
+library(tictoc)
+library(geobr)
+library(DT)
+```
+
+## Load data
+
+```{r}
+tdengue <- read_parquet(file = "../tdengue.parquet") %>%
+  drop_na() %>%
+  select(mun, date, starts_with("cases"))
+```
+
+::: callout-note
+-   NA values are created when the lagged variables were calculated. The rows containing those NA values are dropped due machine learning regressors constraints.
+
+-   For validation purposes, only the `cases` and `cases_lag*` covariates variables are keep.
+:::
+
+```{r}
+glimpse(tdengue)
+```
+
+## Clustering
+
+This procedure goal is to cluster the municipalities considering time series features similarities.
+
+### Prepare data
+
+Prepare the data for use with the `{tsfeatures}` package, converting the panel data to a list of `ts` objects.
+
+```{r}
+tdengue_df <- tdengue %>%
+  arrange(mun, date) %>%
+  select(-date) %>%
+  nest(data = cases, .by = mun)
+
+tdengue_list <- lapply(tdengue_df$data, ts)
+```
+
+### Time series features
+
+Extract time series features.
+
+```{r}
+tsf <- tsfeatures(
+  tslist = tdengue_list, 
+  features = c("entropy", "stability", "lumpiness", "flat_spots", "stl_features", "acf_features")
+  )
+tsf$mun <- tdengue_df$mun
+```
+
+### Robust sparse k-means clustering
+
+Cluster the municipalities based solely on the time series features.
+
+```{r}
+points <- tsf %>%
+  select(-mun, -nperiods, -seasonal_period) %>%
+  as.matrix() %>%
+  scale()
+```
+
+Uses $k$ from 2 to 10 for clustering.
+
+```{r}
+k_seq <- 2:10
+```
+
+```{r}
+cluster_results <- tibble()
+cluster_labels <- list()
+for(k in k_seq){
+  res <- RSKC::RSKC(d = points, alpha = 10/60, L1 = NULL, ncl = k)
+  
+  tmp <- list(list(labels = res$labels))
+  names(tmp) <-  k
+  
+  cluster_labels <- append(cluster_labels, tmp)
+  
+  cluster_results <- bind_rows(cluster_results, tibble(k = k, wss = res$WSS))
+}
+```
+
+The total sum of squares is plotted. The \$k=5\$ seems to be a break point.
+
+```{r}
+ggplot(cluster_results, aes(k, wss)) +
+  geom_line() +
+  geom_point() +
+  theme_bw()
+```
+
+### Identify municipalities and cluster id
+
+Finally, the cluster partition ID is added to the main dataset.
+
+```{r}
+cluster_ids <- tibble(
+  mun = tdengue_df$mun,
+  group = cluster_labels[["5"]]$labels
+)
+```
+
+```{r}
+tdengue <- left_join(tdengue, cluster_ids, by = "mun")
+```
+
+### Cluster sizes
+
+```{r}
+table(cluster_ids$group)
+```
+
+## Train and test split
+
+Split the data into training and testing. The function `time_series_split` handles the time series, not shuffling them, and considering the panel data format, as depicted in the message about overlapping timestamps detected.
+
+The last two years data will be used as the training set.
+
+```{r}
+tdengue_split <- tdengue %>%
+  time_series_split(
+    date_var = date, 
+    assess = 52*2,
+    cumulative = TRUE
+  )
+
+tdengue_split
+```
+
+#### K-folds
+
+The training set will be split into k folds.
+
+```{r}
+tdengue_split_folds <- training(tdengue_split) %>%
+  vfold_cv(v = 5)
+```
+
+## Recipes
+
+The global and subset models training specification are called recipes. The procedure bellow creates a list of those recipes.
+
+```{r}
+recipes_list <- list()
+```
+
+### Global
+
+The global training recipe uses data from all municipalities for training the models.
+
+-   The date and group variables are removed prior training
+
+-   The municipality identification variable is treated as an Id variable, taking no place as a predictor in the training process
+
+```{r}
+recipe_global <- recipe(cases ~ ., data = training(tdengue_split)) %>%
+  step_rm(date, group) %>%
+  update_role(mun, new_role = "id variable")
+
+recipes_list <- append(recipes_list, list(global = recipe_global))
+
+rm(recipe_global)
+```
+
+### Groups
+
+-   For each group created by the clustering process, a specific training recipe will be created. For this, the first step is to filter rows from the training set, keep only the rows belonging to the group in the loop
+
+-   The date and group variables are removed prior training
+
+-   The municipality identification variable is treated as an Id variable, taking no place as a predictor in the training process
+
+```{r}
+for(g in unique(tdengue$group)){
+  tmp <- recipe(cases ~ ., data = training(tdengue_split)) %>%
+    step_filter(group == !!g) %>%
+    step_rm(date, group) %>%
+    update_role(mun, new_role = "id variable")
+  
+  tmp <- list(tmp)
+  tmp <- setNames(tmp, paste0("g", g))
+  
+  recipes_list <- append(recipes_list, tmp)
+  
+  rm(tmp)
+}
+```
+
+## Regressors specification
+
+### Random forest
+
+A Random Forest specification using the `ranger` engine. The `trees` and `min_n` hyperparameters will be tuned.
+
+```{r}
+rf_spec <- rand_forest(
+  trees = tune(),
+  min_n = tune()
+) %>%
+  set_engine("ranger") %>%
+  set_mode("regression")
+```
+
+### LightGBM
+
+```{r}
+# lgbm_spec <- boost_tree(
+#   trees = tune(),
+#   min_n = tune(),
+#   tree_depth = tune()
+# ) %>%
+#   set_engine("lightgbm") %>%
+#   set_mode("regression")
+```
+
+## Workflow set
+
+This step creates a workflow set, combining the training recipes and regressors specifications.
+
+```{r}
+all_workflows <- workflow_set(
+  preproc = recipes_list, 
+  models = list(rf = rf_spec), 
+  cross = TRUE
+)
+```
+
+## Tune
+
+This step tunes the training hyperparameters of each workflow.
+
+```{r}
+doParallel::registerDoParallel()
+
+tic()
+race_results <- 
+  all_workflows %>%
+  workflow_map(
+    "tune_race_anova",
+    seed = 345,
+    resamples = tdengue_split_folds,
+    grid = 10,
+    control = control_race(parallel_over = "everything"),
+    verbose = TRUE
+  )
+toc()
+```
+
+## Fit
+
+Each workflow will be trained using the tuned hyperparameters, considering the RMSE metric as reference.
+
+This procedure creates a list of trained models, containing the fit results and a list of the municipalities used on the training of each workflow.
+
+The global workflow is trained with data from all municipalities and the subsets workflows are trained using the respective municipalities list given by the cluster algorithm.
+
+```{r}
+tic()
+trained_models <- list()
+for(w in unique(race_results$wflow_id)){
+  best_tune <- race_results %>%
+    extract_workflow_set_result(w) %>%
+    select_best("rmse")
+  
+  final_fit <- race_results %>%
+    extract_workflow(w) %>%
+    finalize_workflow(best_tune) %>%
+    fit(training(tdengue_split))
+  
+  mold <- extract_mold(final_fit)
+  train_ids <- mold$extras$roles$`id variable` %>%
+    distinct() %>%
+    pull() %>%
+    as.character()
+  
+  final_fit <- list(
+    list(
+      "final_fit" = final_fit, 
+      "train_ids" = train_ids
+    )
+  )
+  
+  final_fit <- setNames(final_fit, paste0(w))
+  
+  trained_models <- append(trained_models, final_fit)
+}
+toc()
+```
+
+## Accuracy
+
+After training each workflow, the accuracy of the models are obtained applying the fitted models on the testing set.
+
+For the global model, all municipalities are using for testing. For the subsets models, only data from the subset's municipalities are considered for testing.
+
+The RMSE metric is obtained for each workflow and municipality.
+
+```{r}
+models_accuracy <- tibble()
+for(t in 1:length(trained_models)){
+  
+  model_tbl <- modeltime_table(trained_models[[t]][[1]]) 
+  testing_set <- testing(tdengue_split) %>%
+    filter(mun %in% trained_models[[t]][[2]])
+  
+
+  calib_tbl <- model_tbl %>%
+      modeltime_calibrate(
+        new_data = testing_set, 
+        id       = "mun"
+      )
+  
+  res <- calib_tbl %>% 
+      modeltime_accuracy(
+        acc_by_id = TRUE, 
+        metric_set = metric_set(rmse)
+      )
+  
+  res$.model_id <- word(names(trained_models[t]), 1, sep = "_")
+  
+  models_accuracy <- bind_rows(models_accuracy, res)
+}
+```
+
+This plot presents the RMSE distribution across the workflows.
+
+```{r}
+ggplot(data = models_accuracy, aes(x = .model_id, y = rmse, fill = .model_desc)) +
+  geom_boxplot()
+```
+
+### Breakdown
+
+```{r}
+mun_names <- lookup_muni(code_muni = "all") %>%
+  mutate(code_muni = substr(code_muni, 0, 6)) %>%
+  mutate(name_muni = paste0(name_muni, ", ", abbrev_state)) %>%
+  select(code_muni, name_muni)
+```
+
+```{r}
+models_accuracy %>% 
+  left_join(mun_names, by = c("mun" = "code_muni")) %>%
+  select(.model_id, .model_desc, name_muni, rmse) %>%
+  mutate(rmse = round(rmse, 2)) %>%
+  arrange(.model_id, .model_desc, -rmse) %>%
+  datatable(filter = "top")
+```
+
+```{r}
+models_accuracy %>% 
+  left_join(mun_names, by = c("mun" = "code_muni")) %>%
+  select(.model_id, .model_desc, name_muni, rmse) %>%
+  mutate(rmse = round(rmse, 2)) %>%
+  group_by(.model_desc) %>%
+  mutate(.model_id = case_when(
+    .model_id != "global" ~ "cluster",
+    .default = .model_id
+  )) %>%
+  pivot_wider(names_from = .model_id, values_from = rmse) %>%
+  mutate(dif = round(global - cluster, 2)) %>% 
+  ungroup() %>%
+  datatable(filter = "top")
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```
+
+## Links of intererest
+
+-   <https://cran.r-project.org/web/packages/tsfeatures/vignettes/tsfeatures.html>
+
+-   <https://www.tidymodels.org/learn/statistics/k-means/>
+
+-   <https://business-science.github.io/modeltime/articles/modeling-panel-data.html>
+
+-   <https://blog.bguarisma.com/series/time-series-forecasting>
