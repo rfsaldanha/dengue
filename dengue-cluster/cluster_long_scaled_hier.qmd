@@ -60,3 +60,9 @@ toc()
 #| fig-height: 10
 ggdendro::ggdendrogram(clust, size = .3, labels = F)
 ```
+
+## Session info
+
+```{r}
+sessionInfo()
+```
