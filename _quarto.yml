@@ -80,6 +80,7 @@ website:
                 contents:
                     - dengue-model/dengue_ts_overview.qmd
                     - dengue-model/dengue_ts_global_subset.qmd
+                    - dengue-model/dengue_ts_global_subset_tsfeatures.qmd
               
         - software.qmd
         - publications.qmd

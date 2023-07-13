@@ -1,5 +1,5 @@
 ---
-title: "Global and subset models"
+title: "SBD clustering"
 author: "Raphael Saldanha"
 date: last-modified
 ---
@@ -24,6 +24,8 @@ library(timetk)
 library(dtwclust)
 library(kableExtra)
 library(tictoc)
+library(geobr)
+library(DT)
 ```
 
 ## Load data
@@ -347,6 +349,38 @@ This plot presents the RMSE distribution across the workflows.
 ```{r}
 ggplot(data = models_accuracy, aes(x = .model_id, y = rmse, fill = .model_desc)) +
   geom_boxplot()
+```
+
+### Breakdown
+
+```{r}
+mun_names <- lookup_muni(code_muni = "all") %>%
+  mutate(code_muni = substr(code_muni, 0, 6)) %>%
+  mutate(name_muni = paste0(name_muni, ", ", abbrev_state)) %>%
+  select(code_muni, name_muni)
+  
+models_accuracy %>% 
+  left_join(mun_names, by = c("mun" = "code_muni")) %>%
+  select(.model_id, .model_desc, name_muni, rmse) %>%
+  mutate(rmse = round(rmse, 2)) %>%
+  arrange(.model_id, .model_desc, -rmse) %>%
+  datatable(filter = "top")
+```
+
+```{r}
+models_accuracy %>% 
+  left_join(mun_names, by = c("mun" = "code_muni")) %>%
+  select(.model_id, .model_desc, name_muni, rmse) %>%
+  mutate(rmse = round(rmse, 2)) %>%
+  group_by(.model_desc) %>%
+  mutate(.model_id = case_when(
+    .model_id != "global" ~ "cluster",
+    .default = .model_id
+  )) %>%
+  pivot_wider(names_from = .model_id, values_from = rmse) %>%
+  mutate(dif = round(global - cluster, 2)) %>% 
+  ungroup() %>%
+  datatable(filter = "top")
 ```
 
 ## Session info

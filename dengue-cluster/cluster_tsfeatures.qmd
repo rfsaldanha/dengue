@@ -44,12 +44,12 @@ tdengue_list <- lapply(tdengue_df$data, ts)
 ```{r}
 tsf <- tsfeatures(
   tslist = tdengue_list, 
-  features = c("entropy", "stability", "lumpiness", "flat_spots")
+  features = c("entropy", "stability", "lumpiness", "flat_spots", "stl_features", "acf_features")
   )
 tsf$mun <- tdengue_df$mun
 ```
 
-### Entropy
+### Shannon entropy
 
 > Measures the "forecastability" of a time series, where low values indicate a high signal-to-noise ratio, and large values occur when a series is difficult to forecast.
 
@@ -85,6 +85,94 @@ ggplot(tsf, aes(x = lumpiness)) +
 
 ```{r}
 ggplot(tsf, aes(x = flat_spots)) +
+  geom_histogram(bins = 50, alpha = .7, fill = "purple") +
+  theme_bw()
+```
+
+### STL features decomposition
+
+#### Trend
+
+```{r}
+ggplot(tsf, aes(x = trend)) +
+  geom_histogram(bins = 50, alpha = .7, fill = "purple") +
+  theme_bw()
+```
+
+#### Spike
+
+```{r}
+ggplot(tsf, aes(x = spike)) +
+  geom_histogram(bins = 50, alpha = .7, fill = "purple") +
+  theme_bw()
+```
+
+#### Linearity
+
+```{r}
+ggplot(tsf, aes(x = linearity)) +
+  geom_histogram(bins = 50, alpha = .7, fill = "purple") +
+  theme_bw()
+```
+
+#### Curvature
+
+```{r}
+ggplot(tsf, aes(x = curvature)) +
+  geom_histogram(bins = 50, alpha = .7, fill = "purple") +
+  theme_bw()
+```
+
+#### First autocorrelation coefficient
+
+```{r}
+ggplot(tsf, aes(x = e_acf1)) +
+  geom_histogram(bins = 50, alpha = .7, fill = "purple") +
+  theme_bw()
+```
+
+#### Sum of the first ten squared autocorrelation coefficients
+
+```{r}
+ggplot(tsf, aes(x = e_acf10)) +
+  geom_histogram(bins = 50, alpha = .7, fill = "purple") +
+  theme_bw()
+```
+
+### Autocorrelation function (ACF) features
+
+```{r}
+ggplot(tsf, aes(x = x_acf1)) +
+  geom_histogram(bins = 50, alpha = .7, fill = "purple") +
+  theme_bw()
+```
+
+```{r}
+ggplot(tsf, aes(x = x_acf10)) +
+  geom_histogram(bins = 50, alpha = .7, fill = "purple") +
+  theme_bw()
+```
+
+```{r}
+ggplot(tsf, aes(x = diff1_acf1)) +
+  geom_histogram(bins = 50, alpha = .7, fill = "purple") +
+  theme_bw()
+```
+
+```{r}
+ggplot(tsf, aes(x = diff1_acf10)) +
+  geom_histogram(bins = 50, alpha = .7, fill = "purple") +
+  theme_bw()
+```
+
+```{r}
+ggplot(tsf, aes(x = diff2_acf1)) +
+  geom_histogram(bins = 50, alpha = .7, fill = "purple") +
+  theme_bw()
+```
+
+```{r}
+ggplot(tsf, aes(x = diff2_acf10)) +
   geom_histogram(bins = 50, alpha = .7, fill = "purple") +
   theme_bw()
 ```

@@ -422,13 +422,19 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../dengue-model/dengue_ts_overview.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling overview</span></a>
+ <span class="menu-text">Global and subset models strategy overview</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../dengue-model/dengue_ts_global_subset.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Global and subset models</span></a>
+ <span class="menu-text">SBD clustering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-model/dengue_ts_global_subset_tsfeatures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Time series features clustering</span></a>
   </div>
 </li>
       </ul>
@@ -497,9 +503,11 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   <li><a href="#prepare-data" id="toc-prepare-data" class="nav-link" data-scroll-target="#prepare-data">Prepare data</a></li>
   <li><a href="#time-series-features" id="toc-time-series-features" class="nav-link" data-scroll-target="#time-series-features">Time series features</a>
   <ul class="collapse">
-  <li><a href="#entropy" id="toc-entropy" class="nav-link" data-scroll-target="#entropy">Entropy</a></li>
+  <li><a href="#shannon-entropy" id="toc-shannon-entropy" class="nav-link" data-scroll-target="#shannon-entropy">Shannon entropy</a></li>
   <li><a href="#stability-lumpiness" id="toc-stability-lumpiness" class="nav-link" data-scroll-target="#stability-lumpiness">Stability &amp; lumpiness</a></li>
   <li><a href="#flat-spots" id="toc-flat-spots" class="nav-link" data-scroll-target="#flat-spots">Flat spots</a></li>
+  <li><a href="#stl-features-decomposition" id="toc-stl-features-decomposition" class="nav-link" data-scroll-target="#stl-features-decomposition">STL features decomposition</a></li>
+  <li><a href="#autocorrelation-function-acf-features" id="toc-autocorrelation-function-acf-features" class="nav-link" data-scroll-target="#autocorrelation-function-acf-features">Autocorrelation function (ACF) features</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -527,7 +535,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 7, 2023 | 12:03:01 +02:00</p>
+      <p class="date">July 13, 2023 | 11:25:15 +02:00</p>
     </div>
   </div>
   
@@ -571,12 +579,12 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tsf <span class="ot">&lt;-</span> <span class="fu">tsfeatures</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">tslist =</span> tdengue_list, </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"entropy"</span>, <span class="st">"stability"</span>, <span class="st">"lumpiness"</span>, <span class="st">"flat_spots"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"entropy"</span>, <span class="st">"stability"</span>, <span class="st">"lumpiness"</span>, <span class="st">"flat_spots"</span>, <span class="st">"stl_features"</span>, <span class="st">"acf_features"</span>)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>tsf<span class="sc">$</span>mun <span class="ot">&lt;-</span> tdengue_df<span class="sc">$</span>mun</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="entropy" class="level3">
-<h3 class="anchored" data-anchor-id="entropy">Entropy</h3>
+<section id="shannon-entropy" class="level3">
+<h3 class="anchored" data-anchor-id="shannon-entropy">Shannon entropy</h3>
 <blockquote class="blockquote">
 <p>Measures the “forecastability” of a time series, where low values indicate a high signal-to-noise ratio, and large values occur when a series is difficult to forecast.</p>
 </blockquote>
@@ -625,6 +633,126 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="cluster_tsfeatures_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="stl-features-decomposition" class="level3">
+<h3 class="anchored" data-anchor-id="stl-features-decomposition">STL features decomposition</h3>
+<section id="trend" class="level4">
+<h4 class="anchored" data-anchor-id="trend">Trend</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tsf, <span class="fu">aes</span>(<span class="at">x =</span> trend)) <span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>, <span class="at">alpha =</span> .<span class="dv">7</span>, <span class="at">fill =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_tsfeatures_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="spike" class="level4">
+<h4 class="anchored" data-anchor-id="spike">Spike</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tsf, <span class="fu">aes</span>(<span class="at">x =</span> spike)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>, <span class="at">alpha =</span> .<span class="dv">7</span>, <span class="at">fill =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_tsfeatures_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="linearity" class="level4">
+<h4 class="anchored" data-anchor-id="linearity">Linearity</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tsf, <span class="fu">aes</span>(<span class="at">x =</span> linearity)) <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>, <span class="at">alpha =</span> .<span class="dv">7</span>, <span class="at">fill =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_tsfeatures_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="curvature" class="level4">
+<h4 class="anchored" data-anchor-id="curvature">Curvature</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tsf, <span class="fu">aes</span>(<span class="at">x =</span> curvature)) <span class="sc">+</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>, <span class="at">alpha =</span> .<span class="dv">7</span>, <span class="at">fill =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_tsfeatures_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="first-autocorrelation-coefficient" class="level4">
+<h4 class="anchored" data-anchor-id="first-autocorrelation-coefficient">First autocorrelation coefficient</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tsf, <span class="fu">aes</span>(<span class="at">x =</span> e_acf1)) <span class="sc">+</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>, <span class="at">alpha =</span> .<span class="dv">7</span>, <span class="at">fill =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_tsfeatures_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="sum-of-the-first-ten-squared-autocorrelation-coefficients" class="level4">
+<h4 class="anchored" data-anchor-id="sum-of-the-first-ten-squared-autocorrelation-coefficients">Sum of the first ten squared autocorrelation coefficients</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tsf, <span class="fu">aes</span>(<span class="at">x =</span> e_acf10)) <span class="sc">+</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>, <span class="at">alpha =</span> .<span class="dv">7</span>, <span class="at">fill =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_tsfeatures_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="autocorrelation-function-acf-features" class="level3">
+<h3 class="anchored" data-anchor-id="autocorrelation-function-acf-features">Autocorrelation function (ACF) features</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tsf, <span class="fu">aes</span>(<span class="at">x =</span> x_acf1)) <span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>, <span class="at">alpha =</span> .<span class="dv">7</span>, <span class="at">fill =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_tsfeatures_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tsf, <span class="fu">aes</span>(<span class="at">x =</span> x_acf10)) <span class="sc">+</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>, <span class="at">alpha =</span> .<span class="dv">7</span>, <span class="at">fill =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_tsfeatures_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tsf, <span class="fu">aes</span>(<span class="at">x =</span> diff1_acf1)) <span class="sc">+</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>, <span class="at">alpha =</span> .<span class="dv">7</span>, <span class="at">fill =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_tsfeatures_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tsf, <span class="fu">aes</span>(<span class="at">x =</span> diff1_acf10)) <span class="sc">+</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>, <span class="at">alpha =</span> .<span class="dv">7</span>, <span class="at">fill =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_tsfeatures_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tsf, <span class="fu">aes</span>(<span class="at">x =</span> diff2_acf1)) <span class="sc">+</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>, <span class="at">alpha =</span> .<span class="dv">7</span>, <span class="at">fill =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_tsfeatures_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tsf, <span class="fu">aes</span>(<span class="at">x =</span> diff2_acf10)) <span class="sc">+</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>, <span class="at">alpha =</span> .<span class="dv">7</span>, <span class="at">fill =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_tsfeatures_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 
