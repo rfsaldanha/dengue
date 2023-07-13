@@ -176,3 +176,9 @@ ggplot(tsf, aes(x = diff2_acf10)) +
   geom_histogram(bins = 50, alpha = .7, fill = "purple") +
   theme_bw()
 ```
+
+### Session info
+
+```{r}
+sessionInfo()
+```
