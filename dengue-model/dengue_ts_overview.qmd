@@ -1,5 +1,9 @@
 ---
 title: "Global and subset models strategy overview"
+back-to-top-navigation: false
+format: 
+  html:
+    page-layout: full
 ---
 
 ```{mermaid}
