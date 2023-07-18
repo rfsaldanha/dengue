@@ -13,6 +13,7 @@ This notebook aims to explore time series features of dengue cases that may guid
 ```{r}
 #| message: false
 library(tidyverse)
+library(tidymodels)
 library(arrow)
 library(tsfeatures)
 ```
@@ -175,6 +176,236 @@ ggplot(tsf, aes(x = diff2_acf1)) +
 ggplot(tsf, aes(x = diff2_acf10)) +
   geom_histogram(bins = 50, alpha = .7, fill = "purple") +
   theme_bw()
+```
+
+## Clustering
+
+This procedure goal is to cluster the municipalities considering time series features similarities.
+
+
+### K-means clustering
+
+Cluster the municipalities based solely on the time series features.
+
+```{r}
+points <- tsf %>%
+  select(-mun)
+```
+
+Uses $k$ from 2 to 10 for clustering.
+
+```{r}
+kclusts <- 
+  tibble(k = 2:10) %>%
+  mutate(
+    kclust = map(k, ~kmeans(points, .x)),
+    tidied = map(kclust, tidy),
+    glanced = map(kclust, glance),
+    augmented = map(kclust, augment, points)
+  )
+```
+
+Isolate results.
+
+```{r}
+clusters <- 
+  kclusts %>%
+  unnest(cols = c(tidied))
+
+assignments <- 
+  kclusts %>% 
+  unnest(cols = c(augmented))
+
+clusterings <- 
+  kclusts %>%
+  unnest(cols = c(glanced))
+```
+
+The total sum of squares is plotted. The \$k=5\$ seems to be a break point.
+
+```{r}
+ggplot(clusterings, aes(k, tot.withinss)) +
+  geom_line() +
+  geom_point() +
+  theme_bw()
+```
+
+### Identify municipalities and cluster id
+
+Finally, the cluster partition ID is added to the main dataset.
+
+```{r}
+cluster_ids <- clusterings %>%
+  filter(k == 5) %>%
+  pull(augmented) %>%
+  pluck(1) %>%
+  select(group = .cluster) %>%
+  mutate(mun = tdengue_df$mun)
+```
+
+### Cluster sizes
+
+```{r}
+table(cluster_ids$group)
+```
+
+## Time series features per group
+
+Add group Id to time series feautures.
+
+```{r}
+tsf_group <- left_join(tsf, cluster_ids, by = "mun")
+```
+
+### Shannon entropy
+
+```{r}
+ggplot(tsf_group, aes(x = entropy, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+### Stability & lumpiness
+
+
+```{r}
+ggplot(tsf_group, aes(x = stability, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+```{r}
+ggplot(tsf_group, aes(x = lumpiness, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+### Flat spots
+
+```{r}
+ggplot(tsf_group, aes(x = flat_spots, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+### STL features decomposition
+
+#### Trend
+
+```{r}
+ggplot(tsf_group, aes(x = trend, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+#### Spike
+
+```{r}
+ggplot(tsf_group, aes(x = spike, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+#### Linearity
+
+```{r}
+ggplot(tsf_group, aes(x = linearity, , fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+#### Curvature
+
+```{r}
+ggplot(tsf_group, aes(x = curvature, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+#### First autocorrelation coefficient
+
+```{r}
+ggplot(tsf_group, aes(x = e_acf1, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+#### Sum of the first ten squared autocorrelation coefficients
+
+```{r}
+ggplot(tsf_group, aes(x = e_acf10, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+### Autocorrelation function (ACF) features
+
+```{r}
+ggplot(tsf_group, aes(x = x_acf1, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+```{r}
+ggplot(tsf_group, aes(x = x_acf10, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+```{r}
+ggplot(tsf_group, aes(x = diff1_acf1, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+```{r}
+ggplot(tsf_group, aes(x = diff1_acf10, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+```{r}
+ggplot(tsf_group, aes(x = diff2_acf1, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+```{r}
+ggplot(tsf_group, aes(x = diff2_acf10, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
 ```
 
 ## Session info

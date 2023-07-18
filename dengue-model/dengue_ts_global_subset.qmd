@@ -383,6 +383,25 @@ models_accuracy %>%
   datatable(filter = "top")
 ```
 
+```{r}
+models_accuracy %>% 
+  left_join(mun_names, by = c("mun" = "code_muni")) %>%
+  select(.model_id, .model_desc, name_muni, rmse) %>%
+  group_by(.model_desc) %>%
+  mutate(.model_id = case_when(
+    .model_id != "global" ~ "cluster",
+    .default = .model_id
+  )) %>%
+  pivot_wider(names_from = .model_id, values_from = rmse) %>%
+  mutate(dif = round(global - cluster, 2)) %>% 
+  arrange(.model_desc, dif) %>%
+  ggplot(aes(x = global, y = cluster, fill = .model_desc, color = dif)) +
+  geom_point(size = 2, alpha = .3) +
+  viridis::scale_color_viridis(option = "inferno") +
+  theme_bw() +
+  labs(x = "Global model", y = "Subset models", title = "RMSE error obtained with global and subset training strategies")
+```
+
 ## Session info
 
 ```{r}
