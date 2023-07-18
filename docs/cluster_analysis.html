@@ -32,6 +32,8 @@ ul.task-list li input[type="checkbox"] {
 <meta name="quarto:offset" content="./">
 <link href="./dengue-cluster/cluster_long.html" rel="next">
 <link href="./bundled_data.html" rel="prev">
+<script src="site_libs/quarto-listing/list.min.js"></script>
+<script src="site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -66,6 +68,35 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script>
+
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-date','listing-title','listing-author','listing-subtitle','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-date","listing-title","listing-author","listing-subtitle","listing-image","listing-description"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZMP18L536K"></script>
 
 <script type="text/javascript">
@@ -76,6 +107,8 @@ gtag('js', new Date());
 gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -128,6 +161,10 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   <li class="nav-item">
     <a class="nav-link" href="./presentations.html" rel="" target="">
  <span class="menu-text">Presentations</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./summary.html" rel="" target="">
+ <span class="menu-text">Summary</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -366,7 +403,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dengue-model/dengue_ts_overview.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Global and subset models strategy overview</span></a>
+ <span class="menu-text">Global and subset models workflow</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -444,16 +481,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#long-time-series" id="toc-long-time-series" class="nav-link active" data-scroll-target="#long-time-series">Long time series</a>
-  <ul class="collapse">
-  <li><a href="#municipalityyear-time-series" id="toc-municipalityyear-time-series" class="nav-link" data-scroll-target="#municipalityyear-time-series">Municipality/year time series</a></li>
-  </ul></li>
-  </ul>
-</nav>
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -476,18 +504,234 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </header>
 
 <p>On this section there are notebooks that cluster municipalities time series of dengue cases with different strategies.</p>
-<section id="long-time-series" class="level2">
-<h2 class="anchored" data-anchor-id="long-time-series">Long time series</h2>
-<p>Clustering of full-size time series of each municipality.</p>
-<section id="municipalityyear-time-series" class="level3">
-<h3 class="anchored" data-anchor-id="municipalityyear-time-series">Municipality/year time series</h3>
-<p>Clustering of time-series of each municipality per year.</p>
 
 
-</section>
-</section>
 
-<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+
+<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="listing-actions-group">
+   <div class="input-group input-group-sm quarto-listing-sort">
+     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
+     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
+       <option value="" disabled="" selected="" hidden="">Order By</option>
+       <option value="index" data-direction="asc">Default</option>
+         <option value="listing-title" data-direction="asc">
+          Title
+        </option>
+         <option value="listing-date-sort" data-direction="asc">
+          Date - Oldest
+        </option>
+         <option value="listing-date-sort" data-direction="desc">
+          Date - Newest
+        </option>
+         <option value="listing-author" data-direction="asc">
+          Author
+        </option>
+     </select>
+  </div>
+</div>
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-listing-date-sort="1689671417000" data-listing-file-modified-sort="1689671417313" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6">
+<div class="thumbnail">
+<p><a href="./dengue-cluster/cluster_tsfeatures.html"> <p class="card-img-top"><img src="dengue-cluster/cluster_tsfeatures_files/figure-html/unnamed-chunk-5-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-cluster/cluster_tsfeatures.html">
+<h3 class="no-anchor listing-title">
+Time series features
+</h3>
+<div class="listing-subtitle">
+with scaled cases
+</div>
+<div class="listing-description">
+This notebook aims to explore time series features of dengue cases that may guide the clustering procedures. Time series features descriptions are quoted from <span class="citation" data-cites="tsfeatures">Hyndman et al. (…</span>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-cluster/cluster_tsfeatures.html">
+<div class="listing-date">
+July 18, 2023 | 11:10:17 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-listing-date-sort="1689578141000" data-listing-file-modified-sort="1689578141780" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="thumbnail">
+<p><a href="./dengue-cluster/cluster_long_scaled_hier.html"> <p class="card-img-top"><img src="dengue-cluster/cluster_long_scaled_hier_files/figure-html/unnamed-chunk-5-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-cluster/cluster_long_scaled_hier.html">
+<h3 class="no-anchor listing-title">
+Hierarchical clustering
+</h3>
+<div class="listing-subtitle">
+with scaled cases
+</div>
+<div class="listing-description">
+This notebooks aims to explore hierarchical clustering of municipalities considering scaled dengue cases time series.
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-cluster/cluster_long_scaled_hier.html">
+<div class="listing-date">
+July 17, 2023 | 09:15:41 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-listing-date-sort="1687502135000" data-listing-file-modified-sort="1687502135299" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="thumbnail">
+<p><a href="./dengue-cluster/cluster_mun_year.html"> <p class="card-img-top"><img src="dengue-cluster/cluster_mun_year_files/figure-html/unnamed-chunk-9-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-cluster/cluster_mun_year.html">
+<h3 class="no-anchor listing-title">
+Yearly time series
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+This notebook aims to cluster the Brazilian municipalities considering yearly dengue cases time-series similarities.
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-cluster/cluster_mun_year.html">
+<div class="listing-date">
+June 23, 2023 | 08:35:35 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-listing-date-sort="1687502135000" data-listing-file-modified-sort="1687502135267" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="thumbnail">
+<p><a href="./dengue-cluster/cluster_long.html"> <p class="card-img-top"><img src="dengue-cluster/cluster_long_files/figure-html/unnamed-chunk-9-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-cluster/cluster_long.html">
+<h3 class="no-anchor listing-title">
+Raw cases
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+This notebook aims to cluster the Brazilian municipalities considering dengue raw cases time-series similarities.
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-cluster/cluster_long.html">
+<div class="listing-date">
+June 23, 2023 | 08:35:35 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="4" data-listing-date-sort="1687502135000" data-listing-file-modified-sort="1687502135291" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="thumbnail">
+<p><a href="./dengue-cluster/cluster_long_scaled.html"> <p class="card-img-top"><img src="dengue-cluster/cluster_long_scaled_files/figure-html/unnamed-chunk-9-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-cluster/cluster_long_scaled.html">
+<h3 class="no-anchor listing-title">
+Scaled cases
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+This notebook aims to cluster the Brazilian municipalities considering scaled (standardized) dengue cases time-series similarities.
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-cluster/cluster_long_scaled.html">
+<div class="listing-date">
+June 23, 2023 | 08:35:35 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-listing-date-sort="1687502135000" data-listing-file-modified-sort="1687502135307" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="thumbnail">
+<p><a href="./dengue-cluster/cluster_mun_year_epi_year.html"> <p class="card-img-top"><img src="dengue-cluster/cluster_mun_year_epi_year_files/figure-html/unnamed-chunk-9-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-cluster/cluster_mun_year_epi_year.html">
+<h3 class="no-anchor listing-title">
+Epi year time series
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+This notebook aims to cluster the Brazilian municipalities by epidemiological yearly dengue cases time-series yearly (starting on September) by its similarities.
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-cluster/cluster_mun_year_epi_year.html">
+<div class="listing-date">
+June 23, 2023 | 08:35:35 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="6" data-listing-date-sort="1687502135000" data-listing-file-modified-sort="1687502135307" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="thumbnail">
+<p><a href="./dengue-cluster/cluster_mun_year_cumulative.html"> <p class="card-img-top"><img src="dengue-cluster/cluster_mun_year_cumulative_files/figure-html/unnamed-chunk-9-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-cluster/cluster_mun_year_cumulative.html">
+<h3 class="no-anchor listing-title">
+Cumulative time series
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+This notebook aims to cluster the Brazilian municipalities cumulative yearly dengue cases time-series yearly by its similarities.
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-cluster/cluster_mun_year_cumulative.html">
+<div class="listing-date">
+June 23, 2023 | 08:35:35 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+</div>
+<div class="listing-no-matching d-none">
+No matching items
+</div>
+</div><a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

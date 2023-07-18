@@ -1,0 +1,12 @@
+---
+title: "Summary"
+listing:
+  contents:
+    - dengue-data
+    - dengue-cluster
+    - dengue-model
+  type: default
+  filter-ui: false
+  sort-ui: true
+  sort: "date desc"
+---

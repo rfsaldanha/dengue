@@ -1,13 +1,11 @@
 ---
 title: "Overview"
+listing:
+  contents: dengue-cluster
+  type: default
+  filter-ui: false
+  sort-ui: true
+  sort: "date desc"
 ---
 
 On this section there are notebooks that cluster municipalities time series of dengue cases with different strategies.
-
-## Long time series
-
-Clustering of full-size time series of each municipality.
-
-### Municipality/year time series
-
-Clustering of time-series of each municipality per year.

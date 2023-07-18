@@ -1,5 +1,7 @@
 ---
-title: "Global and subset models strategy overview"
+title: "Global and subset models workflow"
+author: "Raphael Saldanha"
+date: last-modified
 back-to-top-navigation: false
 format: 
   html:

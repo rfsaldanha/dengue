@@ -5,7 +5,7 @@ title: "Overview"
 In this section there are notebooks for dengue notifications data download, pre-processing, missing data analysis, imputations and exportation.
 
 ```{mermaid}
-flowchart LR
+flowchart TD
   A[Raw dataset] --> B(Imputation)
   B --> C[Improved dataset]
   C --> D{Filter valid dates}

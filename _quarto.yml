@@ -36,6 +36,8 @@ website:
         file: export-data/exported_data.qmd  
       - text: "Presentations"
         file: presentations.qmd
+      - text: "Summary"
+        file: summary.qmd        
 
   
   sidebar:

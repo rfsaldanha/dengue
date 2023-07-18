@@ -1,5 +1,11 @@
 ---
 title: "Overview"
+listing:
+  contents: dengue-model
+  type: default
+  filter-ui: false
+  sort-ui: true
+  sort: "date desc"
 ---
 
 In this section there are notebooks for dengue modelling.

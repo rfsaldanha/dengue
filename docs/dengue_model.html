@@ -32,6 +32,8 @@ ul.task-list li input[type="checkbox"] {
 <meta name="quarto:offset" content="./">
 <link href="./dengue-model/dengue_weather_lag_class.html" rel="next">
 <link href="./dengue-cluster/cluster_mun_year_epi_year.html" rel="prev">
+<script src="site_libs/quarto-listing/list.min.js"></script>
+<script src="site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -66,6 +68,35 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script>
+
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-date','listing-title','listing-author','listing-subtitle','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-date","listing-title","listing-author","listing-subtitle","listing-image","listing-description"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZMP18L536K"></script>
 
 <script type="text/javascript">
@@ -76,6 +107,8 @@ gtag('js', new Date());
 gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -128,6 +161,10 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   <li class="nav-item">
     <a class="nav-link" href="./presentations.html" rel="" target="">
  <span class="menu-text">Presentations</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./summary.html" rel="" target="">
+ <span class="menu-text">Summary</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -366,7 +403,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./dengue-model/dengue_ts_overview.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Global and subset models strategy overview</span></a>
+ <span class="menu-text">Global and subset models workflow</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -470,7 +507,231 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 
 
 
-<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+
+<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="listing-actions-group">
+   <div class="input-group input-group-sm quarto-listing-sort">
+     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
+     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
+       <option value="" disabled="" selected="" hidden="">Order By</option>
+       <option value="index" data-direction="asc">Default</option>
+         <option value="listing-title" data-direction="asc">
+          Title
+        </option>
+         <option value="listing-date-sort" data-direction="asc">
+          Date - Oldest
+        </option>
+         <option value="listing-date-sort" data-direction="desc">
+          Date - Newest
+        </option>
+         <option value="listing-author" data-direction="asc">
+          Author
+        </option>
+     </select>
+  </div>
+</div>
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-listing-date-sort="1689674545000" data-listing-file-modified-sort="1689674545267" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="thumbnail">
+<p><a href="./dengue-model/dengue_ts_overview.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-model/dengue_ts_overview.html">
+<h3 class="no-anchor listing-title">
+Global and subset models workflow
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-model/dengue_ts_overview.html">
+<div class="listing-date">
+July 18, 2023 | 12:02:25 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-listing-date-sort="1689670301000" data-listing-file-modified-sort="1689670301392" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8">
+<div class="thumbnail">
+<p><a href="./dengue-model/dengue_ts_global_subset_tsfeatures.html"> <p class="card-img-top"><img src="dengue-model/dengue_ts_global_subset_tsfeatures_files/figure-html/unnamed-chunk-9-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-model/dengue_ts_global_subset_tsfeatures.html">
+<h3 class="no-anchor listing-title">
+Time series features clustering
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+This notebooks aims to implement the global and subset modelling, adopting a clustering strategy based on time series features extraction, with the <code>{tsfeatures}</code> package.
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-model/dengue_ts_global_subset_tsfeatures.html">
+<div class="listing-date">
+July 18, 2023 | 10:51:41 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-listing-date-sort="1689666749000" data-listing-file-modified-sort="1689666749140" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8">
+<div class="thumbnail">
+<p><a href="./dengue-model/dengue_ts_global_subset.html"> <p class="card-img-top"><img src="dengue-model/dengue_ts_global_subset_files/figure-html/unnamed-chunk-7-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-model/dengue_ts_global_subset.html">
+<h3 class="no-anchor listing-title">
+SBD clustering
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+This notebooks aims to reproduce the metodology of the paper submitted to the SBD2023 conference, implementing the global and subset modelling.
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-model/dengue_ts_global_subset.html">
+<div class="listing-date">
+July 18, 2023 | 09:52:29 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-listing-date-sort="1689256222000" data-listing-file-modified-sort="1689256222910" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7">
+<div class="thumbnail">
+<p><a href="./dengue-model/dengue_ts_global_subset_tsfeatures_sparse.html"> <p class="card-img-top"><img src="dengue-model/dengue_ts_global_subset_tsfeatures_sparse_files/figure-html/unnamed-chunk-9-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-model/dengue_ts_global_subset_tsfeatures_sparse.html">
+<h3 class="no-anchor listing-title">
+Time series features clustering, with robust sparse k-means
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+This notebooks aims to implement the global and subset modelling, adopting a clustering strategy based on time series features extraction, with the <code>{tsfeatures}</code> package.
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-model/dengue_ts_global_subset_tsfeatures_sparse.html">
+<div class="listing-date">
+July 13, 2023 | 15:50:22 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="4" data-listing-date-sort="1689080987000" data-listing-file-modified-sort="1689080987560" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
+<div class="thumbnail">
+<p><a href="./dengue-model/dengue_classification_symptoms_conditions_multi.html"> <p class="card-img-top"><img src="dengue-model/dengue_classification_symptoms_conditions_multi_files/figure-html/unnamed-chunk-11-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-model/dengue_classification_symptoms_conditions_multi.html">
+<h3 class="no-anchor listing-title">
+Dengue case classification
+</h3>
+<div class="listing-subtitle">
+by symptoms and clinical condition
+</div>
+<div class="listing-description">
+The objective of this notebook is to predict a dengue suspected case based on its symptoms, clinical conditions and other patient related variables.
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-model/dengue_classification_symptoms_conditions_multi.html">
+<div class="listing-date">
+July 11, 2023 | 15:09:47 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-listing-date-sort="1688474098000" data-listing-file-modified-sort="1688474098638" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
+<div class="thumbnail">
+<p><a href="./dengue-model/dengue_weather_lag_reg.html"> <p class="card-img-top"><img src="dengue-model/dengue_weather_lag_reg_files/figure-html/unnamed-chunk-14-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-model/dengue_weather_lag_reg.html">
+<h3 class="no-anchor listing-title">
+Regression task
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+This notebook models the relationship between dengue cases and weather variables using the nominal value of dengue cases.
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-model/dengue_weather_lag_reg.html">
+<div class="listing-date">
+July 4, 2023 | 14:34:58 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="6" data-listing-date-sort="1688473963000" data-listing-file-modified-sort="1688473963873" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
+<div class="thumbnail">
+<p><a href="./dengue-model/dengue_weather_lag_class.html"> <p class="card-img-top"><img src="dengue-model/dengue_weather_lag_class_files/figure-html/unnamed-chunk-18-1.png"  class="thumbnail-image card-img"/></p> </a></p>
+</div>
+<div class="body">
+<a href="./dengue-model/dengue_weather_lag_class.html">
+<h3 class="no-anchor listing-title">
+Classification task
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+This notebook models the relationship between dengue cases and weather variables using a classification of dengue cases as outbreak level (anomaly) or base level.
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./dengue-model/dengue_weather_lag_class.html">
+<div class="listing-date">
+July 4, 2023 | 14:32:43 +02:00
+</div>
+<div class="listing-author">
+Raphael Saldanha
+</div>
+</a>
+</div>
+</div>
+</div>
+<div class="listing-no-matching d-none">
+No matching items
+</div>
+</div><a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
