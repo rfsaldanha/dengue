@@ -6,7 +6,7 @@ listing:
     - dengue-cluster
     - dengue-model
   type: default
-  filter-ui: false
+  filter-ui: true
   sort-ui: true
   sort: "date desc"
 ---

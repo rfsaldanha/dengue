@@ -14,8 +14,8 @@
   {
     "listing": "/summary.html",
     "items": [
-      "/dengue-model/dengue_ts_overview.html",
       "/dengue-data/aggregated_database.html",
+      "/dengue-model/dengue_ts_overview.html",
       "/dengue-cluster/cluster_tsfeatures.html",
       "/dengue-model/dengue_ts_global_subset_tsfeatures.html",
       "/dengue-model/dengue_ts_global_subset.html",
