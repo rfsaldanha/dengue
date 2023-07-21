@@ -69,7 +69,7 @@ cdengue <- tdengue %>%
 
 The SBD method is used to cluster the municipalities, considering a shape-bases distance (k-Shape clustering algorithm). More details on the [publicated methodology](https://doi.org/10.1145/2723372.2737793).
 
-``` r``length(unique(tdengue$mun)) ``` municipalities will be clustered.
+`r length(unique(tdengue$mun))` municipalities will be clustered.
 
 The clustering algorithm is applied with a varying number of $k$ partitions from 3 to 8.
 
