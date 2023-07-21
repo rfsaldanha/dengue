@@ -14,6 +14,13 @@ library(tidyverse)
 library(arrow)
 library(knitr)
 library(lubridate)
+source("../functions.R")
+```
+
+### Execution node
+
+```{r}
+node_name()
 ```
 
 ## Load data
@@ -23,7 +30,7 @@ important_vars <- c("DT_SIN_PRI", "RESUL_SORO", "SOROTIPO", "CLASSI_FIN", "CRITE
 
 valid_interval <- interval(ymd("2011-01-01"), ymd("2021-12-31"))
 
-dengue <- open_dataset(sources = "parquets/") %>%
+dengue <- open_dataset(sources = file.path(c(data_dir(), "parquets/"))) %>%
   select(all_of(important_vars)) %>%
   collect() %>%
   mutate(DT_SIN_PRI = ymd(DT_SIN_PRI)) %>%
@@ -66,7 +73,8 @@ dengue_cases_classification <- dengue %>%
 ```
 
 ```{r}
-write_parquet(x = dengue_cases_classification, sink = "parquet_classification/dengue_cases_classification.parquet")
+write_parquet(x = dengue_cases_classification, sink = 
+                file.path(c(data_dir(), "parquet_classification/dengue_cases_classification.parquet")))
 ```
 
 ```{r}

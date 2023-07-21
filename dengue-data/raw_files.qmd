@@ -14,6 +14,13 @@ library(tidyverse)
 # remotes::install_github("rfsaldanha/microdatasus")
 library(microdatasus)
 library(arrow)
+source("../functions.R")
+```
+
+### Execution node
+
+```{r}
+node_name()
 ```
 
 ## Data download
@@ -42,7 +49,7 @@ This code chunk is commented to avoid unnecessary download again the raw DBC fil
 ## Overview
 
 ```{r}
-dengue <- open_dataset(sources = "parquets/")
+dengue <- open_dataset(sources = file.path(c(data_dir(), "parquets/")))
 ```
 
 ```{r}

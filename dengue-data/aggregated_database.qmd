@@ -17,6 +17,13 @@ The aggregation will be on municipalities and time will be date and epidemiologi
 library(tidyverse)
 library(arrow)
 library(lubridate)
+source("../functions.R")
+```
+
+### Execution node
+
+```{r}
+node_name()
 ```
 
 ## Load data
@@ -24,7 +31,7 @@ library(lubridate)
 Lazy evaluation.
 
 ```{r}
-dengue <- arrow::read_parquet(file = "parquet_improved/dengue_improved.parquet")
+dengue <- arrow::read_parquet(file = file.path(c(data_dir(), "parquet_improved/dengue_improved.parquet")))
 
 tally(dengue)
 ```
@@ -81,7 +88,7 @@ glimpse(dengue_md)
 
 ```{r}
 dengue_md %>%
-  write_parquet(sink = "parquet_aggregated/dengue_md.parquet")
+  write_parquet(sink = file.path(c(data_dir(), "parquet_aggregated/dengue_md.parquet")))
 ```
 
 ### Municipality and epidemiological week ("mw")
@@ -102,7 +109,7 @@ glimpse(dengue_mw)
 
 ```{r}
 dengue_mw %>%
-  write_parquet(sink = "parquet_aggregated/dengue_mw.parquet")
+  write_parquet(sink = file.path(c(data_dir(), "parquet_aggregated/dengue_mw.parquet")))
 ```
 
 ## Session info
