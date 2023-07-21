@@ -13,15 +13,27 @@ This website presents working in progress research on dengue and machine learnin
 #| echo: false
 library(dplyr)
 library(ggplot2)
-arrow::read_parquet(file = "dengue-data/parquet_classification/dengue_cases_classification.parquet") %>%
-  ggplot(aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN)) +
-  geom_bar() +
+library(ggiraph)
+
+p <- arrow::read_parquet(file = "dengue-data/parquet_classification/dengue_cases_classification.parquet") %>%
+  ggplot(aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN, data_id = CLASSI_FIN)) +
+  geom_bar_interactive(
+    aes(tooltip = sprintf("%s: %.0f", fill, after_stat(count))),
+    size = 3
+  ) +
   scale_fill_hue(direction = 1) +
   scale_y_continuous(labels = scales::comma) +
   labs(fill = "Classificação") +
   theme_minimal() +
   theme(legend.position = "bottom") +
   labs(title = "Suspected dengue cases notification in Brazil", x = "Month of first symptom's onset", y = "Records", fill = "Classification")
+
+girafe(
+  ggobj = p,
+  options = list(
+    opts_toolbar(saveaspng = FALSE)
+  )
+)
 ```
 
 \
