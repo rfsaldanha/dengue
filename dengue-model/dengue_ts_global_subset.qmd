@@ -2,6 +2,7 @@
 title: "SBD clustering"
 author: "Raphael Saldanha"
 date: last-modified
+bibliography: references.bib
 ---
 
 This notebooks aims to reproduce the metodology of the paper submitted to the SBD2023 conference, implementing the global and subset modelling.
@@ -67,7 +68,7 @@ cdengue <- tdengue %>%
 
 ### SBD method
 
-The SBD method is used to cluster the municipalities, considering a shape-bases distance (k-Shape clustering algorithm). More details on the [publicated methodology](https://doi.org/10.1145/2723372.2737793).
+The SBD method is used to cluster the municipalities, considering a shape-bases distance (k-Shape clustering algorithm) [@paparrizos2015].
 
 `r length(unique(tdengue$mun))` municipalities will be clustered.
 
@@ -216,8 +217,8 @@ A Random Forest specification using the `ranger` engine. The `trees` and `min_n`
 
 ```{r}
 rf_spec <- rand_forest(
-  trees = tune(),
-  min_n = tune()
+  # trees = tune(),
+  # min_n = tune()
 ) %>%
   set_engine("ranger") %>%
   set_mode("regression")
@@ -325,7 +326,6 @@ for(t in 1:length(trained_models)){
   testing_set <- testing(tdengue_split) %>%
     filter(mun %in% trained_models[[t]][[2]])
   
-
   calib_tbl <- model_tbl %>%
       modeltime_calibrate(
         new_data = testing_set, 
@@ -335,7 +335,7 @@ for(t in 1:length(trained_models)){
   res <- calib_tbl %>% 
       modeltime_accuracy(
         acc_by_id = TRUE, 
-        metric_set = metric_set(rmse)
+        metric_set = metric_set(rmse, mape)
       )
   
   res$.model_id <- word(names(trained_models[t]), 1, sep = "_")
@@ -408,7 +408,7 @@ models_accuracy %>%
 sessionInfo()
 ```
 
-## References
+## Useful links
 
 -   <https://business-science.github.io/modeltime/articles/modeling-panel-data.html>
 
