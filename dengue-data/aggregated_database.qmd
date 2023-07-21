@@ -1,7 +1,7 @@
 ---
 title: "Export aggregated database"
 author: Raphael Saldanha
-date: now
+date: last-modified
 ---
 
 ## Context
@@ -10,10 +10,10 @@ This notebook aims to create a database with aggregated counts of positive dengu
 
 The aggregation will be on municipalities and time will be date and epidemiological week.
 
-
 ## Packages
 
 ```{r}
+#| message: false
 library(tidyverse)
 library(arrow)
 library(lubridate)
@@ -40,7 +40,6 @@ dengue <- dengue %>%
 
 tally(dengue)
 ```
-
 
 ## Filter positive cases of dengue
 
