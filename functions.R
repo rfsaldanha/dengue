@@ -10,10 +10,10 @@ node_name <- function(){
 data_dir <- function(){
   node_name <- node_name()
   
-  if(node_name %in% c("dell")){
-    ref <- "data"
-  } else if(node_name == "fatnode"){
+  if(node_name == "fatnode"){
     ref <- "/data/raphaelfs/dengue_data"
+  } else {
+    ref <- NULL
   }
   
   return(ref)
