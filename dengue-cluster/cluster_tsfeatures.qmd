@@ -182,7 +182,6 @@ ggplot(tsf, aes(x = diff2_acf10)) +
 
 This procedure goal is to cluster the municipalities considering time series features similarities.
 
-
 ### K-means clustering
 
 Cluster the municipalities based solely on the time series features.
@@ -268,7 +267,6 @@ ggplot(tsf_group, aes(x = entropy, fill = group)) +
 ```
 
 ### Stability & lumpiness
-
 
 ```{r}
 ggplot(tsf_group, aes(x = stability, fill = group)) +
