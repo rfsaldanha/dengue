@@ -1,0 +1,127 @@
+---
+title: "A trajectory on health data and information"
+author: "Raphael Saldanha"
+institute: "Inria   LNCC"
+format:
+  revealjs: 
+    theme: default
+---
+
+## Some context
+
+-   Undergrad on Geography (UFJF)
+
+-   Specialization on Statistics (UFJF)
+
+-   Master's at Public Health (UFJF)
+
+-   PhD on Health Information and Communication (Fiocruz)
+
+-   Postdoctoral researcher at Inria, France: *Institut national de recherche en sciences et technologies du numérique*
+
+## Geography and health
+
+-   Geography. The study of the earth and atmosphere and of human activity as it affects and is affected by these.
+
+-   Health geography. Application of geographical information, methods and perspectives to study health-disease processes.
+
+## Data science applied to public health
+
+-   A perspective for *quantitative* health information
+
+-   Spatial and time series of public health data of multiple formats
+
+-   Classical and modern methods of data analysis
+
+-   New ways of use and disseminate health information
+
+## Thesis
+
+-   From acquisition to data visualization: applications of data science on health
+
+-   Study the cycle of generation and dissemination of health information
+
+-   Presents a **new paradigm** of data science and health, considering the hybrid possibilities of a theory & data driven science for Public Health
+
+-   and a **new process model** called Knowledge Discovery in Databases for Public Health (KDD-PH)
+
+## KDD-PH
+
+```{mermaid}
+flowchart TD
+A[Research problem] --> B[Data acquisition]
+B --> C[Data assessment, preparation and analysis]
+C --> F[Modelling and assessment]
+F --> H[Knowledge review and dissemination]
+H --> F
+H --> I[Public health policies]
+I --> J[Follow-up]
+F --> A
+J --> A
+```
+
+## Thesis results
+
+-   Articles and products that fully or partially adopts the KDD-PH approach
+
+## Theoretical construction
+
+-   Data science and big data: what that means for population studies and health
+
+-   To reflect on the possible changes that data science can induce in population and health related studies
+
+-   Volume is not the most promising characteristic of big data for population and health related studies, but rather the **complexity of data** and the possibilities of integration with traditional studies by means of **interdisciplinary teams.**
+
+-   [Paper at CSC](https://doi.org/10.1590/1414-462X202199010305)
+
+## R package microdatasus
+
+-   Health data acquisition from DataSUS, Brazilian official source of health data
+
+-   [GitHub repo](https://github.com/rfsaldanha/microdatasus)
+
+-   [Paper at CSP](https://doi.org/10.1590/0102-311X00032419)
+
+## Network analysis of breast cancer patients flow in Brazil from 2014 to 2016
+
+-   Health data analysis
+
+-   Highlight central municipalities in a network
+
+-   Distances and difficulties faced by the patients
+
+-   [Paper at CSP](https://doi.org/10.1590/0102-311X00090918)
+
+## Cross-border monitoring system of malaria disease
+
+-   Health data harmonization and visualization
+
+-   French Guiana and Brazil frontier
+
+-   French and Portuguese, visualization as a common language
+
+-   [Paper at JMIR](https://doi.org/10.2196/15409)
+
+## MonitoraCovid-19
+
+-   Health data acquisition and visualization
+
+-   A multidisciplinary visualization dashboard of Covid-19
+
+-   Positioned Fiocruz and ICICT as a main reference about Covid-19 data and information
+
+-   More than 320,000 unique users
+
+-   [Book chapter](https://doi.org/10.7476/9786557081211.0015) about the project internal processes
+
+## Postdoc research
+
+-   In partnership with LNCC and Inria
+
+-   Teams highly specialized on data analysis and modelling with Artificial Intelligence
+
+-   Create and apply novel data science methods to public health problems
+
+-   Building and Selecting Specialized AI Models for Predicting Dengue Disease
+
+-   [Project technical website](https://rfsaldanha.github.io/dengue/)

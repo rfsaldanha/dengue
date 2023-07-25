@@ -93,6 +93,8 @@ website:
               - presentations.qmd
               - href: presentations/project_presentation.qmd
                 target: _blank
+              - href: presentations/trajectory_health_data_information.qmd
+                target: _blank
         - publications.qmd
 
   
