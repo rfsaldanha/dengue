@@ -16,6 +16,53 @@ library(tidyverse)
 library(tidymodels)
 library(arrow)
 library(tsfeatures)
+library(DT)
+```
+
+### Functions
+
+Perform Kolmogorov-Smirnorf tests between groups statistics.
+
+```{r}
+#| code-fold: true
+ks_group_test <- function(stat){
+  
+  tsf_group_split <- tsf_group %>%
+    # Select variables and statistic
+    select(group, statistic = !!stat) %>%
+    # Split to list  
+    group_split(group) 
+
+  # Matrix of possible combinations
+  comb <- combn(x = unique(tsf_group$group), m = 2)
+
+  # Resuls data frame
+  ks_results <- tibble()
+  
+  
+  # For each group combination, perform ks.test
+  for(i in 1:ncol(comb)){
+    g_a <- comb[1,i]
+    g_b <- comb[2,i]
+    
+    res <- ks.test(
+      x = tsf_group_split[[g_a]]$statistic, 
+      y =  tsf_group_split[[g_b]]$statistic
+    ) %>% tidy()
+    
+    tmp <- tibble(
+      g_a = g_a,
+      g_b = g_b,
+      statistic = round(res$statistic, 4),
+      pvalue = round(res$p.value, 4)
+    )
+    
+    ks_results <- bind_rows(ks_results, tmp)
+  }
+  
+  ks_results %>%
+    arrange(g_a, g_b)
+}
 ```
 
 ## Load data
@@ -266,7 +313,13 @@ ggplot(tsf_group, aes(x = entropy, fill = group)) +
   theme(legend.position = "none")
 ```
 
+```{r}
+#| warning: false
+ks_group_test("entropy") %>% datatable()
+```
+
 ### Stability & lumpiness
+
 
 ```{r}
 ggplot(tsf_group, aes(x = stability, fill = group)) +
@@ -277,11 +330,21 @@ ggplot(tsf_group, aes(x = stability, fill = group)) +
 ```
 
 ```{r}
+#| warning: false
+ks_group_test("stability") %>% datatable()
+```
+
+```{r}
 ggplot(tsf_group, aes(x = lumpiness, fill = group)) +
   geom_histogram(bins = 50, alpha = .7) +
   facet_wrap(~ group) +
   theme_bw() +
   theme(legend.position = "none")
+```
+
+```{r}
+#| warning: false
+ks_group_test("lumpiness") %>% datatable()
 ```
 
 ### Flat spots
@@ -292,6 +355,11 @@ ggplot(tsf_group, aes(x = flat_spots, fill = group)) +
   facet_wrap(~ group) +
   theme_bw() +
   theme(legend.position = "none")
+```
+
+```{r}
+#| warning: false
+ks_group_test("flat_spots") %>% datatable()
 ```
 
 ### STL features decomposition
@@ -306,6 +374,11 @@ ggplot(tsf_group, aes(x = trend, fill = group)) +
   theme(legend.position = "none")
 ```
 
+```{r}
+#| warning: false
+ks_group_test("trend") %>% datatable()
+```
+
 #### Spike
 
 ```{r}
@@ -314,6 +387,11 @@ ggplot(tsf_group, aes(x = spike, fill = group)) +
   facet_wrap(~ group) +
   theme_bw() +
   theme(legend.position = "none")
+```
+
+```{r}
+#| warning: false
+ks_group_test("spike") %>% datatable()
 ```
 
 #### Linearity
@@ -326,6 +404,11 @@ ggplot(tsf_group, aes(x = linearity, , fill = group)) +
   theme(legend.position = "none")
 ```
 
+```{r}
+#| warning: false
+ks_group_test("linearity") %>% datatable()
+```
+
 #### Curvature
 
 ```{r}
@@ -334,6 +417,11 @@ ggplot(tsf_group, aes(x = curvature, fill = group)) +
   facet_wrap(~ group) +
   theme_bw() +
   theme(legend.position = "none")
+```
+
+```{r}
+#| warning: false
+ks_group_test("curvature") %>% datatable()
 ```
 
 #### First autocorrelation coefficient
@@ -346,6 +434,11 @@ ggplot(tsf_group, aes(x = e_acf1, fill = group)) +
   theme(legend.position = "none")
 ```
 
+```{r}
+#| warning: false
+ks_group_test("e_acf1") %>% datatable()
+```
+
 #### Sum of the first ten squared autocorrelation coefficients
 
 ```{r}
@@ -354,6 +447,11 @@ ggplot(tsf_group, aes(x = e_acf10, fill = group)) +
   facet_wrap(~ group) +
   theme_bw() +
   theme(legend.position = "none")
+```
+
+```{r}
+#| warning: false
+ks_group_test("e_acf10") %>% datatable()
 ```
 
 ### Autocorrelation function (ACF) features
@@ -367,11 +465,21 @@ ggplot(tsf_group, aes(x = x_acf1, fill = group)) +
 ```
 
 ```{r}
+#| warning: false
+ks_group_test("x_acf1") %>% datatable()
+```
+
+```{r}
 ggplot(tsf_group, aes(x = x_acf10, fill = group)) +
   geom_histogram(bins = 50, alpha = .7) +
   facet_wrap(~ group) +
   theme_bw() +
   theme(legend.position = "none")
+```
+
+```{r}
+#| warning: false
+ks_group_test("x_acf10") %>% datatable()
 ```
 
 ```{r}
@@ -383,11 +491,21 @@ ggplot(tsf_group, aes(x = diff1_acf1, fill = group)) +
 ```
 
 ```{r}
+#| warning: false
+ks_group_test("diff1_acf1") %>% datatable()
+```
+
+```{r}
 ggplot(tsf_group, aes(x = diff1_acf10, fill = group)) +
   geom_histogram(bins = 50, alpha = .7) +
   facet_wrap(~ group) +
   theme_bw() +
   theme(legend.position = "none")
+```
+
+```{r}
+#| warning: false
+ks_group_test("diff1_acf10") %>% datatable()
 ```
 
 ```{r}
@@ -399,11 +517,21 @@ ggplot(tsf_group, aes(x = diff2_acf1, fill = group)) +
 ```
 
 ```{r}
+#| warning: false
+ks_group_test("diff2_acf1") %>% datatable()
+```
+
+```{r}
 ggplot(tsf_group, aes(x = diff2_acf10, fill = group)) +
   geom_histogram(bins = 50, alpha = .7) +
   facet_wrap(~ group) +
   theme_bw() +
   theme(legend.position = "none")
+```
+
+```{r}
+#| warning: false
+ks_group_test("diff2_acf10") %>% datatable()
 ```
 
 ## Session info

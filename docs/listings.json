@@ -3,9 +3,9 @@
     "listing": "/cluster_analysis.html",
     "items": [
       "/dengue-cluster/cluster_tsfeatures.html",
+      "/dengue-cluster/cluster_long.html",
       "/dengue-cluster/cluster_long_scaled_hier.html",
       "/dengue-cluster/cluster_mun_year.html",
-      "/dengue-cluster/cluster_long.html",
       "/dengue-cluster/cluster_long_scaled.html",
       "/dengue-cluster/cluster_mun_year_epi_year.html",
       "/dengue-cluster/cluster_mun_year_cumulative.html"
@@ -14,6 +14,8 @@
   {
     "listing": "/summary.html",
     "items": [
+      "/dengue-cluster/cluster_tsfeatures.html",
+      "/dengue-cluster/cluster_long.html",
       "/dengue-data/aggregated_database.html",
       "/dengue-data/case_classification.html",
       "/dengue-data/imputation.html",
@@ -21,7 +23,6 @@
       "/dengue-data/raw_files.html",
       "/dengue-model/dengue_ts_global_subset.html",
       "/dengue-model/dengue_ts_overview.html",
-      "/dengue-cluster/cluster_tsfeatures.html",
       "/dengue-model/dengue_ts_global_subset_tsfeatures.html",
       "/dengue-cluster/cluster_long_scaled_hier.html",
       "/dengue-model/dengue_ts_global_subset_tsfeatures_sparse.html",
@@ -29,7 +30,6 @@
       "/dengue-model/dengue_weather_lag_reg.html",
       "/dengue-model/dengue_weather_lag_class.html",
       "/dengue-cluster/cluster_mun_year.html",
-      "/dengue-cluster/cluster_long.html",
       "/dengue-cluster/cluster_long_scaled.html",
       "/dengue-cluster/cluster_mun_year_epi_year.html",
       "/dengue-cluster/cluster_mun_year_cumulative.html"
