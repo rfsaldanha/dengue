@@ -15,3 +15,5 @@ title: "Publications"
 -   Research paper. *Dengue and weather covariates: a time lagged relationship analysis.*
 
 -   Research paper. *Inconclusive dengue cases diagnosis reclassification by symptoms and clinical conditions.*
+
+-   Research paper. *Dengue hidden epidemics: anomalies on different space-time scenarios.*
