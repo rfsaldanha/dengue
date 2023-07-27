@@ -17,3 +17,5 @@ title: "Publications"
 -   Research paper. *Inconclusive dengue cases diagnosis reclassification by symptoms and clinical conditions.*
 
 -   Research paper. *Dengue hidden epidemics: anomalies on different space-time scenarios.*
+
+-   Research paper. *Municipality climate features: indicators of anomalies and sequences of events*

@@ -214,7 +214,7 @@
     "href": "publications.html#work-in-progress",
     "title": "Publications",
     "section": "Work in progress",
-    "text": "Work in progress\n\nResearch paper. Dengue profiles: clustering of time series of dengue cases per municipalities.\nResearch paper. Dengue and weather covariates: a time lagged relationship analysis.\nResearch paper. Inconclusive dengue cases diagnosis reclassification by symptoms and clinical conditions.\nResearch paper. Dengue hidden epidemics: anomalies on different space-time scenarios."
+    "text": "Work in progress\n\nResearch paper. Dengue profiles: clustering of time series of dengue cases per municipalities.\nResearch paper. Dengue and weather covariates: a time lagged relationship analysis.\nResearch paper. Inconclusive dengue cases diagnosis reclassification by symptoms and clinical conditions.\nResearch paper. Dengue hidden epidemics: anomalies on different space-time scenarios.\nResearch paper. Municipality climate features: indicators of anomalies and sequences of events"
   },
   {
     "objectID": "presentations/project_presentation.html#building-and-selecting-specialized-ai-models-for-predicting-dengue-disease",
@@ -1011,8 +1011,8 @@
     "objectID": "presentations/trajectory_health_data_information.html#some-context",
     "href": "presentations/trajectory_health_data_information.html#some-context",
     "title": "A trajectory on health data and information",
-    "section": "Some context",
-    "text": "Some context\n\nUndergrad on Geography (UFJF)\nSpecialization on Statistics (UFJF)\nMaster’s at Public Health (UFJF)\nPhD on Health Information and Communication (Fiocruz)\nPostdoctoral researcher at Inria, France: Institut national de recherche en sciences et technologies du numérique"
+    "section": "",
+    "text": "Undergrad on Geography (UFJF)\nSpecialization on Statistics (UFJF)\nMaster’s at Public Health (UFJF)\nPhD on Health Information and Communication (Fiocruz)\nPostdoctoral researcher at Inria, France: Institut national de recherche en sciences et technologies du numérique"
   },
   {
     "objectID": "presentations/trajectory_health_data_information.html#geography-and-health",
@@ -1433,5 +1433,12 @@
     "title": "Time series features clustering, with robust sparse k-means",
     "section": "Links of intererest",
     "text": "Links of intererest\n\nhttps://cran.r-project.org/web/packages/tsfeatures/vignettes/tsfeatures.html\nhttps://www.tidymodels.org/learn/statistics/k-means/\nhttps://business-science.github.io/modeltime/articles/modeling-panel-data.html\nhttps://blog.bguarisma.com/series/time-series-forecasting"
+  },
+  {
+    "objectID": "presentations/trajectory_health_data_information.html",
+    "href": "presentations/trajectory_health_data_information.html",
+    "title": "A trajectory on health data and information",
+    "section": "",
+    "text": "Undergrad on Geography (UFJF)\nSpecialization on Statistics (UFJF)\nMaster’s at Public Health (UFJF)\nPhD on Health Information and Communication (Fiocruz)\nPostdoctoral researcher at Inria, France: Institut national de recherche en sciences et technologies du numérique"
   }
 ]
