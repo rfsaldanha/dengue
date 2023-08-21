@@ -49,7 +49,7 @@ This code chunk is commented to avoid unnecessary download again the raw DBC fil
 ## Overview
 
 ```{r}
-dengue <- open_dataset(sources = file.path(c(data_dir(), "parquets/")))
+dengue <- open_dataset(sources = data_dir("parquets/"))
 ```
 
 ```{r}
