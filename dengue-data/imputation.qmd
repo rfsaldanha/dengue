@@ -127,7 +127,7 @@ There was a improvement on 25,823 records with invalid dates and all missing rec
 
 ```{r}
 dengue %>%
-  write_parquet(sink = "parquet_improved/dengue_improved.parquet")
+  write_parquet(sink = data_dir("dengue_data/parquet_improved/dengue_improved.parquet"))
 ```
 
 ## Session info
