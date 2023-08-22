@@ -22,44 +22,26 @@ source("../functions.R")
 
 ## Load data
 
-Load the aggregated data.
+Load the bundled data.
 
 ```{r}
-dengue <- read_parquet("../dengue-data/parquet_aggregated/dengue_md.parquet")
+tdengue <- open_dataset(sources = data_dir("bundled_data/tdengue.parquet")) %>%
+    select(mun, date, cases = cases_raw) %>%
+    collect()
 
-dim(dengue)
+dim(tdengue)
 ```
 
 ### Prepare data
 
-The chunk bellow executes various steps to prepare the data for clustering.
+The chunk bellow formats the dataset for `tsclust` use.
 
 ```{r}
-tdengue <- dengue %>%
-  # Filter out dates after 2020-01-01, as this year is not complete
-  filter(date < as.Date("2020-01-01")) %>%
-  # Pad days with zero cases
-  group_by(mun) %>%
-  pad_by_time(date, .by = "day", .pad_value = 0, .start_date = min(dengue$date), .end_date = max(dengue$date)) %>%
-  ungroup() %>%
-  # Aggregate by week
-  mutate(
-    week = str_pad(epiweek(date), pad = 0, width = 2),
-    year = year(date)
-  ) %>%
-  group_by(mun, year, week) %>%
-  summarise(freq = sum(freq, na.rm = TRUE)) %>%
-  ungroup() %>%
-  # Keep only municipalities series with more than 100 cases total
-  group_by(mun) %>%
-  mutate(total = sum(freq, na.rm = TRUE)) %>%
-  ungroup() %>%
-  filter(total >= 100) %>%
-  select(-total) %>%
+tdengue <- tdengue %>%
   # Prepare time series
   arrange(mun) %>%
-  pivot_wider(names_from = mun, values_from = freq) %>%
-  select(-week) %>%
+  pivot_wider(names_from = mun, values_from = cases) %>%
+  select(-date) %>%
   t() %>%
   # Convert object
   tslist()

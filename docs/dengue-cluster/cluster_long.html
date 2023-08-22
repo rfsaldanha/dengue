@@ -533,7 +533,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 22, 2023 | 11:50:14 +02:00</p>
+      <p class="date">August 22, 2023 | 12:00:07 +02:00</p>
     </div>
   </div>
   
@@ -553,61 +553,40 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(timetk)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dtwclust)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../functions.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="load-data" class="level2">
 <h2 class="anchored" data-anchor-id="load-data">Load data</h2>
-<p>Load the aggregated data.</p>
+<p>Load the bundled data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"../dengue-data/parquet_aggregated/dengue_md.parquet"</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(dengue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> <span class="fu">data_dir</span>(<span class="st">"bundled_data/tdengue.parquet"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(mun, date, <span class="at">cases =</span> cases_raw) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">collect</span>()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tdengue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 16772737        3</code></pre>
+<pre><code>[1] 163326      3</code></pre>
 </div>
 </div>
 <section id="prepare-data" class="level3">
 <h3 class="anchored" data-anchor-id="prepare-data">Prepare data</h3>
-<p>The chunk bellow executes various steps to prepare the data for clustering.</p>
+<p>The chunk bellow formats the dataset for <code>tsclust</code> use.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> dengue <span class="sc">%&gt;%</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Filter out dates after 2020-01-01, as this year is not complete</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&lt;</span> <span class="fu">as.Date</span>(<span class="st">"2020-01-01"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pad days with zero cases</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mun) <span class="sc">%&gt;%</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pad_by_time</span>(date, <span class="at">.by =</span> <span class="st">"day"</span>, <span class="at">.pad_value =</span> <span class="dv">0</span>, <span class="at">.start_date =</span> <span class="fu">min</span>(dengue<span class="sc">$</span>date), <span class="at">.end_date =</span> <span class="fu">max</span>(dengue<span class="sc">$</span>date)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Aggregate by week</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">week =</span> <span class="fu">str_pad</span>(<span class="fu">epiweek</span>(date), <span class="at">pad =</span> <span class="dv">0</span>, <span class="at">width =</span> <span class="dv">2</span>),</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">year</span>(date)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mun, year, week) <span class="sc">%&gt;%</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">freq =</span> <span class="fu">sum</span>(freq, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Keep only municipalities series with more than 100 cases total</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mun) <span class="sc">%&gt;%</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total =</span> <span class="fu">sum</span>(freq, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(total <span class="sc">&gt;=</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>total) <span class="sc">%&gt;%</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prepare time series</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(mun) <span class="sc">%&gt;%</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> mun, <span class="at">values_from =</span> freq) <span class="sc">%&gt;%</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>week) <span class="sc">%&gt;%</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert object</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tslist</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'mun', 'year'. You can override using the
-`.groups` argument.</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> tdengue <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prepare time series</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(mun) <span class="sc">%&gt;%</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> mun, <span class="at">values_from =</span> cases) <span class="sc">%&gt;%</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>date) <span class="sc">%&gt;%</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert object</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tslist</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(tdengue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(tdengue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2953</code></pre>
+<pre><code>[1] 326</code></pre>
 </div>
 </div>
 </section>
@@ -616,37 +595,37 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="clustering">Clustering</h2>
 <p>Sequence of <code>k</code> groups to be used.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>k_seq <span class="ot">&lt;-</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>k_seq <span class="ot">&lt;-</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="sbd-method" class="level3">
 <h3 class="anchored" data-anchor-id="sbd-method">SBD method</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">tsclust</span>(</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">series =</span> tdengue, </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"partitional"</span>, </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> k_seq,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance =</span> <span class="st">"sbd"</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">13</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">tsclust</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">series =</span> tdengue, </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"partitional"</span>, </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> k_seq,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance =</span> <span class="st">"sbd"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">13</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>37.281 sec elapsed</code></pre>
+<pre><code>0.25 sec elapsed</code></pre>
 </div>
 </div>
 </section>
 <section id="cluster-validity-indices-cvi" class="level3">
 <h3 class="anchored" data-anchor-id="cluster-validity-indices-cvi">Cluster Validity Indices (CVI)</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(clust) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"k_"</span>, k_seq)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>res_cvi <span class="ot">&lt;-</span> <span class="fu">sapply</span>(clust, cvi, <span class="at">type =</span> <span class="st">"internal"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">"k"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>Sil)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>res_cvi <span class="sc">%&gt;%</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(clust) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"k_"</span>, k_seq)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>res_cvi <span class="ot">&lt;-</span> <span class="fu">sapply</span>(clust, cvi, <span class="at">type =</span> <span class="st">"internal"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">"k"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>Sil)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>res_cvi <span class="sc">%&gt;%</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
@@ -663,84 +642,84 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">k_3</td>
+<td style="text-align: right;">0.1992816</td>
+<td style="text-align: right;">0.3600762</td>
+<td style="text-align: right;">55.96640</td>
+<td style="text-align: right;">2.438337</td>
+<td style="text-align: right;">2.438337</td>
+<td style="text-align: right;">0.0731844</td>
+<td style="text-align: right;">0.3439018</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">k_4</td>
-<td style="text-align: right;">0.0792636</td>
-<td style="text-align: right;">0.2942582</td>
-<td style="text-align: right;">306.6924</td>
-<td style="text-align: right;">4.320899</td>
-<td style="text-align: right;">5.211936</td>
-<td style="text-align: right;">0.0233990</td>
-<td style="text-align: right;">0.3676556</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">k_9</td>
-<td style="text-align: right;">0.0692372</td>
-<td style="text-align: right;">0.0706483</td>
-<td style="text-align: right;">175.8549</td>
-<td style="text-align: right;">4.509085</td>
-<td style="text-align: right;">6.068099</td>
-<td style="text-align: right;">0.0141304</td>
-<td style="text-align: right;">0.3514621</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">k_7</td>
-<td style="text-align: right;">0.0497536</td>
-<td style="text-align: right;">0.1391297</td>
-<td style="text-align: right;">195.6471</td>
-<td style="text-align: right;">3.601189</td>
-<td style="text-align: right;">4.740963</td>
-<td style="text-align: right;">0.0181718</td>
-<td style="text-align: right;">0.3502824</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">k_10</td>
-<td style="text-align: right;">0.0460694</td>
-<td style="text-align: right;">0.0883471</td>
-<td style="text-align: right;">135.2359</td>
-<td style="text-align: right;">3.542163</td>
-<td style="text-align: right;">4.435264</td>
-<td style="text-align: right;">0.0143743</td>
-<td style="text-align: right;">0.3398911</td>
+<td style="text-align: right;">0.1722424</td>
+<td style="text-align: right;">0.2527362</td>
+<td style="text-align: right;">43.53453</td>
+<td style="text-align: right;">2.763123</td>
+<td style="text-align: right;">3.487695</td>
+<td style="text-align: right;">0.0559111</td>
+<td style="text-align: right;">0.3517955</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">k_5</td>
-<td style="text-align: right;">0.0459207</td>
-<td style="text-align: right;">0.2229480</td>
-<td style="text-align: right;">232.7881</td>
-<td style="text-align: right;">3.748984</td>
-<td style="text-align: right;">5.009457</td>
-<td style="text-align: right;">0.0270760</td>
-<td style="text-align: right;">0.3632902</td>
+<td style="text-align: right;">0.1453384</td>
+<td style="text-align: right;">0.2349916</td>
+<td style="text-align: right;">41.11108</td>
+<td style="text-align: right;">2.041304</td>
+<td style="text-align: right;">2.378688</td>
+<td style="text-align: right;">0.0705271</td>
+<td style="text-align: right;">0.3436025</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">k_8</td>
-<td style="text-align: right;">0.0426182</td>
-<td style="text-align: right;">0.1217283</td>
-<td style="text-align: right;">193.0502</td>
-<td style="text-align: right;">3.451211</td>
-<td style="text-align: right;">4.361179</td>
-<td style="text-align: right;">0.0222442</td>
-<td style="text-align: right;">0.3501777</td>
+<td style="text-align: left;">k_6</td>
+<td style="text-align: right;">0.0347392</td>
+<td style="text-align: right;">0.1785337</td>
+<td style="text-align: right;">35.47813</td>
+<td style="text-align: right;">3.990564</td>
+<td style="text-align: right;">6.214420</td>
+<td style="text-align: right;">0.0316647</td>
+<td style="text-align: right;">0.3264600</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">k_6</td>
-<td style="text-align: right;">0.0418012</td>
-<td style="text-align: right;">0.2473345</td>
-<td style="text-align: right;">252.6956</td>
-<td style="text-align: right;">5.279611</td>
-<td style="text-align: right;">6.589676</td>
-<td style="text-align: right;">0.0254406</td>
-<td style="text-align: right;">0.3570179</td>
+<td style="text-align: left;">k_10</td>
+<td style="text-align: right;">0.0277274</td>
+<td style="text-align: right;">0.0735284</td>
+<td style="text-align: right;">22.48656</td>
+<td style="text-align: right;">3.014356</td>
+<td style="text-align: right;">4.699508</td>
+<td style="text-align: right;">0.0296837</td>
+<td style="text-align: right;">0.2917120</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">k_3</td>
-<td style="text-align: right;">0.0354230</td>
-<td style="text-align: right;">0.3658859</td>
-<td style="text-align: right;">319.9077</td>
-<td style="text-align: right;">5.150333</td>
-<td style="text-align: right;">5.830050</td>
-<td style="text-align: right;">0.0139629</td>
-<td style="text-align: right;">0.3937537</td>
+<td style="text-align: left;">k_7</td>
+<td style="text-align: right;">0.0231129</td>
+<td style="text-align: right;">0.1305430</td>
+<td style="text-align: right;">22.67986</td>
+<td style="text-align: right;">3.495637</td>
+<td style="text-align: right;">5.419732</td>
+<td style="text-align: right;">0.0263159</td>
+<td style="text-align: right;">0.3205679</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">k_8</td>
+<td style="text-align: right;">0.0184137</td>
+<td style="text-align: right;">0.1420584</td>
+<td style="text-align: right;">29.73833</td>
+<td style="text-align: right;">4.217213</td>
+<td style="text-align: right;">5.638936</td>
+<td style="text-align: right;">0.0305519</td>
+<td style="text-align: right;">0.3026231</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">k_9</td>
+<td style="text-align: right;">-0.0112281</td>
+<td style="text-align: right;">0.0841227</td>
+<td style="text-align: right;">21.15849</td>
+<td style="text-align: right;">4.427848</td>
+<td style="text-align: right;">7.822503</td>
+<td style="text-align: right;">0.0294877</td>
+<td style="text-align: right;">0.3055242</td>
 </tr>
 </tbody>
 </table>
@@ -752,22 +731,22 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <section id="cluster-with-higher-silhouette-statistic" class="level3">
 <h3 class="anchored" data-anchor-id="cluster-with-higher-silhouette-statistic">Cluster with higher Silhouette statistic</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sel_clust <span class="ot">&lt;-</span> clust[[res_cvi[[<span class="dv">1</span>,<span class="dv">1</span>]]]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sel_clust <span class="ot">&lt;-</span> clust[[res_cvi[[<span class="dv">1</span>,<span class="dv">1</span>]]]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sel_clust)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sel_clust)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="cluster_long_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">"cluster_long.pdf"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">"cluster_long.pdf"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Saving 7 x 5 in image</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sel_clust, <span class="at">type =</span> <span class="st">"centroids"</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sel_clust, <span class="at">type =</span> <span class="st">"centroids"</span>, <span class="at">lty =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="cluster_long_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -776,11 +755,11 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <section id="cluster-sizes" class="level3">
 <h3 class="anchored" data-anchor-id="cluster-sizes">Cluster sizes</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sel_clust<span class="sc">@</span>cluster)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sel_clust<span class="sc">@</span>cluster)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-   1    2    3    4 
-1512  292  867  282 </code></pre>
+  1   2   3 
+235  57  34 </code></pre>
 </div>
 </div>
 </section>
@@ -788,15 +767,15 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <section id="session-info" class="level2">
 <h2 class="anchored" data-anchor-id="session-info">Session info</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>R version 4.2.0 (2022-04-22)
-Platform: aarch64-apple-darwin20 (64-bit)
-Running under: macOS 13.4
+<pre><code>R version 4.1.2 (2021-11-01)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 22.04.3 LTS
 
 Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRblas.0.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRlapack.dylib
+BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0
+LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0
 
 Random number generation:
  RNG:     L'Ecuyer-CMRG 
@@ -804,56 +783,60 @@ Random number generation:
  Sample:  Rejection 
  
 locale:
-[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+ [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
  [1] tictoc_1.2       kableExtra_1.3.4 dtwclust_5.5.12  dtw_1.23-1      
- [5] proxy_0.4-27     timetk_2.8.3     arrow_12.0.1     lubridate_1.9.2 
- [9] forcats_1.0.0    stringr_1.5.0    dplyr_1.1.2      purrr_1.0.1     
-[13] readr_2.1.4      tidyr_1.3.0      tibble_3.2.1     ggplot2_3.4.2   
+ [5] proxy_0.4-27     timetk_2.8.3     arrow_12.0.1.1   lubridate_1.9.2 
+ [9] forcats_1.0.0    stringr_1.5.0    dplyr_1.1.2      purrr_1.0.2     
+[13] readr_2.1.4      tidyr_1.3.0      tibble_3.2.1     ggplot2_3.4.3   
 [17] tidyverse_2.0.0 
 
 loaded via a namespace (and not attached):
-  [1] colorspace_2.1-0    ellipsis_0.3.2      class_7.3-22       
-  [4] modeltools_0.2-23   clue_0.3-64         rstudioapi_0.14    
+  [1] colorspace_2.1-0    ellipsis_0.3.2      class_7.3-20       
+  [4] modeltools_0.2-23   clue_0.3-64         rstudioapi_0.15.0  
   [7] farver_2.1.1        listenv_0.9.0       furrr_0.3.1        
  [10] dials_1.2.0         ggrepel_0.9.3       bit64_4.0.5        
  [13] RSpectra_0.16-1     prodlim_2023.03.31  fansi_1.0.4        
- [16] xml2_1.3.4          codetools_0.2-19    splines_4.2.0      
- [19] knitr_1.43          jsonlite_1.8.5      workflows_1.1.3    
- [22] anytime_0.3.9       cluster_2.1.4       yardstick_1.2.0    
- [25] shiny_1.7.4         tune_1.1.1          httr_1.4.6         
- [28] compiler_4.2.0      assertthat_0.2.1    Matrix_1.5-4.1     
- [31] fastmap_1.1.1       cli_3.6.1           later_1.3.1        
- [34] htmltools_0.5.5     tools_4.2.0         gtable_0.3.3       
- [37] glue_1.6.2          reshape2_1.4.4      Rcpp_1.0.10        
- [40] DiceDesign_1.9      vctrs_0.6.3         svglite_2.1.1      
- [43] iterators_1.0.14    parsnip_1.1.0       timeDate_4022.108  
- [46] gower_1.0.1         xfun_0.39           globals_0.16.2     
- [49] rvest_1.0.3         timechange_0.2.0    mime_0.12          
- [52] lifecycle_1.0.3     future_1.32.0       MASS_7.3-60        
- [55] zoo_1.8-12          scales_1.2.1        ipred_0.9-14       
- [58] ragg_1.2.5          hms_1.1.3           promises_1.2.0.1   
- [61] parallel_4.2.0      yaml_2.3.7          padr_0.6.2         
- [64] rpart_4.1.19        stringi_1.7.12      highr_0.10         
- [67] foreach_1.5.2       lhs_1.1.6           hardhat_1.3.0      
- [70] lava_1.7.2.1        systemfonts_1.0.4   rlang_1.1.1        
- [73] pkgconfig_2.0.3     rsample_1.1.1       evaluate_0.21      
- [76] lattice_0.21-8      labeling_0.4.2      recipes_1.0.6      
- [79] htmlwidgets_1.6.2   bit_4.0.5           tidyselect_1.2.0   
- [82] parallelly_1.36.0   plyr_1.8.8          magrittr_2.0.3     
- [85] R6_2.5.1            generics_0.1.3      pillar_1.9.0       
- [88] withr_2.5.0         xts_0.13.1          survival_3.5-5     
- [91] nnet_7.3-19         future.apply_1.11.0 utf8_1.2.3         
- [94] tzdb_0.4.0          rmarkdown_2.22      grid_4.2.0         
- [97] flexclust_1.4-1     data.table_1.14.8   webshot_0.5.4      
-[100] digest_0.6.31       xtable_1.8-4        httpuv_1.6.11      
-[103] textshaping_0.3.6   RcppParallel_5.1.7  stats4_4.2.0       
-[106] GPfit_1.0-8         munsell_0.5.0       viridisLite_0.4.2  
-[109] shinyjs_2.1.0      </code></pre>
+ [16] xml2_1.3.5          codetools_0.2-18    splines_4.1.2      
+ [19] knitr_1.43          jsonlite_1.8.7      workflows_1.1.3    
+ [22] cluster_2.1.2       yardstick_1.2.0     shiny_1.7.5        
+ [25] tune_1.1.1          httr_1.4.7          compiler_4.1.2     
+ [28] assertthat_0.2.1    Matrix_1.6-1        fastmap_1.1.1      
+ [31] cli_3.6.1           later_1.3.1         htmltools_0.5.6    
+ [34] tools_4.1.2         gtable_0.3.4        glue_1.6.2         
+ [37] reshape2_1.4.4      Rcpp_1.0.11         DiceDesign_1.9     
+ [40] vctrs_0.6.3         svglite_2.1.1       iterators_1.0.14   
+ [43] parsnip_1.1.1       timeDate_4022.108   gower_1.0.1        
+ [46] xfun_0.40           globals_0.16.2      rvest_1.0.3        
+ [49] timechange_0.2.0    mime_0.12           lifecycle_1.0.3    
+ [52] future_1.33.0       MASS_7.3-55         zoo_1.8-12         
+ [55] scales_1.2.1        ipred_0.9-14        ragg_1.2.5         
+ [58] hms_1.1.3           promises_1.2.1      parallel_4.1.2     
+ [61] yaml_2.3.7          rpart_4.1.16        stringi_1.7.12     
+ [64] highr_0.10          foreach_1.5.2       lhs_1.1.6          
+ [67] hardhat_1.3.0       lava_1.7.2.1        systemfonts_1.0.4  
+ [70] rlang_1.1.1         pkgconfig_2.0.3     rsample_1.1.1      
+ [73] evaluate_0.21       lattice_0.20-45     labeling_0.4.2     
+ [76] recipes_1.0.7       htmlwidgets_1.6.2   bit_4.0.5          
+ [79] tidyselect_1.2.0    parallelly_1.36.0   plyr_1.8.8         
+ [82] magrittr_2.0.3      R6_2.5.1            generics_0.1.3     
+ [85] pillar_1.9.0        withr_2.5.0         xts_0.13.1         
+ [88] survival_3.2-13     nnet_7.3-17         future.apply_1.11.0
+ [91] utf8_1.2.3          tzdb_0.4.0          rmarkdown_2.24     
+ [94] grid_4.1.2          flexclust_1.4-1     data.table_1.14.8  
+ [97] webshot_0.5.5       digest_0.6.33       xtable_1.8-4       
+[100] httpuv_1.6.11       textshaping_0.3.6   RcppParallel_5.1.7 
+[103] stats4_4.1.2        GPfit_1.0-8         munsell_0.5.0      
+[106] viridisLite_0.4.2   shinyjs_2.1.0      </code></pre>
 </div>
 </div>
 
