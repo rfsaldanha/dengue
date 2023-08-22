@@ -37,7 +37,7 @@ important_vars <- c("ID_AGRAVO", "DT_NOTIFIC", "ID_UNIDADE",
                     "CLASSI_FIN", "CRITERIO", "EVOLUCAO",
                     "DT_OBITO", "HOSPITALIZ", "DT_INTERNA")
 
-dengue <- open_dataset(sources = file.path(c(data_dir(), "parquets/"))) %>%
+dengue <- open_dataset(sources = data_dir("dengue_data/parquets")) %>%
   select(all_of(important_vars)) %>%
   collect()
 ```
