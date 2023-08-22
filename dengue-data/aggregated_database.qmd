@@ -109,7 +109,7 @@ glimpse(dengue_mw)
 
 ```{r}
 dengue_mw %>%
-  write_parquet(sink = file.path(c(data_dir(), "parquet_aggregated/dengue_mw.parquet")))
+  write_parquet(sink = data_dir("dengue_data/parquet_aggregated/dengue_mw.parquet"))
 ```
 
 ## Session info
