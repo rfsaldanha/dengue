@@ -16,7 +16,7 @@ library(ggplot2)
 library(ggiraph)
 source("functions.R")
 
-p <- arrow::read_parquet(file = data_dir("dengue-data/parquet_classification/dengue_cases_classification.parquet")) %>%
+p <- arrow::read_parquet(file = data_dir("dengue_data/parquet_classification/dengue_cases_classification.parquet")) %>%
   ggplot(aes(x = DT_SIN_PRI, weight = freq, fill = CLASSI_FIN, data_id = CLASSI_FIN)) +
   geom_bar_interactive(
     aes(tooltip = sprintf("%s: %.0f", fill, after_stat(count))),

@@ -11,16 +11,13 @@ data_dir <- function(dest){
   node_name <- node_name()
   
   if(node_name == "fatnode"){
-    ref <- "/data/raphaelfs/dengue_data"
-  } else {
-    ref <- NULL
+    ref <- "/data/raphaelfs/dengue_data_files"
+  } else if(node_name == "dell") {
+    ref <- "/home/rfsaldanha/projects/dengue/dengue_data_files"
   }
+  #TODO: include macos location
   
-  if(is.null(ref)){
-    ref <- file.path(dest)
-  } else {
-    ref <- file.path(ref, dest)
-  }
+  ref <- file.path(ref, dest)
   
   return(ref)
 }
