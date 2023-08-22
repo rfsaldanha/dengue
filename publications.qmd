@@ -10,12 +10,12 @@ title: "Publications"
 
 ## Work in progress
 
--   Research paper. *Dengue profiles: clustering of time series of dengue cases per municipalities*.
+-   Research paper. *Dengue profiles: clustering of time series of dengue cases per municipalities in Brazil*.
 
--   Research paper. *Dengue and weather covariates: a time lagged relationship analysis.*
+-   Research paper. *Dengue and weather covariates: a time lagged relationship analysis in Brazil.*
 
--   Research paper. *Inconclusive dengue cases diagnosis reclassification by symptoms and clinical conditions.*
+-   Research paper. *Inconclusive dengue cases diagnosis reclassification in Brazil by symptoms and clinical conditions.*
 
--   Research paper. *Dengue hidden epidemics: anomalies on different space-time scenarios.*
+-   Research paper. *Dengue hidden epidemics: anomalies on different space-time scenarios in Brazil.*
 
 -   Research paper. *Municipality climate features: indicators of anomalies and sequences of events*
