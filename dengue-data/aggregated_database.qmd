@@ -88,7 +88,7 @@ glimpse(dengue_md)
 
 ```{r}
 dengue_md %>%
-  write_parquet(sink = file.path(c(data_dir(), "parquet_aggregated/dengue_md.parquet")))
+  write_parquet(sink = data_dir("dengue_data/parquet_aggregated/dengue_md.parquet"))
 ```
 
 ### Municipality and epidemiological week ("mw")
