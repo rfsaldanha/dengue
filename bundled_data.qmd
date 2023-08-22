@@ -15,6 +15,7 @@ library(arrow)
 library(brpop)
 library(tidymodels)
 library(timetk)
+source("../functions.R")
 ```
 
 ## Data
@@ -24,7 +25,7 @@ library(timetk)
 Load dengue cases data and aggregate per week.
 
 ```{r}
-dengue <- read_parquet("dengue-data/parquet_aggregated/dengue_md.parquet") %>%
+dengue <- read_parquet(data_dir("dengue_data/parquet_aggregated/dengue_md.parquet")) %>%
   group_by(mun) %>%
   summarise_by_time(.date_var = date, .by = "week", freq = sum(freq, na.rm = TRUE)) %>%
   ungroup() %>%
@@ -48,7 +49,7 @@ Load weather variables and group per week.
 #### Precipitation
 
 ```{r}
-prec <- open_dataset(sources = "weather-data/parquet/brdwgd/pr.parquet") %>%
+prec <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/pr.parquet")) %>%
   filter(name == "pr_sum") %>%
   select(date, value) %>%
   collect() %>%
@@ -64,7 +65,7 @@ As precipitation is a volume, the `sum` function is used.
 #### Average maximum temperature
 
 ```{r}
-tmax <- open_dataset(sources = "weather-data/parquet/brdwgd/tmax.parquet") %>%
+tmax <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/tmax.parquet")) %>%
   filter(name == "Tmax_mean") %>%
   select(date, value) %>%
   collect() %>%
@@ -176,7 +177,7 @@ glimpse(tdengue)
 ## Save result
 
 ```{r}
-write_parquet(x = tdengue, sink = "tdengue.parquet")
+write_parquet(x = tdengue, sink = data_dir("bundled_data/tdengue.parquet"))
 ```
 
 ## Session info
