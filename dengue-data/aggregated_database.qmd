@@ -31,7 +31,7 @@ node_name()
 Lazy evaluation.
 
 ```{r}
-dengue <- arrow::read_parquet(file = file.path(c(data_dir(), "parquet_improved/dengue_improved.parquet")))
+dengue <- arrow::read_parquet(file = data_dir("dengue_data/parquet_improved/dengue_improved.parquet"))
 
 tally(dengue)
 ```
