@@ -17,6 +17,7 @@ library(tidymodels)
 library(arrow)
 library(tsfeatures)
 library(DT)
+source("../functions.R")
 ```
 
 ### Functions
@@ -70,8 +71,9 @@ ks_group_test <- function(stat){
 Load the bundled data (326 municipalities, pop $\geq$ 100k inhab.) with standardized cases and keep only the municipality code, date and cases variables.
 
 ```{r}
-tdengue <- read_parquet("../tdengue.parquet") %>%
-  select(mun, date, cases)
+tdengue <- open_dataset(sources = data_dir("bundled_data/tdengue.parquet")) %>%
+    select(mun, date, cases) %>%
+    collect()
 ```
 
 ## Prepare data
@@ -319,7 +321,6 @@ ks_group_test("entropy") %>% datatable()
 ```
 
 ### Stability & lumpiness
-
 
 ```{r}
 ggplot(tsf_group, aes(x = stability, fill = group)) +
