@@ -17,6 +17,7 @@ library(timetk)
 library(dtwclust)
 library(kableExtra)
 library(tictoc)
+source("../functions.R")
 ```
 
 ## Load data
@@ -24,9 +25,11 @@ library(tictoc)
 Load the aggregated data.
 
 ```{r}
-dengue <- read_parquet("../dengue-data/parquet_aggregated/dengue_md.parquet")
+tdengue <- open_dataset(sources = data_dir("bundled_data/tdengue.parquet")) %>%
+    select(mun, date, cases) %>%
+    collect()
 
-dim(dengue)
+dim(tdengue)
 ```
 
 ### Prepare data
@@ -34,34 +37,11 @@ dim(dengue)
 The chunk bellow executes various steps to prepare the data for clustering.
 
 ```{r}
-tdengue <- dengue %>%
-  # Filter out dates after 2020-01-01, as this year is not complete
-  filter(date <= as.Date("2020-01-01")) %>%
-  # Pad days with zero cases
-  group_by(mun) %>%
-  pad_by_time(date, .by = "day", .pad_value = 0, .start_date = min(dengue$date), .end_date = max(dengue$date)) %>%
-  ungroup() %>%
-  # Aggregate by week
-  mutate(date = floor_date(date, "week")) %>%
-  group_by(mun, date) %>%
-  summarise(freq = sum(freq, na.rm = TRUE)) %>%
-  ungroup() %>%
-  # Keep only municipalities series with more than 100 cases total
-  group_by(mun) %>%
-  mutate(total = sum(freq, na.rm = TRUE)) %>%
-  ungroup() %>%
-  filter(total >= 100) %>%
-  select(-total) %>%
-  # Scale cases by mun
-  group_by(mun) %>%
-  arrange(date) %>%
-  mutate(freq = scale(freq)) %>%
-  ungroup() %>%
-  arrange(mun, date) %>%
+tdengue <- tdengue %>%
   # Prepare time series
   mutate(mun = paste0("m_", mun)) %>%
   arrange(mun, date) %>%
-  pivot_wider(names_from = mun, values_from = freq) %>%
+  pivot_wider(names_from = mun, values_from = cases) %>%
   select(-date) %>%
   t() %>%
   tslist()
