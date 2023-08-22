@@ -73,8 +73,7 @@ dengue_cases_classification <- dengue %>%
 ```
 
 ```{r}
-write_parquet(x = dengue_cases_classification, sink = 
-                file.path(c(data_dir(), "parquet_classification/dengue_cases_classification.parquet")))
+write_parquet(x = dengue_cases_classification, sink = data_dir("dengue_data/parquet_classification/dengue_cases_classification.parquet"))
 ```
 
 ```{r}
