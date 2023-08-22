@@ -18,6 +18,7 @@ library(timetk)
 library(dtwclust)
 library(kableExtra)
 library(tictoc)
+source("../functions.R")
 ```
 
 ## Load data
@@ -25,8 +26,9 @@ library(tictoc)
 Load the bundled data (326 municipalities, pop $\geq$ 100k inhab.) with standardized cases and keep only the municipality code, date and cases variables.
 
 ```{r}
-tdengue <- read_parquet("../tdengue.parquet") %>%
-  select(mun, date, cases)
+tdengue <- open_dataset(sources = data_dir("bundled_data/tdengue.parquet")) %>%
+    select(mun, date, cases) %>%
+    collect()
 ```
 
 ## Prepare data
