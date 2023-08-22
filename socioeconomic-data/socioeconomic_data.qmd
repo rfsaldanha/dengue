@@ -11,13 +11,14 @@ date: last-modified
 library(tidyverse)
 library(janitor)
 library(arrow)
+source("../functions.R")
 ```
 
 ## HDI
 
 ```{r}
 hdi <- read_delim(
-  file = "../socioeconomic-data/idhm.csv",
+  file = data_dir("socioeconomic_data/idhm.csv"),
   delim = ",", locale=locale(decimal_mark = "."), 
   na = "-",
   col_types = cols(
@@ -53,7 +54,7 @@ hdi <- read_delim(
 ## Export
 
 ```{r}
-write_parquet(x = hdi, sink = "hdi.parquet")
+write_parquet(x = hdi, sink = data_dir("socioeconomic_data/hdi.parquet"))
 ```
 
 ## Session info
