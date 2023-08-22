@@ -17,6 +17,7 @@ library(timetk)
 library(dtwclust)
 library(kableExtra)
 library(tictoc)
+source("../functions.R")
 ```
 
 ## Load data

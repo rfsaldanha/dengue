@@ -141,6 +141,7 @@ $$
 
 ```{r}
 tdengue <- tdengue %>%
+  mutate(cases_raw = cases) %>%
   group_by(mun) %>%
   mutate(across(c(cases, prec, tmax), ~ standardize_vec(.x, silent = TRUE))) %>%
   ungroup()
