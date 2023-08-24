@@ -17,6 +17,7 @@ library(timetk)
 library(dtwclust)
 library(kableExtra)
 library(tictoc)
+source("../functions.R")
 ```
 
 ## Load data
@@ -24,7 +25,9 @@ library(tictoc)
 Load the aggregated data.
 
 ```{r}
-dengue <- read_parquet("../dengue-data/parquet_aggregated/dengue_md.parquet")
+dengue <- open_dataset(sources = data_dir("bundled_data/tdengue.parquet")) %>%
+    select(mun, date, cases = cases_raw) %>%
+    collect()
 
 dim(dengue)
 ```
@@ -35,19 +38,13 @@ The chunk bellow executes various steps to prepare the data for clustering.
 
 ```{r}
 tdengue <- dengue %>%
-  # Filter out dates after 2020-01-01, as this year is not complete
-  filter(date < as.Date("2020-01-01")) %>%
-  # Pad days with zero cases
-  group_by(mun) %>%
-  pad_by_time(date, .by = "day", .pad_value = 0, .start_date = min(dengue$date), .end_date = max(dengue$date)) %>%
-  ungroup() %>%
-  # Aggregate by week
-  mutate(
-    week = str_pad(isoweek(date), pad = 0, width = 2),
-    year = year(date)
-  ) %>%
+  # Create year variable
+  mutate(year = year(date)) %>%
+  # Create week number
+  mutate(week = epiweek(date)) %>%
+  # Summarise per year and isoweek
   group_by(mun, year, week) %>%
-  summarise(freq = sum(freq, na.rm = TRUE)) %>%
+  summarise(cases = sum(cases, na.rm = TRUE)) %>%
   ungroup() %>%
   # Center year on September
   group_by(mun) %>%
@@ -56,33 +53,26 @@ tdengue <- dengue %>%
     .default = year
   )) %>%
   ungroup() %>% 
-  # Keep only municipalities/year series with more than 100 cases total
-  group_by(mun, year) %>%
-  mutate(total = sum(freq, na.rm = TRUE)) %>%
-  ungroup() %>%
-  filter(total >= 100) %>%
-  select(-total) %>%
-  # Scale cases by mun and year
+  # Scale cases
   group_by(mun, year) %>%
   arrange(week) %>%
-  mutate(freq = scale(freq)) %>%
+  mutate(cases = scale(cases)) %>%
   ungroup() %>%
-  arrange(mun, year, week) %>%
   # Isolate municipality and year
   mutate(mun = paste0(mun, "_", year)) %>%
   select(-year, week) %>%
+  # Arrange data
+  arrange(mun, week) %>%
   # Prepare time series of municipalities by year
   mutate(mun = paste0("m_", mun)) %>%
-  arrange(mun) %>%
-  pivot_wider(names_from = mun, values_from = freq) %>%
+  pivot_wider(names_from = mun, values_from = cases) %>%
   select(-week) %>%
+  # Use zero value for years withot week 53
+  mutate(across(everything(), ~replace_na(.x, 0))) %>%
+  # Transpose as matrix
   t() %>%
   # Convert object
   tslist()
-
-# Remove missing values created by leap years (week 53)
-tdengue <- lapply(tdengue, na.omit)
-
 ```
 
 ```{r}
@@ -97,7 +87,7 @@ Sequence of `k` groups to be used.
 k_seq <- 3:10
 ```
 
-### SBD method
+### Soft-DTW method
 
 ```{r}
 tic()
@@ -105,7 +95,7 @@ clust <- tsclust(
   series = tdengue, 
   type = "partitional", 
   k = k_seq,
-  distance = "sbd",
+  distance = "sdtw",
   seed = 13
 )
 toc()
