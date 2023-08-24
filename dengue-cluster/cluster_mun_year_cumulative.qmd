@@ -81,7 +81,7 @@ Sequence of `k` groups to be used.
 k_seq <- 3:10
 ```
 
-### Soft-DTW method
+### GAK method
 
 ```{r}
 tic()
@@ -89,7 +89,7 @@ clust <- tsclust(
   series = tdengue, 
   type = "partitional", 
   k = k_seq,
-  distance = "sdtw",
+  distance = "gak",
   seed = 13
 )
 toc()
