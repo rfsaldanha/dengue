@@ -47,8 +47,11 @@ tdengue <- dengue %>%
   # Summarise per year and isoweek
   group_by(mun, year, week) %>%
   summarise(cases = sum(cases, na.rm = TRUE)) %>%
+  ungroup() %>%
   # Accumulate mun time series by year
-  mutate(freq = cumsum(cases)) %>%
+  group_by(mun, year) %>%
+  arrange(week) %>%
+  mutate(cases = cumsum(cases)) %>%
   # Scale cases
   mutate(cases = scale(cases)) %>%
   ungroup() %>%
@@ -81,7 +84,7 @@ Sequence of `k` groups to be used.
 k_seq <- 3:10
 ```
 
-### GAK method
+### Soft-DTW method
 
 ```{r}
 tic()
@@ -89,7 +92,7 @@ clust <- tsclust(
   series = tdengue, 
   type = "partitional", 
   k = k_seq,
-  distance = "gak",
+  distance = "sdtw",
   seed = 13
 )
 toc()
