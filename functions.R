@@ -13,7 +13,7 @@ data_dir <- function(dest){
   if(node_name == "fatnode"){
     ref <- "/data/raphaelfs/dengue_data_files"
   } else if(node_name == "rfsaldanha") {
-    ref <- "/home/rfsaldanha/projects/dengue/dengue_data_files"
+    ref <- "/home/raphael/projects/dengue/dengue_data_files"
   }
   #TODO: include macos location
   
