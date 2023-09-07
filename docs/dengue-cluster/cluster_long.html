@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.150">
+<meta name="generator" content="quarto-1.3.353">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -83,11 +83,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "panel-placement": "end",
   "type": "overlay",
   "limit": 20,
-  "keyboard-shortcut": [
-    "f",
-    "/",
-    "s"
-  ],
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -97,8 +92,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-submit-button-title": "Submit"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZMP18L536K"></script>
@@ -110,6 +104,7 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </script>
+
 <script src="../site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
@@ -123,7 +118,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
+      <div class="navbar-brand-container">
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Dengue AI</span>
     </a>
@@ -171,10 +166,10 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
  <span class="menu-text">Summary</span></a>
   </li>  
 </ul>
-          </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
-    <a href="https://github.com/rfsaldanha/dengue" rel="" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+            <div class="quarto-navbar-tools ms-auto">
+    <a href="https://github.com/rfsaldanha/dengue" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
 </div>
+          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
@@ -502,7 +497,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </ul></li>
   <li><a href="#clustering" id="toc-clustering" class="nav-link" data-scroll-target="#clustering">Clustering</a>
   <ul class="collapse">
-  <li><a href="#sbd-method" id="toc-sbd-method" class="nav-link" data-scroll-target="#sbd-method">SBD method</a></li>
+  <li><a href="#dtw-method" id="toc-dtw-method" class="nav-link" data-scroll-target="#dtw-method">DTW method</a></li>
   <li><a href="#cluster-validity-indices-cvi" id="toc-cluster-validity-indices-cvi" class="nav-link" data-scroll-target="#cluster-validity-indices-cvi">Cluster Validity Indices (CVI)</a></li>
   <li><a href="#cluster-with-higher-silhouette-statistic" id="toc-cluster-with-higher-silhouette-statistic" class="nav-link" data-scroll-target="#cluster-with-higher-silhouette-statistic">Cluster with higher Silhouette statistic</a></li>
   <li><a href="#cluster-sizes" id="toc-cluster-sizes" class="nav-link" data-scroll-target="#cluster-sizes">Cluster sizes</a></li>
@@ -533,7 +528,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 22, 2023 | 12:00:07 +02:00</p>
+      <p class="date">September 7, 2023 | 14:21:58 +02:00</p>
     </div>
   </div>
   
@@ -567,7 +562,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tdengue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 163326      3</code></pre>
+<pre><code>[1] 1529052       3</code></pre>
 </div>
 </div>
 <section id="prepare-data" class="level3">
@@ -586,7 +581,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(tdengue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 326</code></pre>
+<pre><code>[1] 3052</code></pre>
 </div>
 </div>
 </section>
@@ -597,20 +592,20 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>k_seq <span class="ot">&lt;-</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="sbd-method" class="level3">
-<h3 class="anchored" data-anchor-id="sbd-method">SBD method</h3>
+<section id="dtw-method" class="level3">
+<h3 class="anchored" data-anchor-id="dtw-method">DTW method</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">tsclust</span>(</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">series =</span> tdengue, </span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"partitional"</span>, </span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> k_seq,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance =</span> <span class="st">"sbd"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance =</span> <span class="st">"dtw_basic"</span>,</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">13</span></span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>0.25 sec elapsed</code></pre>
+<pre><code>885.794 sec elapsed</code></pre>
 </div>
 </div>
 </section>
@@ -643,83 +638,83 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">k_3</td>
-<td style="text-align: right;">0.1992816</td>
-<td style="text-align: right;">0.3600762</td>
-<td style="text-align: right;">55.96640</td>
-<td style="text-align: right;">2.438337</td>
-<td style="text-align: right;">2.438337</td>
-<td style="text-align: right;">0.0731844</td>
-<td style="text-align: right;">0.3439018</td>
+<td style="text-align: right;">0.5668890</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">756.8688</td>
+<td style="text-align: right;">3.240129</td>
+<td style="text-align: right;">14.60189</td>
+<td style="text-align: right;">0.0006137</td>
+<td style="text-align: right;">0.1716353</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">k_4</td>
-<td style="text-align: right;">0.1722424</td>
-<td style="text-align: right;">0.2527362</td>
-<td style="text-align: right;">43.53453</td>
-<td style="text-align: right;">2.763123</td>
-<td style="text-align: right;">3.487695</td>
-<td style="text-align: right;">0.0559111</td>
-<td style="text-align: right;">0.3517955</td>
+<td style="text-align: right;">0.3686314</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">474.2373</td>
+<td style="text-align: right;">3.395145</td>
+<td style="text-align: right;">45.32376</td>
+<td style="text-align: right;">0.0002016</td>
+<td style="text-align: right;">0.0595228</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">k_5</td>
-<td style="text-align: right;">0.1453384</td>
-<td style="text-align: right;">0.2349916</td>
-<td style="text-align: right;">41.11108</td>
-<td style="text-align: right;">2.041304</td>
-<td style="text-align: right;">2.378688</td>
-<td style="text-align: right;">0.0705271</td>
-<td style="text-align: right;">0.3436025</td>
+<td style="text-align: right;">0.2603404</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">461.8422</td>
+<td style="text-align: right;">3.397394</td>
+<td style="text-align: right;">159.14213</td>
+<td style="text-align: right;">0.0001007</td>
+<td style="text-align: right;">0.0181070</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">k_6</td>
-<td style="text-align: right;">0.0347392</td>
-<td style="text-align: right;">0.1785337</td>
-<td style="text-align: right;">35.47813</td>
-<td style="text-align: right;">3.990564</td>
-<td style="text-align: right;">6.214420</td>
-<td style="text-align: right;">0.0316647</td>
-<td style="text-align: right;">0.3264600</td>
+<td style="text-align: right;">0.2449685</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">334.9730</td>
+<td style="text-align: right;">3.525329</td>
+<td style="text-align: right;">107.17956</td>
+<td style="text-align: right;">0.0001415</td>
+<td style="text-align: right;">0.0354917</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">k_10</td>
-<td style="text-align: right;">0.0277274</td>
-<td style="text-align: right;">0.0735284</td>
-<td style="text-align: right;">22.48656</td>
-<td style="text-align: right;">3.014356</td>
-<td style="text-align: right;">4.699508</td>
-<td style="text-align: right;">0.0296837</td>
-<td style="text-align: right;">0.2917120</td>
+<td style="text-align: left;">k_9</td>
+<td style="text-align: right;">0.2065265</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">242.9163</td>
+<td style="text-align: right;">3.811424</td>
+<td style="text-align: right;">174.35124</td>
+<td style="text-align: right;">0.0001007</td>
+<td style="text-align: right;">0.0180477</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">k_7</td>
-<td style="text-align: right;">0.0231129</td>
-<td style="text-align: right;">0.1305430</td>
-<td style="text-align: right;">22.67986</td>
-<td style="text-align: right;">3.495637</td>
-<td style="text-align: right;">5.419732</td>
-<td style="text-align: right;">0.0263159</td>
-<td style="text-align: right;">0.3205679</td>
+<td style="text-align: right;">0.1630632</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">244.6162</td>
+<td style="text-align: right;">4.104858</td>
+<td style="text-align: right;">123.96261</td>
+<td style="text-align: right;">0.0000743</td>
+<td style="text-align: right;">0.0594859</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">k_8</td>
-<td style="text-align: right;">0.0184137</td>
-<td style="text-align: right;">0.1420584</td>
-<td style="text-align: right;">29.73833</td>
-<td style="text-align: right;">4.217213</td>
-<td style="text-align: right;">5.638936</td>
-<td style="text-align: right;">0.0305519</td>
-<td style="text-align: right;">0.3026231</td>
+<td style="text-align: left;">k_10</td>
+<td style="text-align: right;">0.0089230</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">227.4877</td>
+<td style="text-align: right;">3.605120</td>
+<td style="text-align: right;">317.76194</td>
+<td style="text-align: right;">0.0000109</td>
+<td style="text-align: right;">0.0169681</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">k_9</td>
-<td style="text-align: right;">-0.0112281</td>
-<td style="text-align: right;">0.0841227</td>
-<td style="text-align: right;">21.15849</td>
-<td style="text-align: right;">4.427848</td>
-<td style="text-align: right;">7.822503</td>
-<td style="text-align: right;">0.0294877</td>
-<td style="text-align: right;">0.3055242</td>
+<td style="text-align: left;">k_8</td>
+<td style="text-align: right;">-0.0091527</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">216.5552</td>
+<td style="text-align: right;">4.260783</td>
+<td style="text-align: right;">207.51837</td>
+<td style="text-align: right;">0.0000159</td>
+<td style="text-align: right;">0.1709365</td>
 </tr>
 </tbody>
 </table>
@@ -758,8 +753,8 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sel_clust<span class="sc">@</span>cluster)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-  1   2   3 
-235  57  34 </code></pre>
+   1    2    3 
+ 683  169 2200 </code></pre>
 </div>
 </div>
 </section>
@@ -769,12 +764,12 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>R version 4.1.2 (2021-11-01)
+<pre><code>R version 4.3.1 (2023-06-16)
 Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: Ubuntu 22.04.3 LTS
 
 Matrix products: default
-BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0
+BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0 
 LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0
 
 Random number generation:
@@ -783,60 +778,63 @@ Random number generation:
  Sample:  Rejection 
  
 locale:
- [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_CA.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_CA.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_CA.UTF-8       LC_NAME=C                 
  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+[11] LC_MEASUREMENT=en_CA.UTF-8 LC_IDENTIFICATION=C       
+
+time zone: Europe/Paris
+tzcode source: system (glibc)
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
  [1] tictoc_1.2       kableExtra_1.3.4 dtwclust_5.5.12  dtw_1.23-1      
- [5] proxy_0.4-27     timetk_2.8.3     arrow_12.0.1.1   lubridate_1.9.2 
- [9] forcats_1.0.0    stringr_1.5.0    dplyr_1.1.2      purrr_1.0.2     
+ [5] proxy_0.4-27     timetk_2.8.3     arrow_13.0.0     lubridate_1.9.2 
+ [9] forcats_1.0.0    stringr_1.5.0    dplyr_1.1.3      purrr_1.0.2     
 [13] readr_2.1.4      tidyr_1.3.0      tibble_3.2.1     ggplot2_3.4.3   
 [17] tidyverse_2.0.0 
 
 loaded via a namespace (and not attached):
-  [1] colorspace_2.1-0    ellipsis_0.3.2      class_7.3-20       
-  [4] modeltools_0.2-23   clue_0.3-64         rstudioapi_0.15.0  
-  [7] farver_2.1.1        listenv_0.9.0       furrr_0.3.1        
- [10] dials_1.2.0         ggrepel_0.9.3       bit64_4.0.5        
- [13] RSpectra_0.16-1     prodlim_2023.03.31  fansi_1.0.4        
- [16] xml2_1.3.5          codetools_0.2-18    splines_4.1.2      
- [19] knitr_1.43          jsonlite_1.8.7      workflows_1.1.3    
- [22] cluster_2.1.2       yardstick_1.2.0     shiny_1.7.5        
- [25] tune_1.1.1          httr_1.4.7          compiler_4.1.2     
- [28] assertthat_0.2.1    Matrix_1.6-1        fastmap_1.1.1      
- [31] cli_3.6.1           later_1.3.1         htmltools_0.5.6    
- [34] tools_4.1.2         gtable_0.3.4        glue_1.6.2         
- [37] reshape2_1.4.4      Rcpp_1.0.11         DiceDesign_1.9     
- [40] vctrs_0.6.3         svglite_2.1.1       iterators_1.0.14   
- [43] parsnip_1.1.1       timeDate_4022.108   gower_1.0.1        
- [46] xfun_0.40           globals_0.16.2      rvest_1.0.3        
- [49] timechange_0.2.0    mime_0.12           lifecycle_1.0.3    
- [52] future_1.33.0       MASS_7.3-55         zoo_1.8-12         
- [55] scales_1.2.1        ipred_0.9-14        ragg_1.2.5         
- [58] hms_1.1.3           promises_1.2.1      parallel_4.1.2     
- [61] yaml_2.3.7          rpart_4.1.16        stringi_1.7.12     
- [64] highr_0.10          foreach_1.5.2       lhs_1.1.6          
- [67] hardhat_1.3.0       lava_1.7.2.1        systemfonts_1.0.4  
- [70] rlang_1.1.1         pkgconfig_2.0.3     rsample_1.1.1      
- [73] evaluate_0.21       lattice_0.20-45     labeling_0.4.2     
- [76] recipes_1.0.7       htmlwidgets_1.6.2   bit_4.0.5          
- [79] tidyselect_1.2.0    parallelly_1.36.0   plyr_1.8.8         
- [82] magrittr_2.0.3      R6_2.5.1            generics_0.1.3     
- [85] pillar_1.9.0        withr_2.5.0         xts_0.13.1         
- [88] survival_3.2-13     nnet_7.3-17         future.apply_1.11.0
- [91] utf8_1.2.3          tzdb_0.4.0          rmarkdown_2.24     
- [94] grid_4.1.2          flexclust_1.4-1     data.table_1.14.8  
- [97] webshot_0.5.5       digest_0.6.33       xtable_1.8-4       
-[100] httpuv_1.6.11       textshaping_0.3.6   RcppParallel_5.1.7 
-[103] stats4_4.1.2        GPfit_1.0-8         munsell_0.5.0      
-[106] viridisLite_0.4.2   shinyjs_2.1.0      </code></pre>
+  [1] rlang_1.1.1         magrittr_2.0.3      clue_0.3-64        
+  [4] furrr_0.3.1         flexclust_1.4-1     compiler_4.3.1     
+  [7] systemfonts_1.0.4   vctrs_0.6.3         reshape2_1.4.4     
+ [10] rvest_1.0.3         lhs_1.1.6           tune_1.1.2         
+ [13] pkgconfig_2.0.3     fastmap_1.1.1       ellipsis_0.3.2     
+ [16] labeling_0.4.3      utf8_1.2.3          promises_1.2.1     
+ [19] rmarkdown_2.24      prodlim_2023.08.28  tzdb_0.4.0         
+ [22] ragg_1.2.5          bit_4.0.5           xfun_0.40          
+ [25] modeltools_0.2-23   jsonlite_1.8.7      recipes_1.0.8      
+ [28] highr_0.10          later_1.3.1         parallel_4.3.1     
+ [31] cluster_2.1.4       R6_2.5.1            stringi_1.7.12     
+ [34] rsample_1.2.0       parallelly_1.36.0   rpart_4.1.19       
+ [37] Rcpp_1.0.11         assertthat_0.2.1    dials_1.2.0        
+ [40] iterators_1.0.14    knitr_1.43          future.apply_1.11.0
+ [43] zoo_1.8-12          httpuv_1.6.11       Matrix_1.6-0       
+ [46] splines_4.3.1       nnet_7.3-19         timechange_0.2.0   
+ [49] tidyselect_1.2.0    rstudioapi_0.15.0   yaml_2.3.7         
+ [52] timeDate_4022.108   codetools_0.2-19    listenv_0.9.0      
+ [55] lattice_0.21-8      plyr_1.8.8          shiny_1.7.5        
+ [58] withr_2.5.0         evaluate_0.21       future_1.33.0      
+ [61] survival_3.5-5      RcppParallel_5.1.7  xml2_1.3.5         
+ [64] xts_0.13.1          pillar_1.9.0        foreach_1.5.2      
+ [67] stats4_4.3.1        shinyjs_2.1.0       generics_0.1.3     
+ [70] hms_1.1.3           munsell_0.5.0       scales_1.2.1       
+ [73] xtable_1.8-4        globals_0.16.2      class_7.3-22       
+ [76] glue_1.6.2          tools_4.3.1         data.table_1.14.8  
+ [79] RSpectra_0.16-1     webshot_0.5.5       gower_1.0.1        
+ [82] grid_4.3.1          yardstick_1.2.0     ipred_0.9-14       
+ [85] colorspace_2.1-0    cli_3.6.1           DiceDesign_1.9     
+ [88] textshaping_0.3.6   workflows_1.1.3     parsnip_1.1.1      
+ [91] fansi_1.0.4         viridisLite_0.4.2   svglite_2.1.1      
+ [94] lava_1.7.2.1        gtable_0.3.4        GPfit_1.0-8        
+ [97] digest_0.6.33       ggrepel_0.9.3       farver_2.1.1       
+[100] htmlwidgets_1.6.2   htmltools_0.5.6     lifecycle_1.0.3    
+[103] httr_1.4.7          hardhat_1.3.0       mime_0.12          
+[106] bit64_4.0.5         MASS_7.3-60        </code></pre>
 </div>
 </div>
 
@@ -923,9 +921,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+  function tippyHover(el, contentFn) {
     const config = {
       allowHTML: true,
+      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -935,17 +934,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start',
+      placement: 'bottom-start'
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -958,60 +948,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    if (id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
-        }
-        return container.innerHTML
-      } else {
-        return note.innerHTML;
-      }
-    } else {
-      return note.innerHTML;
-    }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      try { hash = new URL(url).hash; } catch {}
-      const id = hash.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note !== null) {
-        try {
-          const html = processXRef(id, note);
-          instance.setContent(html);
-        } finally {
-          instance.enable();
-          instance.show();
-        }
-      } else {
-        // See if we can fetch this
-        fetch(url.split('#')[0])
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.getElementById(id);
-          if (note !== null) {
-            const html = processXRef(id, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1055,7 +991,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
-            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1155,18 +1090,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
-    <div class="nav-footer-left">
-<p>Website made with <a href="https://quarto.org/">Quarto</a>, by Raphael Saldanha.</p>
-</div>   
+    <div class="nav-footer-left">Website made with <a href="https://quarto.org/">Quarto</a>, by Raphael Saldanha.</div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
-    <div class="nav-footer-right">
-<p>Inria | LNCC | PCDaS</p>
-</div>
+    <div class="nav-footer-right">Inria | LNCC | PCDaS</div>
   </div>
 </footer>
-
 
 
 
