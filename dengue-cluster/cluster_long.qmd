@@ -59,7 +59,7 @@ Sequence of `k` groups to be used.
 k_seq <- 3:10
 ```
 
-### DTW method
+### SBD method
 
 ```{r}
 tic()
@@ -67,7 +67,7 @@ clust <- tsclust(
   series = tdengue, 
   type = "partitional", 
   k = k_seq,
-  distance = "dtw_basic",
+  distance = "sbd",
   seed = 13
 )
 toc()

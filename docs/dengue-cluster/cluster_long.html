@@ -497,7 +497,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </ul></li>
   <li><a href="#clustering" id="toc-clustering" class="nav-link" data-scroll-target="#clustering">Clustering</a>
   <ul class="collapse">
-  <li><a href="#dtw-method" id="toc-dtw-method" class="nav-link" data-scroll-target="#dtw-method">DTW method</a></li>
+  <li><a href="#sbd-method" id="toc-sbd-method" class="nav-link" data-scroll-target="#sbd-method">SBD method</a></li>
   <li><a href="#cluster-validity-indices-cvi" id="toc-cluster-validity-indices-cvi" class="nav-link" data-scroll-target="#cluster-validity-indices-cvi">Cluster Validity Indices (CVI)</a></li>
   <li><a href="#cluster-with-higher-silhouette-statistic" id="toc-cluster-with-higher-silhouette-statistic" class="nav-link" data-scroll-target="#cluster-with-higher-silhouette-statistic">Cluster with higher Silhouette statistic</a></li>
   <li><a href="#cluster-sizes" id="toc-cluster-sizes" class="nav-link" data-scroll-target="#cluster-sizes">Cluster sizes</a></li>
@@ -528,7 +528,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 7, 2023 | 14:21:58 +02:00</p>
+      <p class="date">September 7, 2023 | 16:05:28 +02:00</p>
     </div>
   </div>
   
@@ -592,20 +592,20 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>k_seq <span class="ot">&lt;-</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="dtw-method" class="level3">
-<h3 class="anchored" data-anchor-id="dtw-method">DTW method</h3>
+<section id="sbd-method" class="level3">
+<h3 class="anchored" data-anchor-id="sbd-method">SBD method</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">tsclust</span>(</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">series =</span> tdengue, </span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"partitional"</span>, </span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> k_seq,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance =</span> <span class="st">"dtw_basic"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance =</span> <span class="st">"sbd"</span>,</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">13</span></span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>885.794 sec elapsed</code></pre>
+<pre><code>14.432 sec elapsed</code></pre>
 </div>
 </div>
 </section>
@@ -637,84 +637,84 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">k_3</td>
-<td style="text-align: right;">0.5668890</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">756.8688</td>
-<td style="text-align: right;">3.240129</td>
-<td style="text-align: right;">14.60189</td>
-<td style="text-align: right;">0.0006137</td>
-<td style="text-align: right;">0.1716353</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">k_4</td>
-<td style="text-align: right;">0.3686314</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">474.2373</td>
-<td style="text-align: right;">3.395145</td>
-<td style="text-align: right;">45.32376</td>
-<td style="text-align: right;">0.0002016</td>
-<td style="text-align: right;">0.0595228</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">k_5</td>
-<td style="text-align: right;">0.2603404</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">461.8422</td>
-<td style="text-align: right;">3.397394</td>
-<td style="text-align: right;">159.14213</td>
-<td style="text-align: right;">0.0001007</td>
-<td style="text-align: right;">0.0181070</td>
+<td style="text-align: right;">0.1178968</td>
+<td style="text-align: right;">0.1664899</td>
+<td style="text-align: right;">360.5761</td>
+<td style="text-align: right;">2.636346</td>
+<td style="text-align: right;">3.372674</td>
+<td style="text-align: right;">0.0250372</td>
+<td style="text-align: right;">0.3823520</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">k_6</td>
-<td style="text-align: right;">0.2449685</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">334.9730</td>
-<td style="text-align: right;">3.525329</td>
-<td style="text-align: right;">107.17956</td>
-<td style="text-align: right;">0.0001415</td>
-<td style="text-align: right;">0.0354917</td>
+<td style="text-align: left;">k_9</td>
+<td style="text-align: right;">0.0939379</td>
+<td style="text-align: right;">0.0558450</td>
+<td style="text-align: right;">228.3600</td>
+<td style="text-align: right;">2.603306</td>
+<td style="text-align: right;">3.356257</td>
+<td style="text-align: right;">0.0263751</td>
+<td style="text-align: right;">0.3560179</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">k_9</td>
-<td style="text-align: right;">0.2065265</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">242.9163</td>
-<td style="text-align: right;">3.811424</td>
-<td style="text-align: right;">174.35124</td>
-<td style="text-align: right;">0.0001007</td>
-<td style="text-align: right;">0.0180477</td>
+<td style="text-align: left;">k_4</td>
+<td style="text-align: right;">0.0909658</td>
+<td style="text-align: right;">0.2557183</td>
+<td style="text-align: right;">455.3801</td>
+<td style="text-align: right;">2.585452</td>
+<td style="text-align: right;">3.008982</td>
+<td style="text-align: right;">0.0273309</td>
+<td style="text-align: right;">0.3753677</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">k_7</td>
-<td style="text-align: right;">0.1630632</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">244.6162</td>
-<td style="text-align: right;">4.104858</td>
-<td style="text-align: right;">123.96261</td>
-<td style="text-align: right;">0.0000743</td>
-<td style="text-align: right;">0.0594859</td>
+<td style="text-align: right;">0.0700984</td>
+<td style="text-align: right;">0.1053331</td>
+<td style="text-align: right;">255.3206</td>
+<td style="text-align: right;">3.523874</td>
+<td style="text-align: right;">4.234083</td>
+<td style="text-align: right;">0.0127739</td>
+<td style="text-align: right;">0.3780671</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">k_3</td>
+<td style="text-align: right;">0.0629606</td>
+<td style="text-align: right;">0.3469533</td>
+<td style="text-align: right;">692.9005</td>
+<td style="text-align: right;">4.526352</td>
+<td style="text-align: right;">5.235963</td>
+<td style="text-align: right;">0.0143776</td>
+<td style="text-align: right;">0.3877551</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">k_6</td>
+<td style="text-align: right;">0.0379108</td>
+<td style="text-align: right;">0.1153733</td>
+<td style="text-align: right;">248.4950</td>
+<td style="text-align: right;">3.877129</td>
+<td style="text-align: right;">5.352801</td>
+<td style="text-align: right;">0.0128539</td>
+<td style="text-align: right;">0.3846769</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">k_10</td>
-<td style="text-align: right;">0.0089230</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">227.4877</td>
-<td style="text-align: right;">3.605120</td>
-<td style="text-align: right;">317.76194</td>
-<td style="text-align: right;">0.0000109</td>
-<td style="text-align: right;">0.0169681</td>
+<td style="text-align: right;">0.0326249</td>
+<td style="text-align: right;">0.0479096</td>
+<td style="text-align: right;">198.4747</td>
+<td style="text-align: right;">4.058305</td>
+<td style="text-align: right;">5.829898</td>
+<td style="text-align: right;">0.0144840</td>
+<td style="text-align: right;">0.3571898</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">k_8</td>
-<td style="text-align: right;">-0.0091527</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">216.5552</td>
-<td style="text-align: right;">4.260783</td>
-<td style="text-align: right;">207.51837</td>
-<td style="text-align: right;">0.0000159</td>
-<td style="text-align: right;">0.1709365</td>
+<td style="text-align: right;">0.0251299</td>
+<td style="text-align: right;">0.0864847</td>
+<td style="text-align: right;">205.7000</td>
+<td style="text-align: right;">13.426826</td>
+<td style="text-align: right;">15.391328</td>
+<td style="text-align: right;">0.0129144</td>
+<td style="text-align: right;">0.3609708</td>
 </tr>
 </tbody>
 </table>
@@ -753,8 +753,8 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sel_clust<span class="sc">@</span>cluster)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-   1    2    3 
- 683  169 2200 </code></pre>
+   1    2    3    4    5 
+1726  130  402  142  652 </code></pre>
 </div>
 </div>
 </section>
