@@ -94,10 +94,16 @@ tdengue_list <- lapply(tdengue_df$data, ts)
 ```{r}
 tsf <- tsfeatures(
   tslist = tdengue_list, 
-  features = c("entropy", "stability", "lumpiness", "flat_spots", "stl_features", "acf_features")
-  )
+  features = c("entropy", "stability",
+               "lumpiness", "flat_spots",
+               "zero_proportion", "stl_features",
+               "acf_features")
+)
+  
 tsf$mun <- tdengue_df$mun
 ```
+
+All features available at the `tsfeatures` package were computed. Bellow, details about some of them.
 
 ### Shannon entropy
 
@@ -240,7 +246,7 @@ points <- tsf %>%
   select(-mun)
 ```
 
-Uses $k$ from 2 to 10 for clustering.
+Uses $k$ from 3 to 10 for clustering.
 
 ```{r}
 kclusts <- 
@@ -284,7 +290,7 @@ Finally, the cluster partition ID is added to the main dataset.
 
 ```{r}
 cluster_ids <- clusterings %>%
-  filter(k == 5) %>%
+  filter(k == 3) %>%
   pull(augmented) %>%
   pluck(1) %>%
   select(group = .cluster) %>%
@@ -362,6 +368,23 @@ ggplot(tsf_group, aes(x = flat_spots, fill = group)) +
 #| warning: false
 ks_group_test("flat_spots") %>% datatable()
 ```
+
+
+### Zero proportion
+
+```{r}
+ggplot(tsf_group, aes(x = zero_proportion, fill = group)) +
+  geom_histogram(bins = 50, alpha = .7) +
+  facet_wrap(~ group) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+```{r}
+#| warning: false
+ks_group_test("zero_proportion") %>% datatable()
+```
+
 
 ### STL features decomposition
 
