@@ -2,9 +2,9 @@
   {
     "listing": "/cluster_analysis.html",
     "items": [
+      "/dengue-cluster/cluster_long_scaled.html",
       "/dengue-cluster/cluster_tsfeatures.html",
       "/dengue-cluster/cluster_long.html",
-      "/dengue-cluster/cluster_long_scaled.html",
       "/dengue-cluster/cluster_mun_year_epi_year.html",
       "/dengue-cluster/cluster_mun_year_cumulative.html",
       "/dengue-cluster/cluster_mun_year.html",
@@ -14,9 +14,9 @@
   {
     "listing": "/summary.html",
     "items": [
+      "/dengue-cluster/cluster_long_scaled.html",
       "/dengue-cluster/cluster_tsfeatures.html",
       "/dengue-cluster/cluster_long.html",
-      "/dengue-cluster/cluster_long_scaled.html",
       "/dengue-cluster/cluster_mun_year_epi_year.html",
       "/dengue-cluster/cluster_mun_year_cumulative.html",
       "/dengue-cluster/cluster_mun_year.html",

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -92,7 +92,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZMP18L536K"></script>
@@ -167,7 +168,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </li>  
 </ul>
             <div class="quarto-navbar-tools ms-auto">
-    <a href="https://github.com/rfsaldanha/dengue" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="https://github.com/rfsaldanha/dengue" rel="" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
 </div>
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
@@ -497,7 +498,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </ul></li>
   <li><a href="#clustering" id="toc-clustering" class="nav-link" data-scroll-target="#clustering">Clustering</a>
   <ul class="collapse">
-  <li><a href="#sbd-method" id="toc-sbd-method" class="nav-link" data-scroll-target="#sbd-method">SBD method</a></li>
+  <li><a href="#gak-method" id="toc-gak-method" class="nav-link" data-scroll-target="#gak-method">GAK method</a></li>
   <li><a href="#cluster-validity-indices-cvi" id="toc-cluster-validity-indices-cvi" class="nav-link" data-scroll-target="#cluster-validity-indices-cvi">Cluster Validity Indices (CVI)</a></li>
   <li><a href="#cluster-with-higher-silhouette-statistic" id="toc-cluster-with-higher-silhouette-statistic" class="nav-link" data-scroll-target="#cluster-with-higher-silhouette-statistic">Cluster with higher Silhouette statistic</a></li>
   <li><a href="#cluster-sizes" id="toc-cluster-sizes" class="nav-link" data-scroll-target="#cluster-sizes">Cluster sizes</a></li>
@@ -528,7 +529,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 7, 2023 | 16:04:16 +02:00</p>
+      <p class="date">September 11, 2023 | 14:44:25 +02:00</p>
     </div>
   </div>
   
@@ -590,22 +591,22 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="clustering">Clustering</h2>
 <p>Sequence of <code>k</code> groups to be used.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>k_seq <span class="ot">&lt;-</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>k_seq <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="sbd-method" class="level3">
-<h3 class="anchored" data-anchor-id="sbd-method">SBD method</h3>
+<section id="gak-method" class="level3">
+<h3 class="anchored" data-anchor-id="gak-method">GAK method</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">tsclust</span>(</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">series =</span> tdengue, </span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"partitional"</span>, </span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> k_seq,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance =</span> <span class="st">"sbd"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance =</span> <span class="st">"gak"</span>,</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">13</span></span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>13.858 sec elapsed</code></pre>
+<pre><code>5614.562 sec elapsed</code></pre>
 </div>
 </div>
 </section>
@@ -637,84 +638,94 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">k_5</td>
-<td style="text-align: right;">0.1234309</td>
-<td style="text-align: right;">0.2081118</td>
-<td style="text-align: right;">300.0188</td>
-<td style="text-align: right;">2.721173</td>
-<td style="text-align: right;">3.297763</td>
-<td style="text-align: right;">0.0419189</td>
-<td style="text-align: right;">0.4021860</td>
+<td style="text-align: left;">k_10</td>
+<td style="text-align: right;">0.2824873</td>
+<td style="text-align: right;">0.6298713</td>
+<td style="text-align: right;">384.8193</td>
+<td style="text-align: right;">1.740696</td>
+<td style="text-align: right;">2.270314</td>
+<td style="text-align: right;">0.0001173</td>
+<td style="text-align: right;">0.1787297</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">k_9</td>
-<td style="text-align: right;">0.0958808</td>
-<td style="text-align: right;">0.0399282</td>
-<td style="text-align: right;">190.6314</td>
-<td style="text-align: right;">2.925468</td>
-<td style="text-align: right;">3.662420</td>
-<td style="text-align: right;">0.0305865</td>
-<td style="text-align: right;">0.3712797</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">k_4</td>
-<td style="text-align: right;">0.0803864</td>
-<td style="text-align: right;">0.2555620</td>
-<td style="text-align: right;">433.2938</td>
-<td style="text-align: right;">4.130769</td>
-<td style="text-align: right;">4.660973</td>
-<td style="text-align: right;">0.0307134</td>
-<td style="text-align: right;">0.3819961</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">k_7</td>
-<td style="text-align: right;">0.0733269</td>
-<td style="text-align: right;">0.0787971</td>
-<td style="text-align: right;">274.2234</td>
-<td style="text-align: right;">2.801842</td>
-<td style="text-align: right;">3.731409</td>
-<td style="text-align: right;">0.0129989</td>
-<td style="text-align: right;">0.3847807</td>
+<td style="text-align: right;">0.2748321</td>
+<td style="text-align: right;">0.6300657</td>
+<td style="text-align: right;">375.3955</td>
+<td style="text-align: right;">2.035515</td>
+<td style="text-align: right;">2.509911</td>
+<td style="text-align: right;">0.0001028</td>
+<td style="text-align: right;">0.1883231</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">k_3</td>
-<td style="text-align: right;">0.0613460</td>
-<td style="text-align: right;">0.3377519</td>
-<td style="text-align: right;">701.2736</td>
-<td style="text-align: right;">4.775565</td>
-<td style="text-align: right;">5.487569</td>
-<td style="text-align: right;">0.0148113</td>
-<td style="text-align: right;">0.3999635</td>
+<td style="text-align: right;">0.2648654</td>
+<td style="text-align: right;">0.6311576</td>
+<td style="text-align: right;">648.3349</td>
+<td style="text-align: right;">1.927945</td>
+<td style="text-align: right;">1.981710</td>
+<td style="text-align: right;">0.0014661</td>
+<td style="text-align: right;">0.2869358</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">k_7</td>
+<td style="text-align: right;">0.2578026</td>
+<td style="text-align: right;">0.6305156</td>
+<td style="text-align: right;">474.7204</td>
+<td style="text-align: right;">1.854999</td>
+<td style="text-align: right;">2.397161</td>
+<td style="text-align: right;">0.0015885</td>
+<td style="text-align: right;">0.2004958</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">k_8</td>
+<td style="text-align: right;">0.2404214</td>
+<td style="text-align: right;">0.6302122</td>
+<td style="text-align: right;">412.4559</td>
+<td style="text-align: right;">2.750497</td>
+<td style="text-align: right;">3.507225</td>
+<td style="text-align: right;">0.0015934</td>
+<td style="text-align: right;">0.1987060</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">k_5</td>
+<td style="text-align: right;">0.1912735</td>
+<td style="text-align: right;">0.6307432</td>
+<td style="text-align: right;">379.9311</td>
+<td style="text-align: right;">2.182433</td>
+<td style="text-align: right;">2.249445</td>
+<td style="text-align: right;">0.0014729</td>
+<td style="text-align: right;">0.2776851</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">k_4</td>
+<td style="text-align: right;">0.1817940</td>
+<td style="text-align: right;">0.6309380</td>
+<td style="text-align: right;">431.4281</td>
+<td style="text-align: right;">3.118583</td>
+<td style="text-align: right;">3.369465</td>
+<td style="text-align: right;">0.0002715</td>
+<td style="text-align: right;">0.2707786</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">k_6</td>
-<td style="text-align: right;">0.0378611</td>
-<td style="text-align: right;">0.1058248</td>
-<td style="text-align: right;">248.4534</td>
-<td style="text-align: right;">4.170298</td>
-<td style="text-align: right;">5.688314</td>
-<td style="text-align: right;">0.0147972</td>
-<td style="text-align: right;">0.3948488</td>
+<td style="text-align: right;">0.1423482</td>
+<td style="text-align: right;">0.6305953</td>
+<td style="text-align: right;">339.5569</td>
+<td style="text-align: right;">3.050722</td>
+<td style="text-align: right;">3.536752</td>
+<td style="text-align: right;">0.0014970</td>
+<td style="text-align: right;">0.2548731</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">k_10</td>
-<td style="text-align: right;">0.0357078</td>
-<td style="text-align: right;">0.0454849</td>
-<td style="text-align: right;">189.8123</td>
-<td style="text-align: right;">4.001129</td>
-<td style="text-align: right;">5.212208</td>
-<td style="text-align: right;">0.0250796</td>
-<td style="text-align: right;">0.3604802</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">k_8</td>
-<td style="text-align: right;">0.0287240</td>
-<td style="text-align: right;">0.1000158</td>
-<td style="text-align: right;">186.8813</td>
-<td style="text-align: right;">154.783730</td>
-<td style="text-align: right;">163.887630</td>
-<td style="text-align: right;">0.0006579</td>
-<td style="text-align: right;">0.3757191</td>
+<td style="text-align: left;">k_2</td>
+<td style="text-align: right;">0.1415486</td>
+<td style="text-align: right;">0.6313977</td>
+<td style="text-align: right;">448.4857</td>
+<td style="text-align: right;">10.060427</td>
+<td style="text-align: right;">10.060427</td>
+<td style="text-align: right;">0.0008962</td>
+<td style="text-align: right;">0.3683506</td>
 </tr>
 </tbody>
 </table>
@@ -753,8 +764,8 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sel_clust<span class="sc">@</span>cluster)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-   1    2    3    4    5 
-1979    1  187  167  718 </code></pre>
+  1   2   3   4   5   6   7   8   9  10 
+530 506 227 268 338 101 340 346 278 118 </code></pre>
 </div>
 </div>
 </section>
