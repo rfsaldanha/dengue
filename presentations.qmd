@@ -1,5 +1,9 @@
 ---
 title: "Overview"
+listing:
+  contents: presentations
+  type: default
+  filter-ui: false
+  sort-ui: true
+  sort: "date desc"
 ---
-
-

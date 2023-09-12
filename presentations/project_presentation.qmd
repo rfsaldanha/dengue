@@ -95,7 +95,7 @@ and different regions
 -   Predictors
     -   Temperature, droughts, rainfall, floods, land use, deforestation
     -   Living conditions, urban environment
-    -   Water supply, water rationing+
+    -   Water supply, water rationing
     -   Mosquito infestation? Only few and localized data available.
 
 ## Modeling intuition
@@ -106,7 +106,7 @@ and different regions
 -   **Local models** are basically **restricted**, not useful for different regions and dengue transmission regimes
 -   A **single** machine-learning model is not a good option due the Brazilian diversity
 
-## Aproach
+## Approach
 
 -   Separate Brazilian municipalities into clusters
     -   Maximizing their similarity regarding dengue transmissions and its covariate's importance and signals

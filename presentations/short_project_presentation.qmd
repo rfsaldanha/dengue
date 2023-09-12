@@ -1,0 +1,107 @@
+---
+title: "Specialized AI Models for Predicting Dengue Disease"
+subtitle: "[Short version]"
+author: "Raphael Saldanha et al."
+institute: "Inria & LNCC"
+format:
+  revealjs: 
+    theme: default
+---
+
+## Context
+
+-   Raphael SALDANHA: Degrees on Geography, Statistics, Public Health and Health Information
+-   Postdoc call from International Relations Department of Inria. Duration of 24 months (2023-2024)
+-   Supervisors: Prof. Reza Akbarinia (Inria) and Prof. Fabio Porto (LNCC)
+
+## Arboviruses
+
+-   Dengue, Zika, Chikungunya, and other arboviruses imposes a significant burden over populations health
+-   Endemic vector borne disease (Aedes mosquitoes)
+-   Impacts all geographic regions in Brazil, with its continental extension
+-   Follow spatial and seasonal trends
+
+## Modeling dengue outbreaks
+
+-   Dengue cases as target variable
+-   Predictors
+    -   Temperature, droughts, rainfall, floods, land use, deforestation
+    -   Living conditions, urban environment
+    -   Water supply, water rationing
+    -   Mosquito infestation? Only few and localized data available.
+
+## Territory diversity
+
+-   On rainy season, water accumulates on cans, pots and litter present at backyards, junkyards and on the streets.
+
+![Fortaleza, jan. 2016](images/Screenshot%20from%202023-07-10%2016-30-06.png){fig-alt="Harvard-Brazil Collaborative Public Health Field Course" fig-align="center" width="500"} ![Fortaleza, jan. 2016.](images/Screenshot%20from%202023-07-10%2016-30-31.png){fig-align="center" width="500"}
+
+~Fortaleza, jan. 2016.~
+
+## Territory diversity
+
+-   On dry season or droughts, water is stored on open drums.
+-   The same predictor (ie. rain) may have different signal, in respect to other conditions.
+
+![](images/Screenshot%20from%202023-07-10%2016-36-25.png){width="300"} ![](images/Screenshot%20from%202023-07-10%2016-36-38.png){width="600"}
+
+## Modeling considerations
+
+-   **General models** tend to ignore the **diversity** of the territory
+-   **Local models** are basically **restricted**, not useful for different regions and dengue transmission regimes
+-   A **single** machine-learning model is not a good option due the Brazilian diversity
+
+## Global and subsets models
+
+~Consider each square as a municipality~
+
+![](images/Screenshot%20from%202023-07-10%2016-48-24.png){fig-align="center"}
+
+## Subsets approach
+
+-   Model 1: global model, with all municipalities data
+-   Model 2: subset models
+    -   Group Brazilian municipalities into clusters
+    -   Train several ML models for each cluster
+    -   Compare the accuracy with the global model
+-   Predict cases using the model with best accuracy
+
+## Workflow
+
+~Abbreviated version~
+
+```{mermaid}
+flowchart LR
+A[All data] --> G[Global Model]
+A --> C(Clustering)
+C --> K1[Model Cluster 1]
+C --> K2[Model Cluster 1]
+C --> Kn[Model Cluster n]
+G --> P1[Predictions]
+K1 --> P2[Predictions]
+K2 --> P2
+Kn --> P2
+P1 --> AC[Accuracy comparison]
+P2 --> AC
+```
+
+## Key decisions
+
+-   How to cluster municipalities based on time series data?
+
+    -   Outcome (dengue cases)
+
+    -   Predictors
+
+-   What are the best predictors for **forecast**?
+
+    -   Choice of lags and rolling windows
+
+-   What are the best ML algorithms to forecast dengue cases?
+
+## Expected results
+
+-   More precise predictions for regions
+-   Less dependency on specific data availability for each municipality
+-   Provide health managers with tools, predictions and scenarios adequate to different scales of health surveillance, preparedness and field action
+-   Contribute to public health policies formulation and implementation

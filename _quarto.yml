@@ -91,7 +91,11 @@ website:
         - section: "Presentations"
           contents: 
               - presentations.qmd
-              - href: presentations/project_presentation.qmd
+              - text: "Project presentation"
+                href: presentations/project_presentation.qmd
+                target: _blank
+              - text: "Project presentation, short version"
+                href: presentations/short_project_presentation.qmd
                 target: _blank
               - href: presentations/trajectory_health_data_information.qmd
                 target: _blank

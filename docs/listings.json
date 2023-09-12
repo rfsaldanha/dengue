@@ -1,19 +1,28 @@
 [
   {
-    "listing": "/cluster_analysis.html",
+    "listing": "/presentations.html",
     "items": [
-      "/dengue-cluster/cluster_long_scaled.html",
-      "/dengue-cluster/cluster_tsfeatures.html",
-      "/dengue-cluster/cluster_long.html",
-      "/dengue-cluster/cluster_mun_year_epi_year.html",
-      "/dengue-cluster/cluster_mun_year_cumulative.html",
-      "/dengue-cluster/cluster_mun_year.html",
-      "/dengue-cluster/cluster_long_scaled_hier.html"
+      "/presentations/project_presentation.html",
+      "/presentations/short_project_presentation.html",
+      "/presentations/trajectory_health_data_information.html"
+    ]
+  },
+  {
+    "listing": "/dengue_model.html",
+    "items": [
+      "/dengue-model/dengue_ts_global_subset.html",
+      "/dengue-model/dengue_ts_overview.html",
+      "/dengue-model/dengue_ts_global_subset_tsfeatures.html",
+      "/dengue-model/dengue_ts_global_subset_tsfeatures_sparse.html",
+      "/dengue-model/dengue_classification_symptoms_conditions_multi.html",
+      "/dengue-model/dengue_weather_lag_reg.html",
+      "/dengue-model/dengue_weather_lag_class.html"
     ]
   },
   {
     "listing": "/summary.html",
     "items": [
+      "/dengue-data/case_classification.html",
       "/dengue-cluster/cluster_long_scaled.html",
       "/dengue-cluster/cluster_tsfeatures.html",
       "/dengue-cluster/cluster_long.html",
@@ -22,7 +31,6 @@
       "/dengue-cluster/cluster_mun_year.html",
       "/dengue-cluster/cluster_long_scaled_hier.html",
       "/dengue-data/aggregated_database.html",
-      "/dengue-data/case_classification.html",
       "/dengue-data/imputation.html",
       "/dengue-data/missing_data.html",
       "/dengue-data/raw_files.html",
@@ -36,15 +44,15 @@
     ]
   },
   {
-    "listing": "/dengue_model.html",
+    "listing": "/cluster_analysis.html",
     "items": [
-      "/dengue-model/dengue_ts_global_subset.html",
-      "/dengue-model/dengue_ts_overview.html",
-      "/dengue-model/dengue_ts_global_subset_tsfeatures.html",
-      "/dengue-model/dengue_ts_global_subset_tsfeatures_sparse.html",
-      "/dengue-model/dengue_classification_symptoms_conditions_multi.html",
-      "/dengue-model/dengue_weather_lag_reg.html",
-      "/dengue-model/dengue_weather_lag_class.html"
+      "/dengue-cluster/cluster_long_scaled.html",
+      "/dengue-cluster/cluster_tsfeatures.html",
+      "/dengue-cluster/cluster_long.html",
+      "/dengue-cluster/cluster_mun_year_epi_year.html",
+      "/dengue-cluster/cluster_mun_year_cumulative.html",
+      "/dengue-cluster/cluster_mun_year.html",
+      "/dengue-cluster/cluster_long_scaled_hier.html"
     ]
   }
 ]
