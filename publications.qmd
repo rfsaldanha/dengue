@@ -1,6 +1,17 @@
 ---
 title: "Publications"
+bibliography: references.bib
 ---
+
+## Published
+
+---
+nocite: |
+  @*
+---
+
+::: {#refs}
+:::
 
 ## Submitted
 
