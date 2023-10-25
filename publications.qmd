@@ -15,9 +15,8 @@ nocite: |
 
 ## Submitted
 
--   Data paper. *Zonal statistics datasets of weather indicators for Brazilian municipalities.*
+-   Data paper. *Zonal statistics datasets of climate indicators for Brazilian municipalities.*
 
--   Short paper. *Subset Modelling: A Domain Partitioning Strategy for Data-efficient Machine-Learning*. As co-author.
 
 ## Work in progress
 
