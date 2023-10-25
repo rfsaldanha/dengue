@@ -13,3 +13,15 @@ More details on <https://rfsaldanha.github.io/brclimr>
 An R package to extract epidemiological features from cases time series.
 
 More details on <https://github.com/rfsaldanha/happyfeat>
+
+## `zonalclim`
+
+An R package to compute zonal statistics from gridded climate indicators.
+
+More details on <https://github.com/rfsaldanha/zonalclim>
+
+## `disdata`
+
+An R package to handle raw suspected disease cases and compute aggregations on space and time.
+
+More details on <https://github.com/rfsaldanha/disdata>

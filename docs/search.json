@@ -147,6 +147,20 @@
     "text": "epifeat\nAn R package to extract epidemiological features from cases time series.\nMore details on https://github.com/rfsaldanha/happyfeat"
   },
   {
+    "objectID": "software.html#zonalclim",
+    "href": "software.html#zonalclim",
+    "title": "Software",
+    "section": "zonalclim",
+    "text": "zonalclim\nAn R package to compute zonal statistics from gridded climate indicators.\nMore details on https://github.com/rfsaldanha/zonalclim"
+  },
+  {
+    "objectID": "software.html#disdata",
+    "href": "software.html#disdata",
+    "title": "Software",
+    "section": "disdata",
+    "text": "disdata\nAn R package to handle raw suspected disease cases and compute aggregations on space and time.\nMore details on https://github.com/rfsaldanha/disdata"
+  },
+  {
     "objectID": "export-data/exported_data.html",
     "href": "export-data/exported_data.html",
     "title": "Exported data",
