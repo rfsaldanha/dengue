@@ -56,7 +56,7 @@ length(tdengue)
 Sequence of `k` groups to be used.
 
 ```{r}
-k_seq <- 3:10
+k_seq <- 2:10
 ```
 
 ### SBD method

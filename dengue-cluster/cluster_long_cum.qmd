@@ -1,0 +1,118 @@
+---
+title: "Raw cases, cumulative"
+author: Raphael Saldanha
+date: last-modified
+---
+
+This notebook aims to cluster the Brazilian municipalities considering dengue raw cases time-series similarities.
+
+## Packages
+
+```{r}
+#| message: false
+library(tidyverse)
+library(lubridate)
+library(arrow)
+library(timetk)
+library(dtwclust)
+library(kableExtra)
+library(tictoc)
+source("../functions.R")
+```
+
+## Load data
+
+Load the bundled data.
+
+```{r}
+tdengue <- open_dataset(sources = data_dir("bundled_data/tdengue.parquet")) %>%
+    select(mun, date, cases = cases_cum) %>%
+    collect()
+
+dim(tdengue)
+```
+
+### Prepare data
+
+The chunk bellow formats the dataset for `tsclust` use.
+
+```{r}
+tdengue <- tdengue %>%
+  # Prepare time series
+  arrange(mun) %>%
+  pivot_wider(names_from = mun, values_from = cases) %>%
+  select(-date) %>%
+  t() %>%
+  # Convert object
+  tslist()
+```
+
+```{r}
+length(tdengue)
+```
+
+## Clustering
+
+Sequence of `k` groups to be used.
+
+```{r}
+k_seq <- 2:10
+```
+
+### SBD method
+
+```{r}
+tic()
+clust <- tsclust(
+  series = tdengue, 
+  type = "partitional", 
+  k = k_seq,
+  distance = "sbd",
+  seed = 13
+)
+toc()
+```
+
+### Cluster Validity Indices (CVI)
+
+```{r}
+names(clust) <- paste0("k_", k_seq)
+res_cvi <- sapply(clust, cvi, type = "internal") %>% 
+  t() %>%
+  as_tibble(rownames = "k") %>%
+  arrange(-Sil)
+
+res_cvi %>%
+  kbl() %>%
+  kable_styling()
+```
+
+### Cluster with higher Silhouette statistic
+
+```{r}
+sel_clust <- clust[[res_cvi[[1,1]]]]
+```
+
+```{r}
+plot(sel_clust)
+```
+
+```{r}
+ggsave(filename = "cluster_long.pdf")
+```
+
+```{r}
+plot(sel_clust, type = "centroids", lty = 1)
+```
+
+### Cluster sizes
+
+```{r}
+table(sel_clust@cluster)
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```

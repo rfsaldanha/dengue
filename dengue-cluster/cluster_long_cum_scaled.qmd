@@ -1,0 +1,212 @@
+---
+title: "Scaled cases, cumulative"
+author: Raphael Saldanha
+date: last-modified
+---
+
+This notebook aims to cluster the Brazilian municipalities considering scaled (standardized) dengue cases time-series similarities.
+
+## Packages
+
+```{r}
+#| message: false
+library(tidyverse)
+library(lubridate)
+library(arrow)
+library(timetk)
+library(dtwclust)
+library(kableExtra)
+library(tictoc)
+source("../functions.R")
+```
+
+## Load data
+
+Load the aggregated data.
+
+```{r}
+tdengue <- open_dataset(sources = data_dir("bundled_data/tdengue.parquet")) %>%
+    select(mun, date, cases = cases_cum) %>%
+    collect()
+
+dim(tdengue)
+```
+
+### Prepare data
+
+The chunk bellow executes various steps to prepare the data for clustering.
+
+```{r}
+tdengue <- tdengue %>%
+  # Prepare time series
+  mutate(mun = paste0("m_", mun)) %>%
+  arrange(mun, date) %>%
+  pivot_wider(names_from = mun, values_from = cases) %>%
+  select(-date) %>%
+  t() %>%
+  tslist()
+```
+
+```{r}
+length(tdengue)
+```
+
+## Clustering
+
+Sequence of `k` groups to be used.
+
+```{r}
+k_seq <- 2:10
+```
+
+### DTW (basic)
+
+```{r}
+tic()
+clust_dtw <- tsclust(
+  series = tdengue, 
+  type = "partitional", 
+  k = k_seq,
+  distance = "dtw_basic",
+  seed = 13
+)
+toc()
+```
+
+```{r}
+names(clust_dtw) <- paste0("k_", k_seq)
+res_cvi <- sapply(clust_dtw, cvi, type = "internal") %>% 
+  t() %>%
+  as_tibble(rownames = "k") %>%
+  arrange(-Sil)
+
+res_cvi %>%
+  gt::gt()
+```
+
+```{r}
+sel_clust <- clust_dtw[[res_cvi[[1,1]]]]
+
+plot(sel_clust)
+plot(sel_clust, type = "centroids", lty = 1)
+```
+
+```{r}
+table(sel_clust@cluster)
+```
+
+
+### Soft-DTW
+
+```{r}
+tic()
+clust_sdtw <- tsclust(
+  series = tdengue, 
+  type = "partitional", 
+  k = k_seq,
+  distance = "sdtw",
+  seed = 13
+)
+toc()
+```
+
+```{r}
+names(clust_sdtw) <- paste0("k_", k_seq)
+res_cvi <- sapply(clust_sdtw, cvi, type = "internal") %>% 
+  t() %>%
+  as_tibble(rownames = "k") %>%
+  arrange(-Sil)
+
+res_cvi %>%
+  gt::gt()
+```
+
+```{r}
+sel_clust <- clust_sdtw[[res_cvi[[1,1]]]]
+
+plot(sel_clust)
+plot(sel_clust, type = "centroids", lty = 1)
+```
+
+```{r}
+table(sel_clust@cluster)
+```
+
+### SBD
+
+```{r}
+tic()
+clust_sbd <- tsclust(
+  series = tdengue, 
+  type = "partitional", 
+  k = k_seq,
+  distance = "sbd",
+  seed = 13
+)
+toc()
+```
+
+```{r}
+names(clust_sbd) <- paste0("k_", k_seq)
+res_cvi <- sapply(clust_sbd, cvi, type = "internal") %>% 
+  t() %>%
+  as_tibble(rownames = "k") %>%
+  arrange(-Sil)
+
+res_cvi %>%
+  gt::gt()
+```
+
+```{r}
+sel_clust <- clust_sbd[[res_cvi[[1,1]]]]
+
+plot(sel_clust)
+plot(sel_clust, type = "centroids", lty = 1)
+```
+
+```{r}
+table(sel_clust@cluster)
+```
+
+### GAK 
+
+```{r}
+tic()
+clust_gak <- tsclust(
+  series = tdengue, 
+  type = "partitional", 
+  k = k_seq,
+  distance = "gak",
+  seed = 13
+)
+toc()
+```
+
+```{r}
+names(clust_gak) <- paste0("k_", k_seq)
+res_cvi <- sapply(clust_gak, cvi, type = "internal") %>% 
+  t() %>%
+  as_tibble(rownames = "k") %>%
+  arrange(-Sil)
+
+res_cvi %>%
+  gt::gt()
+```
+
+```{r}
+sel_clust <- clust_gak[[res_cvi[[1,1]]]]
+
+plot(sel_clust)
+plot(sel_clust, type = "centroids", lty = 1)
+```
+
+```{r}
+table(sel_clust@cluster)
+```
+
+
+## Session info
+
+```{r}
+sessionInfo()
+```
