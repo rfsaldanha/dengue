@@ -45,6 +45,8 @@ tdengue <- tdengue %>%
   select(-date) %>%
   t() %>%
   tslist()
+
+saveRDS(object = tdengue, file = "tdengue.rds")
 ```
 
 ```{r}
@@ -95,7 +97,6 @@ plot(sel_clust, type = "centroids", lty = 1)
 table(sel_clust@cluster)
 ```
 
-
 ### Soft-DTW
 
 ```{r}
@@ -130,6 +131,15 @@ plot(sel_clust, type = "centroids", lty = 1)
 
 ```{r}
 table(sel_clust@cluster)
+```
+
+```{r}
+cluster_ids <- tibble(
+  mun = names(tdengue) %>% substr(3, 9),
+  group = as.character(sel_clust@cluster)
+) 
+
+saveRDS(object = cluster_ids, file = "clust_sdtw_ids.rds")
 ```
 
 ### SBD
@@ -168,7 +178,7 @@ plot(sel_clust, type = "centroids", lty = 1)
 table(sel_clust@cluster)
 ```
 
-### GAK 
+### GAK
 
 ```{r}
 tic()
@@ -203,7 +213,6 @@ plot(sel_clust, type = "centroids", lty = 1)
 ```{r}
 table(sel_clust@cluster)
 ```
-
 
 ## Session info
 

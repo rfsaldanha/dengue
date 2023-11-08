@@ -16,6 +16,7 @@ library(tidyverse)
 library(tidymodels)
 library(arrow)
 library(tsfeatures)
+library(broom)
 library(DT)
 source("../functions.R")
 ```
@@ -68,7 +69,7 @@ ks_group_test <- function(stat){
 
 ## Load data
 
-Load the bundled data (326 municipalities, pop $\geq$ 100k inhab.) with standardized cases and keep only the municipality code, date and cases variables.
+Load the bundled data (679 municipalities, pop $\geq$ 50k inhab.) with standardized cases and keep only the municipality code, date and cases variables.
 
 ```{r}
 tdengue <- open_dataset(sources = data_dir("bundled_data/tdengue.parquet")) %>%
@@ -246,7 +247,7 @@ points <- tsf %>%
   select(-mun)
 ```
 
-Uses $k$ from 3 to 10 for clustering.
+Uses $k$ from 2 to 10 for clustering.
 
 ```{r}
 kclusts <- 
@@ -290,7 +291,7 @@ Finally, the cluster partition ID is added to the main dataset.
 
 ```{r}
 cluster_ids <- clusterings %>%
-  filter(k == 3) %>%
+  filter(k == 5) %>%
   pull(augmented) %>%
   pluck(1) %>%
   select(group = .cluster) %>%
@@ -301,6 +302,17 @@ cluster_ids <- clusterings %>%
 
 ```{r}
 table(cluster_ids$group)
+```
+
+### Cluster time series plot
+
+```{r}
+inner_join(tdengue, cluster_ids, by = "mun") %>%
+  ggplot(aes(x = date, y = cases, color = mun)) +
+  geom_line(alpha = .3) +
+  facet_wrap(~group) +
+  theme_bw() +
+  theme(legend.position = "none")
 ```
 
 ## Time series features per group
@@ -369,7 +381,6 @@ ggplot(tsf_group, aes(x = flat_spots, fill = group)) +
 ks_group_test("flat_spots") %>% datatable()
 ```
 
-
 ### Zero proportion
 
 ```{r}
@@ -384,7 +395,6 @@ ggplot(tsf_group, aes(x = zero_proportion, fill = group)) +
 #| warning: false
 ks_group_test("zero_proportion") %>% datatable()
 ```
-
 
 ### STL features decomposition
 

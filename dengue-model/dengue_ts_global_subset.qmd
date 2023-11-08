@@ -27,12 +27,13 @@ library(kableExtra)
 library(tictoc)
 library(geobr)
 library(DT)
+source("../functions.R")
 ```
 
 ## Load data
 
 ```{r}
-tdengue <- read_parquet(file = "../tdengue.parquet") %>%
+tdengue <- read_parquet(file = data_dir("bundled_data/tdengue.parquet")) %>%
   drop_na() %>%
   select(mun, date, starts_with("cases"))
 ```

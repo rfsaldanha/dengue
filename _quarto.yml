@@ -65,6 +65,7 @@ website:
                     - dengue-cluster/cluster_long_cum.qmd
                     - dengue-cluster/cluster_long_scaled.qmd
                     - dengue-cluster/cluster_long_cum_scaled.qmd
+                    - dengue-cluster/sdtw_long_cum_scaled.qmd
                     - dengue-cluster/cluster_tsfeatures.qmd
                     - dengue-cluster/cluster_long_scaled_hier.qmd
               - section: "Municipality/year time series"

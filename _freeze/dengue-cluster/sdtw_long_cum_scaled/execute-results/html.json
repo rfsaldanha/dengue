@@ -1,0 +1,16 @@
+{
+  "hash": "cb8038aab40bd96773c042a1573fc7d1",
+  "result": {
+    "markdown": "---\ntitle: \"SDTW, cumulative and scaled long time series\"\nauthor: Raphael Saldanha\ndate: last-modified\n---\n\n\n## Packages\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(tidyverse)\nlibrary(lubridate)\nlibrary(gt)\nsource(\"../functions.R\")\n```\n:::\n\n\n## Dengue data\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# tdengue <- readRDS(file = \"tdengue.rds\")\n\ndengue <- arrow::open_dataset(sources = data_dir(\"bundled_data/tdengue.parquet\")) %>%\n    select(mun, date, cases, cases_cum) %>%\n    collect()\n```\n:::\n\n\n## Clustering results\n\n\n::: {.cell}\n\n```{.r .cell-code}\ncluster_ids <- readRDS(file = \"clust_sdtw_ids.rds\")\n```\n:::\n\n\n## Identify municipalities\n\n\n::: {.cell}\n\n```{.r .cell-code}\ndengue <- left_join(dengue, cluster_ids, by = \"mun\")\n```\n:::\n\n\n## Cluster time series plot\n\n\n::: {.cell}\n\n```{.r .cell-code}\nggplot(data = dengue, aes(x = date, y = cases, color = mun)) +\n  geom_line(alpha = .3) +\n  facet_wrap(~group) +\n  theme_bw() +\n  theme(legend.position = \"none\")\n```\n\n::: {.cell-output-display}\n![](sdtw_long_cum_scaled_files/figure-html/unnamed-chunk-5-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nggplot(data = dengue, aes(x = date, y = cases_cum, color = mun)) +\n  geom_line(alpha = .3) +\n  facet_wrap(~group) +\n  theme_bw() +\n  theme(legend.position = \"none\")\n```\n\n::: {.cell-output-display}\n![](sdtw_long_cum_scaled_files/figure-html/unnamed-chunk-6-1.png){width=672}\n:::\n:::\n\n\n## Map clusters\n\n\n::: {.cell}\n\n```{.r .cell-code}\nmun.shp <- geobr::read_municipality(showProgress = FALSE)\n```\n\n::: {.cell-output .cell-output-stderr}\n```\nLoading required namespace: sf\n```\n:::\n\n::: {.cell-output .cell-output-stderr}\n```\nUsing year 2010\n```\n:::\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nmun.shp %>%\n  mutate(code_muni = substr(code_muni, 0, 6)) %>%\n  left_join(cluster_ids, by = c(\"code_muni\" = \"mun\")) %>%\n  ggplot() +\n  geom_sf(aes(fill = group))\n```\n\n::: {.cell-output-display}\n![](sdtw_long_cum_scaled_files/figure-html/unnamed-chunk-8-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "sdtw_long_cum_scaled_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

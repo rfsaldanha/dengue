@@ -95,7 +95,6 @@ plot(sel_clust, type = "centroids", lty = 1)
 table(sel_clust@cluster)
 ```
 
-
 ### Soft-DTW
 
 ```{r}
@@ -168,7 +167,7 @@ plot(sel_clust, type = "centroids", lty = 1)
 table(sel_clust@cluster)
 ```
 
-### GAK 
+### GAK
 
 ```{r}
 tic()
@@ -203,7 +202,6 @@ plot(sel_clust, type = "centroids", lty = 1)
 ```{r}
 table(sel_clust@cluster)
 ```
-
 
 ## Session info
 
