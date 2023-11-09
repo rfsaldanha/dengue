@@ -285,6 +285,17 @@ ggplot(clusterings, aes(k, tot.withinss)) +
   theme_bw()
 ```
 
+```{r}
+silhouette_score <- function(k){
+  km <- kmeans(points, centers = k, nstart=25)
+  ss <- cluster::silhouette(km$cluster, dist(points))
+  mean(ss[, 3])
+}
+k <- 2:10
+avg_sil <- sapply(k, silhouette_score)
+plot(k, type='b', avg_sil, xlab='Number of clusters', ylab='Average Silhouette Scores', frame=FALSE)
+```
+
 ### Identify municipalities and cluster id
 
 Finally, the cluster partition ID is added to the main dataset.
