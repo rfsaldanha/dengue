@@ -74,6 +74,18 @@ tmax <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/tmax.parque
   rename(tmax = value)
 ```
 
+#### Average minimum temperature
+
+```{r}
+tmin <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/tmin.parquet")) %>%
+  filter(name == "Tmin_mean") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue$date) & date <= max(dengue$date)) %>%
+  summarise_by_time(.date_var = date, .by = "week", value = mean(value, na.rm = TRUE)) %>%
+  rename(tmin = value)
+```
+
 ### Join data
 
 Join dengue cases, population and weather variables.
@@ -84,9 +96,10 @@ tdengue <- dengue %>%
   inner_join(pop, by = c("dengue_year" = "year", "mun")) %>%
   select(-dengue_year) %>%
   inner_join(prec, by = "date") %>%
-  inner_join(tmax, by = "date")
+  inner_join(tmax, by = "date") %>%
+  inner_join(tmin, by = "date")
 
-rm(dengue, prec, tmax)
+rm(dengue, prec, tmax, tmin)
 ```
 
 ::: callout-note
@@ -118,7 +131,7 @@ tdengue <- tdengue %>%
   # Remove population
   select(-pop) %>%
   # Round values
-  mutate(across(c(cases, prec, tmax), ~ round(.x, digits = 2))) %>%
+  mutate(across(c(cases, prec, tmax, tmin), ~ round(.x, digits = 2))) %>%
   # Pad weeks 
   group_by(mun) %>%
   pad_by_time(date, .by = "week", .pad_value = 0, .start_date = min(tdengue$date), .end_date = max(tdengue$date)) %>%
@@ -146,7 +159,7 @@ tdengue <- tdengue %>%
   arrange(date) %>%
   mutate(cases_cum_raw = cumsum(cases_raw)) %>%
   mutate(cases_cum = cases_cum_raw) %>%
-  mutate(across(c(cases, cases_cum, prec, tmax), ~ standardize_vec(.x, silent = TRUE))) %>%
+  mutate(across(c(cases, cases_cum, prec, tmax, tmin), ~ standardize_vec(.x, silent = TRUE))) %>%
   ungroup()
 ```
 
@@ -157,7 +170,7 @@ Creates lagged variables from dengue cases and weather variables, from 1 to 6 we
 ```{r}
 tdengue <- tdengue %>%
   group_by(mun) %>%
-  tk_augment_lags(.value = c(cases, prec, tmax), .lags = 1:6) %>%
+  tk_augment_lags(.value = c(cases, prec, tmax, tmin), .lags = 1:6) %>%
   # tk_augment_slidify(
   #   .value = contains("_lag"), 
   #   .period = c(2, 4, 6), 

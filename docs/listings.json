@@ -10,6 +10,7 @@
   {
     "listing": "/cluster_analysis.html",
     "items": [
+      "/dengue-cluster/cluster_multivariate.html",
       "/dengue-cluster/cluster_tsfeatures.html",
       "/dengue-cluster/cluster_long_cum.html",
       "/dengue-cluster/cluster_long.html",
@@ -25,6 +26,7 @@
   {
     "listing": "/summary.html",
     "items": [
+      "/dengue-cluster/cluster_multivariate.html",
       "/dengue-cluster/cluster_tsfeatures.html",
       "/dengue-cluster/cluster_long_cum.html",
       "/dengue-cluster/cluster_long.html",

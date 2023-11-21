@@ -1,0 +1,33 @@
+---
+title: "Multivariate clustering"
+author: Raphael Saldanha
+date: last-modified
+---
+
+This notebook aims to cluster the Brazilian municipalities considering climate indicators with multivariate clustering techniques.
+
+## Packages
+
+```{r}
+#| message: false
+library(tidyverse)
+library(lubridate)
+library(arrow)
+library(timetk)
+library(dtwclust)
+library(kableExtra)
+library(tictoc)
+source("../functions.R")
+```
+
+## Load data
+
+Load the bundled data.
+
+```{r}
+tdengue <- open_dataset(sources = data_dir("bundled_data/tdengue.parquet")) %>%
+#    select(mun, date, tmax, tmin) %>%
+    collect()
+
+dim(tdengue)
+```

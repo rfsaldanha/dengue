@@ -1,0 +1,14 @@
+{
+  "hash": "3181596a5f85fd6730fe7bda42a59db5",
+  "result": {
+    "markdown": "---\ntitle: \"Multivariate clustering\"\nauthor: Raphael Saldanha\ndate: last-modified\n---\n\n\nThis notebook aims to cluster the Brazilian municipalities considering climate indicators with multivariate clustering techniques.\n\n## Packages\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(tidyverse)\nlibrary(lubridate)\nlibrary(arrow)\nlibrary(timetk)\nlibrary(dtwclust)\nlibrary(kableExtra)\nlibrary(tictoc)\nsource(\"../functions.R\")\n```\n:::\n\n\n## Load data\n\nLoad the bundled data.\n\n\n::: {.cell}\n\n```{.r .cell-code}\ntdengue <- open_dataset(sources = data_dir(\"bundled_data/tdengue.parquet\")) %>%\n#    select(mun, date, tmax, tmin) %>%\n    collect()\n\ndim(tdengue)\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n[1] 340179     33\n```\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
