@@ -18,6 +18,7 @@ library(dtwclust)
 library(kableExtra)
 library(tictoc)
 library(sf)
+library(DT)
 source("../functions.R")
 ```
 
@@ -87,7 +88,7 @@ res_cvi <- sapply(stdw_clust, cvi, type = "internal") %>%
   as_tibble(rownames = "k") %>%
   arrange(-Sil)
 
-res_cvi
+datatable(res_cvi)
 ```
 
 ```{r}
@@ -102,7 +103,7 @@ plot(m_sel_clust)
 table(m_sel_clust@cluster)
 ```
 
-### Map
+### Partition results
 
 ```{r}
 coords <- coords %>%
@@ -117,8 +118,18 @@ m_cluster_ids <- tibble(
   left_join(coords, by = "code_muni") %>%
   arrange(group, name_muni) %>%
   st_as_sf()
+```
 
-m_cluster_ids
+```{r}
+saveRDS(object = m_cluster_ids, file = "m_cluster_ids.rds")
+```
+
+```{r}
+m_cluster_ids %>%
+  select(group, name_muni, abbrev_state) %>%
+  arrange(group, name_muni) %>%
+  st_drop_geometry() %>%
+  datatable()
 ```
 
 ```{r}
