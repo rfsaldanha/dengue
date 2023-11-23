@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Raphael Saldanha">
 
-<title>Dengue AI - Overview</title>
+<title>Dengue AI - SDTW, cumulative and scaled long time series</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,29 +21,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./presentations/project_presentation.html" rel="next">
-<link href="./export-data/exported_data.html" rel="prev">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../dengue-cluster/cluster_tsfeatures.html" rel="next">
+<link href="../dengue-cluster/cluster_long_cum_scaled.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -63,35 +96,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-title','listing-author','listing-subtitle','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-title","listing-author","listing-subtitle","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZMP18L536K"></script>
 
 <script type="text/javascript">
@@ -102,10 +106,8 @@ gtag('js', new Date());
 gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -115,7 +117,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Dengue AI</span>
     </a>
   </div>
@@ -126,39 +128,39 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html" rel="" target="">
+    <a class="nav-link" href="../index.html" rel="" target="">
  <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./dengue_data.html" rel="" target="" aria-current="page">
+    <a class="nav-link active" href="../dengue_data.html" rel="" target="" aria-current="page">
  <span class="menu-text">Data</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./cluster_analysis.html" rel="" target="">
+    <a class="nav-link" href="../cluster_analysis.html" rel="" target="">
  <span class="menu-text">Cluster analysis</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./dengue_model.html" rel="" target="">
+    <a class="nav-link" href="../dengue_model.html" rel="" target="">
  <span class="menu-text">Modeling</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./software.html" rel="" target="">
+    <a class="nav-link" href="../software.html" rel="" target="">
  <span class="menu-text">Software</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./publications.html" rel="" target="">
+    <a class="nav-link" href="../publications.html" rel="" target="">
  <span class="menu-text">Publications</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./export-data/exported_data.html" rel="" target="">
+    <a class="nav-link" href="../export-data/exported_data.html" rel="" target="">
  <span class="menu-text">Exported data</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./presentations.html" rel="" target="">
+    <a class="nav-link" href="../presentations.html" rel="" target="">
  <span class="menu-text">Presentations</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./summary.html" rel="" target="">
+    <a class="nav-link" href="../summary.html" rel="" target="">
  <span class="menu-text">Summary</span></a>
   </li>  
 </ul>
@@ -173,7 +175,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./presentations.html">Presentations</a></li><li class="breadcrumb-item"><a href="./presentations.html">Overview</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../cluster_analysis.html">Cluster analysis</a></li><li class="breadcrumb-item"><a href="../dengue-cluster/cluster_long.html">Long time series</a></li><li class="breadcrumb-item"><a href="../dengue-cluster/sdtw_long_cum_scaled.html">SDTW, cumulative and scaled long time series</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
     </div>
@@ -205,37 +207,37 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue_data.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Overview</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/raw_files.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-data/raw_files.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Raw files</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/case_classification.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-data/case_classification.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Case classification analysis</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/missing_data.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-data/missing_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Missing data analysis</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/imputation.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-data/imputation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Imputation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-data/aggregated_database.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-data/aggregated_database.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Export aggregated database</span></a>
   </div>
 </li>
@@ -243,19 +245,19 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./weather_data.html" class="sidebar-item-text sidebar-link">
+  <a href="../weather_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Weather data</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./socioeconomic-data/socioeconomic_data.html" class="sidebar-item-text sidebar-link">
+  <a href="../socioeconomic-data/socioeconomic_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Socio economic data</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./bundled_data.html" class="sidebar-item-text sidebar-link">
+  <a href="../bundled_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Bundled data</span></a>
   </div>
 </li>
@@ -263,73 +265,73 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
  <span class="menu-text">Cluster analysis</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./cluster_analysis.html" class="sidebar-item-text sidebar-link">
+  <a href="../cluster_analysis.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Overview</span></a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
  <span class="menu-text">Long time series</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_long.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_long.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Raw cases</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_long_cum.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_long_cum.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Raw cases, cumulative</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_long_scaled.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_long_scaled.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Scaled cases</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_long_cum_scaled.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_long_cum_scaled.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Scaled cases, cumulative</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/sdtw_long_cum_scaled.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/sdtw_long_cum_scaled.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">SDTW, cumulative and scaled long time series</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_tsfeatures.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_tsfeatures.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Time series features</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_long_scaled_hier.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_long_scaled_hier.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Hierarchical clustering</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_multivariate.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_multivariate.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Multivariate clustering</span></a>
   </div>
 </li>
@@ -346,19 +348,19 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_mun_year.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_mun_year.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Yearly time series</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_mun_year_cumulative.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_mun_year_cumulative.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Cumulative time series</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-cluster/cluster_mun_year_epi_year.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-cluster/cluster_mun_year_epi_year.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Epi year time series</span></a>
   </div>
 </li>
@@ -377,7 +379,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue_model.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue_model.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Overview</span></a>
   </div>
 </li>
@@ -392,13 +394,13 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-model/dengue_weather_lag_class.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-model/dengue_weather_lag_class.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Classification task</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-model/dengue_weather_lag_reg.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-model/dengue_weather_lag_reg.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Regression task</span></a>
   </div>
 </li>
@@ -406,7 +408,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-model/dengue_classification_symptoms_conditions_multi.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-model/dengue_classification_symptoms_conditions_multi.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Dengue case classification</span></a>
   </div>
 </li>
@@ -421,25 +423,25 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-model/dengue_ts_overview.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-model/dengue_ts_overview.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Global and subset models workflow</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-model/dengue_ts_global_subset.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-model/dengue_ts_global_subset.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">SBD clustering</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-model/dengue_ts_global_subset_tsfeatures.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-model/dengue_ts_global_subset_tsfeatures.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Time series features clustering</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dengue-model/dengue_ts_global_subset_tsfeatures_sparse.html" class="sidebar-item-text sidebar-link">
+  <a href="../dengue-model/dengue_ts_global_subset_tsfeatures_sparse.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Time series features clustering, with robust sparse k-means</span></a>
   </div>
 </li>
@@ -449,52 +451,52 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./software.html" class="sidebar-item-text sidebar-link">
+  <a href="../software.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Software</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./publications.html" class="sidebar-item-text sidebar-link">
+  <a href="../publications.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Publications</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./export-data/exported_data.html" class="sidebar-item-text sidebar-link">
+  <a href="../export-data/exported_data.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Exported data</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
  <span class="menu-text">Presentations</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./presentations.html" class="sidebar-item-text sidebar-link active">
+  <a href="../presentations.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Overview</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./presentations/project_presentation.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+  <a href="../presentations/project_presentation.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
  <span class="menu-text">Project presentation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./presentations/short_project_presentation.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+  <a href="../presentations/short_project_presentation.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
  <span class="menu-text">Project presentation, short version</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./presentations/trajectory_health_data_information.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+  <a href="../presentations/trajectory_health_data_information.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
  <span class="menu-text">A trajectory on health data and information</span></a>
   </div>
 </li>
@@ -502,7 +504,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./publications.html" class="sidebar-item-text sidebar-link">
+  <a href="../publications.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Publications</span></a>
   </div>
 </li>
@@ -512,21 +514,44 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#packages" id="toc-packages" class="nav-link active" data-scroll-target="#packages">Packages</a></li>
+  <li><a href="#dengue-data" id="toc-dengue-data" class="nav-link" data-scroll-target="#dengue-data">Dengue data</a></li>
+  <li><a href="#clustering-results" id="toc-clustering-results" class="nav-link" data-scroll-target="#clustering-results">Clustering results</a></li>
+  <li><a href="#identify-municipalities" id="toc-identify-municipalities" class="nav-link" data-scroll-target="#identify-municipalities">Identify municipalities</a></li>
+  <li><a href="#cluster-time-series-plot" id="toc-cluster-time-series-plot" class="nav-link" data-scroll-target="#cluster-time-series-plot">Cluster time series plot</a></li>
+  <li><a href="#map-clusters" id="toc-map-clusters" class="nav-link" data-scroll-target="#map-clusters">Map clusters</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Overview</h1>
+<h1 class="title">SDTW, cumulative and scaled long time series</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Raphael Saldanha </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Last modification</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 8, 2023 | 11:38:02 +01:00</p>
+    </div>
+  </div>
   
     
   </div>
@@ -534,107 +559,86 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 
 </header>
 
+<section id="packages" class="level2">
+<h2 class="anchored" data-anchor-id="packages">Packages</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../functions.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="dengue-data" class="level2">
+<h2 class="anchored" data-anchor-id="dengue-data">Dengue data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tdengue &lt;- readRDS(file = "tdengue.rds")</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">open_dataset</span>(<span class="at">sources =</span> <span class="fu">data_dir</span>(<span class="st">"bundled_data/tdengue.parquet"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(mun, date, cases, cases_cum) <span class="sc">%&gt;%</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="clustering-results" class="level2">
+<h2 class="anchored" data-anchor-id="clustering-results">Clustering results</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cluster_ids <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="at">file =</span> <span class="st">"clust_sdtw_ids.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="identify-municipalities" class="level2">
+<h2 class="anchored" data-anchor-id="identify-municipalities">Identify municipalities</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">left_join</span>(dengue, cluster_ids, <span class="at">by =</span> <span class="st">"mun"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="cluster-time-series-plot" class="level2">
+<h2 class="anchored" data-anchor-id="cluster-time-series-plot">Cluster time series plot</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dengue, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> cases, <span class="at">color =</span> mun)) <span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> .<span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>group) <span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="sdtw_long_cum_scaled_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dengue, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> cases_cum, <span class="at">color =</span> mun)) <span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">alpha =</span> .<span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>group) <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="sdtw_long_cum_scaled_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="map-clusters" class="level2">
+<h2 class="anchored" data-anchor-id="map-clusters">Map clusters</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mun.shp <span class="ot">&lt;-</span> geobr<span class="sc">::</span><span class="fu">read_municipality</span>(<span class="at">showProgress =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required namespace: sf</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Using year 2010</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mun.shp <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">code_muni =</span> <span class="fu">substr</span>(code_muni, <span class="dv">0</span>, <span class="dv">6</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(cluster_ids, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"code_muni"</span> <span class="ot">=</span> <span class="st">"mun"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> group))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="sdtw_long_cum_scaled_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 
 
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-       <option value="" disabled="" selected="" hidden="">Order By</option>
-       <option value="index" data-direction="asc">Default</option>
-         <option value="listing-title" data-direction="asc">
-          Title
-        </option>
-         <option value="listing-author" data-direction="asc">
-          Author
-        </option>
-     </select>
-  </div>
-</div>
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1694510324408" data-listing-reading-time-sort="4">
-<div class="thumbnail">
-<p><a href="./presentations/project_presentation.html"> <!-- img(9CEB782EFEE6)[progressive=false, height=]:presentations/project_presentation.html --> </a></p>
-</div>
-<div class="body">
-<a href="./presentations/project_presentation.html">
-<h3 class="no-anchor listing-title">
-Specialized AI Models for Predicting Dengue Disease
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<!-- desc(5A0113B34292)[max=175]:presentations/project_presentation.html -->
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./presentations/project_presentation.html">
-<div class="listing-author">
-Saldanha, Raphael et al
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-listing-file-modified-sort="1694511265054" data-listing-reading-time-sort="3">
-<div class="thumbnail">
-<p><a href="./presentations/short_project_presentation.html"> <!-- img(9CEB782EFEE6)[progressive=false, height=]:presentations/short_project_presentation.html --> </a></p>
-</div>
-<div class="body">
-<a href="./presentations/short_project_presentation.html">
-<h3 class="no-anchor listing-title">
-Specialized AI Models for Predicting Dengue Disease
-</h3>
-<div class="listing-subtitle">
-[Short version]
-</div>
-<div class="listing-description">
-<!-- desc(5A0113B34292)[max=175]:presentations/short_project_presentation.html -->
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./presentations/short_project_presentation.html">
-<div class="listing-author">
-Raphael Saldanha et al.
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-listing-file-modified-sort="1690297728616" data-listing-reading-time-sort="3">
-<div class="thumbnail">
-<p><a href="./presentations/trajectory_health_data_information.html"> <!-- img(9CEB782EFEE6)[progressive=false, height=]:presentations/trajectory_health_data_information.html --> </a></p>
-</div>
-<div class="body">
-<a href="./presentations/trajectory_health_data_information.html">
-<h3 class="no-anchor listing-title">
-A trajectory on health data and information
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<!-- desc(5A0113B34292)[max=175]:presentations/trajectory_health_data_information.html -->
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./presentations/trajectory_health_data_information.html">
-<div class="listing-author">
-Raphael Saldanha
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div><a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -870,13 +874,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./export-data/exported_data.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Exported data</span>
+      <a href="../dengue-cluster/cluster_long_cum_scaled.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Scaled cases, cumulative</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./presentations/project_presentation.html" class="pagination-link">
-        <span class="nav-page-text">Project presentation</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../dengue-cluster/cluster_tsfeatures.html" class="pagination-link">
+        <span class="nav-page-text">Time series features</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Dengue AI - Overview</title>
+<title>Dengue AI - Weather data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,10 +64,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./presentations/project_presentation.html" rel="next">
-<link href="./export-data/exported_data.html" rel="prev">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
+<link href="./socioeconomic-data/socioeconomic_data.html" rel="next">
+<link href="./dengue-data/aggregated_database.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -63,35 +95,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-title','listing-author','listing-subtitle','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-title","listing-author","listing-subtitle","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZMP18L536K"></script>
 
 <script type="text/javascript">
@@ -102,8 +105,6 @@ gtag('js', new Date());
 gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -173,7 +174,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./presentations.html">Presentations</a></li><li class="breadcrumb-item"><a href="./presentations.html">Overview</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Data</li><li class="breadcrumb-item"><a href="./weather_data.html">Weather data</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
     </div>
@@ -187,13 +188,13 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
  <span class="menu-text">Data</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
@@ -243,7 +244,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
   </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./weather_data.html" class="sidebar-item-text sidebar-link">
+  <a href="./weather_data.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Weather data</span></a>
   </div>
 </li>
@@ -467,16 +468,16 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
  <span class="menu-text">Presentations</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./presentations.html" class="sidebar-item-text sidebar-link active">
+  <a href="./presentations.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Overview</span></a>
   </div>
 </li>
@@ -512,14 +513,31 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">Methodology</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a>
+  <ul class="collapse">
+  <li><a href="#zonal-br-dwgd" id="toc-zonal-br-dwgd" class="nav-link" data-scroll-target="#zonal-br-dwgd">Zonal BR-DWGD</a></li>
+  <li><a href="#zonal-terraclimate" id="toc-zonal-terraclimate" class="nav-link" data-scroll-target="#zonal-terraclimate">Zonal TerraClimate</a></li>
+  </ul></li>
+  <li><a href="#availability" id="toc-availability" class="nav-link" data-scroll-target="#availability">Availability</a>
+  <ul class="collapse">
+  <li><a href="#parquet-files" id="toc-parquet-files" class="nav-link" data-scroll-target="#parquet-files">Parquet files</a></li>
+  <li><a href="#r-package-brclimr" id="toc-r-package-brclimr" class="nav-link" data-scroll-target="#r-package-brclimr">R package <code>brclimr</code></a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Overview</h1>
+<h1 class="title">Weather data</h1>
 </div>
 
 
@@ -534,107 +552,297 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 
 </header>
 
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Zonal statistics such as mean, maximum, minimum, standard deviation, and sum were computed by taking into account the data cells that intersect the boundaries of each municipality and stored in Parquet files.</p>
+<p>This procedure was carried out for all Brazilian municipalities, and for all available dates, for every indicator available in the weather products BR-DWGD and TerraClimate.</p>
+</section>
+<section id="methodology" class="level2">
+<h2 class="anchored" data-anchor-id="methodology">Methodology</h2>
+<p>Zonal statistics are descriptive statistics calculated using a set of cells that spatially intersects a given spatial boundary. For each boundary in a map, statistics like average, maximum value, minimum value, standard deviation, and sum are obtained to represent the cell’s values that intersect the boundary.</p>
+<p>The Brazilian municipality boundaries from 2010 were used as a reference, as provided by the <a href="https://github.com/ipeaGIT/geobr">geobr</a> package.</p>
+<p>Thus, for each municipality, a set of zonal statistics of weather indicators is calculated, at the same time resolution of the source dataset.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://rfsaldanha.github.io/brclimr/articles/images/zonal_statistics.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>Those datasets are available as parquet files on S3 buckets and queried by this project functions to retrieve data for a given municipality, dates, weather indicators, and desired zonal statistics.</p>
+</section>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<section id="zonal-br-dwgd" class="level3">
+<h3 class="anchored" data-anchor-id="zonal-br-dwgd">Zonal BR-DWGD</h3>
+<blockquote class="blockquote">
+<p>Xavier, A. C., Scanlon, B. R., King, C. W., &amp; Alves, A. I. (2022). New improved Brazilian daily weather gridded data (1961–2020). International Journal of Climatology. <a href="https://doi.org/10.1002/joc.7731" class="uri">https://doi.org/10.1002/joc.7731</a></p>
+</blockquote>
+<p>The BR-DWGD dataset presents daily meteorological data interpolated to a grid with 0.1° × 0.1° of spatial resolution for the Brazilian territory, with daily data from January 1, 1961, to July 31, 2020. It used data from 1,252 weather stations and 11,473 rain gauges in its interpolation methods, cross-validated to the selection of the best method for each weather indicator.</p>
+<p>The following weather indicators are available from the BR-DWGD study: precipitation (mm), minimum temperature (°C), maximum temperature (°C), solar radiation (MJ⋅m−2), wind speed at 2m height (m⋅s−1) and relative humidity (%).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>brclimr<span class="sc">::</span><span class="fu">product_info</span>(<span class="at">product =</span> <span class="st">"brdwgd"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;list&gt;
+├─tmax: &lt;list&gt;
+│ ├─name: "Maximum temperature"
+│ ├─unit: "Degree Celsius"
+│ ├─date_range: "Daily, 1961-01-01 to 2020-07-31"
+│ └─stats: &lt;list&gt;
+│   ├─min: "Tmax_min"
+│   ├─max: "Tmax_max"
+│   ├─mean: "Tmax_mean"
+│   └─sd: "Tmax_sd"
+├─tmin: &lt;list&gt;
+│ ├─name: "Minimum temperature"
+│ ├─unit: "Degree Celsius"
+│ ├─date_range: "Daily, 1961-01-01 to 2020-07-31"
+│ └─stats: &lt;list&gt;
+│   ├─min: "Tmin_min"
+│   ├─max: "Tmin_max"
+│   ├─mean: "Tmin_mean"
+│   └─sd: "Tmin_sd"
+├─pr: &lt;list&gt;
+│ ├─name: "Precipitation"
+│ ├─unit: "mm"
+│ ├─date_range: "Daily, 1961-01-01 to 2020-07-31"
+│ └─stats: &lt;list&gt;
+│   ├─min: "pr_min"
+│   ├─max: "pr_max"
+│   ├─mean: "pr_mean"
+│   ├─sd: "pr_sd"
+│   └─sum: "pr_sum"
+├─eto: &lt;list&gt;
+│ ├─name: "Evapotranspiration"
+│ ├─unit: "mm"
+│ ├─date_range: "Daily, 1961-01-01 to 2020-07-31"
+│ └─stats: &lt;list&gt;
+│   ├─min: "ETo_min"
+│   ├─max: "ETo_max"
+│   ├─mean: "ETo_mean"
+│   ├─sd: "ETo_sd"
+│   └─sum: "ETo_sd"
+├─rh: &lt;list&gt;
+│ ├─name: "Relative humidity"
+│ ├─unit: "Percentage"
+│ ├─date_range: "Daily, 1961-01-01 to 2020-07-31"
+│ └─stats: &lt;list&gt;
+│   ├─min: "RH_min"
+│   ├─max: "RH_max"
+│   ├─mean: "RH_mean"
+│   └─sd: "RH_sd"
+├─rs: &lt;list&gt;
+│ ├─name: "Solar radiation"
+│ ├─unit: "MJ/m2"
+│ ├─date_range: "Daily, 1961-01-01 to 2020-07-31"
+│ └─stats: &lt;list&gt;
+│   ├─min: "Rs_min"
+│   ├─max: "Rs_max"
+│   ├─mean: "Rs_mean"
+│   └─sd: "Rs_sd"
+└─u2: &lt;list&gt;
+  ├─name: "Wind speed"
+  ├─unit: "m/2"
+  ├─date_range: "Daily, 1961-01-01 to 2020-07-31"
+  └─stats: &lt;list&gt;
+    ├─min: "u2_min"
+    ├─max: "u2_max"
+    ├─mean: "u2_mean"
+    └─sd: "u2_sd"</code></pre>
+</div>
+</div>
+</section>
+<section id="zonal-terraclimate" class="level3">
+<h3 class="anchored" data-anchor-id="zonal-terraclimate">Zonal TerraClimate</h3>
+<blockquote class="blockquote">
+<p>Abatzoglou, J. T., Dobrowski, S. Z., Parks, S. A., Hegewisch, K. C. (2018). TerraClimate, a high-resolution global dataset of monthly climate and climatic water balance from 1958-2015. Scientific Data, 5. https://doi.org/10.1038/sdata.2017.191</p>
+</blockquote>
+<p>The TerraClimate dataset presents monthly meteorological data interpolated to a grid with 0.04° × 0.04° (1/24th degree) of spatial resolution with world cover, with monthly data from January, 1958, to December, 2021.</p>
+<p>The following weather indicators are available from the TerraClimate study: Actual Evapotranspiration (mm), Climate Water Deficit (mm), Potential evapotranspiration(mm), Precipitation (mm), Runoff (mm), Soil Moisture (mm), Downward surface shortwave radiation (W/m2), Snow water equivalent (mm), Minimum temperature (°C), Maximum temperature (°C), Vapor pressure (kPa), Wind speed (m/s), Vapor Pressure Deficit (kpa) and Palmer Drought Severity Index.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>brclimr<span class="sc">::</span><span class="fu">product_info</span>(<span class="at">product =</span> <span class="st">"terraclimate"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;list&gt;
+├─tmax: &lt;list&gt;
+│ ├─name: "Maximum temperature"
+│ ├─detail: "Average for month"
+│ ├─unit: "Degree Celsius"
+│ ├─date_range: "Monthly, 1958-01 to 2021-12"
+│ └─stats: &lt;list&gt;
+│   ├─min: "tmax_min"
+│   ├─max: "tmax_max"
+│   ├─mean: "tmax_mean"
+│   └─sd: "tmax_sd"
+├─tmin: &lt;list&gt;
+│ ├─name: "Minimum temperature"
+│ ├─detail: "Average for month"
+│ ├─unit: "Degree Celsius"
+│ ├─date_range: "Monthly, 1958-01 to 2021-12"
+│ └─stats: &lt;list&gt;
+│   ├─min: "tmin_min"
+│   ├─max: "tmin_max"
+│   ├─mean: "tmin_mean"
+│   └─sd: "tmin_sd"
+├─ppt: &lt;list&gt;
+│ ├─name: "Precipitation"
+│ ├─detail: "Monthly total"
+│ ├─unit: "mm"
+│ ├─date_range: "Monthly, 1958-01 to 2021-12"
+│ └─stats: &lt;list&gt;
+│   ├─min: "ppt_min"
+│   ├─max: "ppt_max"
+│   ├─mean: "ppt_mean"
+│   ├─sd: "ppt_sd"
+│   └─sum: "ppt_sum"
+├─aet: &lt;list&gt;
+│ ├─name: "Actual Evapotranspiration"
+│ ├─detail: "Monthly total"
+│ ├─unit: "mm"
+│ ├─date_range: "Monthly, 1958-01 to 2021-12"
+│ └─stats: &lt;list&gt;
+│   ├─min: "aet_min"
+│   ├─max: "aet_max"
+│   ├─mean: "aet_mean"
+│   ├─sd: "aet_sd"
+│   └─sum: "aet_sum"
+├─def: &lt;list&gt;
+│ ├─name: "Climate Water Deficit"
+│ ├─detail: "Monthly total"
+│ ├─unit: "mm"
+│ ├─date_range: "Monthly, 1958-01 to 2021-12"
+│ └─stats: &lt;list&gt;
+│   ├─min: "def_min"
+│   ├─max: "def_max"
+│   ├─mean: "def_mean"
+│   ├─sd: "def_sd"
+│   └─sum: "def_sum"
+├─pdsi: &lt;list&gt;
+│ ├─name: "Palmer Drought Severity Index"
+│ ├─detail: "At end of month"
+│ ├─unit: "unitless"
+│ ├─date_range: "Monthly, 1958-01 to 2021-12"
+│ └─stats: &lt;list&gt;
+│   ├─min: "PDSI_min"
+│   ├─max: "PDSI_max"
+│   ├─mean: "PDSI_mean"
+│   └─sd: "PDSI_sd"
+├─pet: &lt;list&gt;
+│ ├─name: "Potential evapotranspiration"
+│ ├─detail: "Monthly total"
+│ ├─unit: "mm"
+│ ├─date_range: "Monthly, 1958-01 to 2021-12"
+│ └─stats: &lt;list&gt;
+│   ├─min: "pet_min"
+│   ├─max: "pet_max"
+│   ├─mean: "pet_mean"
+│   ├─sd: "pet_sd"
+│   └─sum: "pet_sum"
+├─q: &lt;list&gt;
+│ ├─name: "Runoff"
+│ ├─detail: "Monthly total"
+│ ├─unit: "mm"
+│ ├─date_range: "Monthly, 1958-01 to 2021-12"
+│ └─stats: &lt;list&gt;
+│   ├─min: "q_min"
+│   ├─max: "q_max"
+│   ├─mean: "q_mean"
+│   ├─sd: "q_sd"
+│   └─sum: "q_sum"
+├─soil: &lt;list&gt;
+│ ├─name: "Soil Moisture"
+│ ├─detail: "Total column, at end of month"
+│ ├─unit: "mm"
+│ ├─date_range: "Monthly, 1958-01 to 2021-12"
+│ └─stats: &lt;list&gt;
+│   ├─min: "soil_min"
+│   ├─max: "soil_max"
+│   ├─mean: "soil_mean"
+│   ├─sd: "soil_sd"
+│   └─sum: "soil_sum"
+├─srad: &lt;list&gt;
+│ ├─name: "Downward surface shortwave radia..."
+│ ├─unit: "W/m2"
+│ ├─date_range: "Monthly, 1958-01 to 2021-12"
+│ └─stats: &lt;list&gt;
+│   ├─min: "srad_min"
+│   ├─max: "srad_max"
+│   ├─mean: "srad_mean"
+│   ├─sd: "srad_sd"
+│   └─sum: "srad_sum"
+├─swe: &lt;list&gt;
+│ ├─name: "Snow water equivalent"
+│ ├─detail: "At end of month"
+│ ├─unit: "mm"
+│ ├─date_range: "Monthly, 1958-01 to 2021-12"
+│ └─stats: &lt;list&gt;
+│   ├─min: "swe_min"
+│   ├─max: "swe_max"
+│   ├─mean: "swe_mean"
+│   ├─sd: "swe_sd"
+│   └─sum: "swe_sum"
+├─vap: &lt;list&gt;
+│ ├─name: "Vapor pressure"
+│ ├─detail: "Average for month"
+│ ├─unit: "kPa"
+│ ├─date_range: "Monthly, 1958-01 to 2021-12"
+│ └─stats: &lt;list&gt;
+│   ├─min: "vap_min"
+│   ├─max: "vap_max"
+│   ├─mean: "vap_mean"
+│   └─sd: "vap_sd"
+├─vpd: &lt;list&gt;
+│ ├─name: "Vapor Pressure Deficit"
+│ ├─detail: "Average for month"
+│ ├─unit: "kPa"
+│ ├─date_range: "Monthly, 1958-01 to 2021-12"
+│ └─stats: &lt;list&gt;
+│   ├─min: "vpd_min"
+│   ├─max: "vpd_max"
+│   ├─mean: "vpd_mean"
+│   └─sd: "vpd_sd"
+└─ws: &lt;list&gt;
+  ├─name: "Wind speed"
+  ├─detail: "Average for month"
+  ├─unit: "m/s"
+  ├─date_range: "Monthly, 1958-01 to 2021-12"
+  └─stats: &lt;list&gt;
+    ├─min: "ws_min"
+    ├─max: "ws_max"
+    ├─mean: "ws_mean"
+    └─sd: "ws_sd"</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="availability" class="level2">
+<h2 class="anchored" data-anchor-id="availability">Availability</h2>
+<section id="parquet-files" class="level3">
+<h3 class="anchored" data-anchor-id="parquet-files">Parquet files</h3>
+<p>The results are available to use as <code>parquet</code> format files. Access the following DOIs to access and download the files.</p>
+<section id="zonal-br-dwgd-1" class="level4">
+<h4 class="anchored" data-anchor-id="zonal-br-dwgd-1">Zonal BR-DWGD</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://doi.org/https://doi.org/10.5281/zenodo.7824920"><img src="https://img.shields.io/badge/doi-https://doi.org/10.5281/zenodo.7824920-green.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</section>
+<section id="zonal-terraclimate-1" class="level4">
+<h4 class="anchored" data-anchor-id="zonal-terraclimate-1">Zonal TerraClimate</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://doi.org/https://doi.org/10.5281/zenodo.7825777"><img src="https://img.shields.io/badge/doi-https://doi.org/10.5281/zenodo.7825777-green.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</section>
+</section>
+<section id="r-package-brclimr" class="level3">
+<h3 class="anchored" data-anchor-id="r-package-brclimr">R package <code>brclimr</code></h3>
+<p>We created an R package to on-line access those parquet files and download data for a user especified municipality. More details on <a href="https://rfsaldanha.github.io/brclimr" class="uri">https://rfsaldanha.github.io/brclimr</a></p>
 
 
+</section>
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-       <option value="" disabled="" selected="" hidden="">Order By</option>
-       <option value="index" data-direction="asc">Default</option>
-         <option value="listing-title" data-direction="asc">
-          Title
-        </option>
-         <option value="listing-author" data-direction="asc">
-          Author
-        </option>
-     </select>
-  </div>
-</div>
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1694510324408" data-listing-reading-time-sort="4">
-<div class="thumbnail">
-<p><a href="./presentations/project_presentation.html"> <!-- img(9CEB782EFEE6)[progressive=false, height=]:presentations/project_presentation.html --> </a></p>
-</div>
-<div class="body">
-<a href="./presentations/project_presentation.html">
-<h3 class="no-anchor listing-title">
-Specialized AI Models for Predicting Dengue Disease
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<!-- desc(5A0113B34292)[max=175]:presentations/project_presentation.html -->
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./presentations/project_presentation.html">
-<div class="listing-author">
-Saldanha, Raphael et al
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-listing-file-modified-sort="1694511265054" data-listing-reading-time-sort="3">
-<div class="thumbnail">
-<p><a href="./presentations/short_project_presentation.html"> <!-- img(9CEB782EFEE6)[progressive=false, height=]:presentations/short_project_presentation.html --> </a></p>
-</div>
-<div class="body">
-<a href="./presentations/short_project_presentation.html">
-<h3 class="no-anchor listing-title">
-Specialized AI Models for Predicting Dengue Disease
-</h3>
-<div class="listing-subtitle">
-[Short version]
-</div>
-<div class="listing-description">
-<!-- desc(5A0113B34292)[max=175]:presentations/short_project_presentation.html -->
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./presentations/short_project_presentation.html">
-<div class="listing-author">
-Raphael Saldanha et al.
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-listing-file-modified-sort="1690297728616" data-listing-reading-time-sort="3">
-<div class="thumbnail">
-<p><a href="./presentations/trajectory_health_data_information.html"> <!-- img(9CEB782EFEE6)[progressive=false, height=]:presentations/trajectory_health_data_information.html --> </a></p>
-</div>
-<div class="body">
-<a href="./presentations/trajectory_health_data_information.html">
-<h3 class="no-anchor listing-title">
-A trajectory on health data and information
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-<!-- desc(5A0113B34292)[max=175]:presentations/trajectory_health_data_information.html -->
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./presentations/trajectory_health_data_information.html">
-<div class="listing-author">
-Raphael Saldanha
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div><a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -870,13 +1078,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./export-data/exported_data.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Exported data</span>
+      <a href="./dengue-data/aggregated_database.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Export aggregated database</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./presentations/project_presentation.html" class="pagination-link">
-        <span class="nav-page-text">Project presentation</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./socioeconomic-data/socioeconomic_data.html" class="pagination-link">
+        <span class="nav-page-text">Socio economic data</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
