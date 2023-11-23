@@ -23,11 +23,11 @@ source("../functions.R")
 
 ## Load data
 
-Daily, scaled maximum temperature, minimum temperature and precipitation.
+Daily, scaled cases, maximum temperature, minimum temperature and precipitation.
 
 ```{r}
 tdengue <- open_dataset(sources = data_dir("bundled_data/tdengue.parquet")) %>%
-  select(mun, date, tmax, tmin, prec) %>%
+  select(mun, date, cases, tmax, tmin, prec) %>%
   collect()
 
 dim(tdengue)
@@ -63,7 +63,7 @@ names(mdengue) <- group_keys(gdengue)$mun
 glimpse(mdengue[1:3])
 ```
 
-## SDTW clustering
+## DTW clustering
 
 Try from 2 to 20 partitions.
 
