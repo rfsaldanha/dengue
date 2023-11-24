@@ -22,7 +22,8 @@
   {
     "listing": "/summary.html",
     "items": [
-      "/dengue-cluster/cluster_multivariate.html",
+      "/dengue-cluster/cluster_multivariate_clim.html",
+      "/dengue-cluster/cluster_multivariate_all.html",
       "/dengue-cluster/cluster_tsfeatures.html",
       "/dengue-cluster/cluster_long_cum.html",
       "/dengue-cluster/cluster_long.html",
@@ -50,7 +51,8 @@
   {
     "listing": "/cluster_analysis.html",
     "items": [
-      "/dengue-cluster/cluster_multivariate.html",
+      "/dengue-cluster/cluster_multivariate_clim.html",
+      "/dengue-cluster/cluster_multivariate_all.html",
       "/dengue-cluster/cluster_tsfeatures.html",
       "/dengue-cluster/cluster_long_cum.html",
       "/dengue-cluster/cluster_long.html",

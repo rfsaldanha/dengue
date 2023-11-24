@@ -1,10 +1,10 @@
 ---
-title: "Multivariate clustering"
+title: "Climate variables multivariate clustering"
 author: Raphael Saldanha
 date: last-modified
 ---
 
-This notebook aims to cluster the Brazilian municipalities considering climate indicators with multivariate clustering techniques.
+This notebook aims to cluster the Brazilian municipalities considering only climate indicators with multivariate clustering techniques.
 
 ## Packages
 
@@ -28,7 +28,7 @@ Daily, scaled cases, maximum temperature, minimum temperature and precipitation.
 
 ```{r}
 tdengue <- open_dataset(sources = data_dir("bundled_data/tdengue.parquet")) %>%
-  select(mun, date, cases, tmax, tmin, prec) %>%
+  select(mun, date, tmax, tmin, prec) %>%
   collect()
 
 dim(tdengue)
@@ -121,7 +121,7 @@ m_cluster_ids <- tibble(
 ```
 
 ```{r}
-saveRDS(object = m_cluster_ids, file = "m_cluster_ids.rds")
+saveRDS(object = m_cluster_ids, file = "m_clim_cluster_ids.rds")
 ```
 
 ```{r}

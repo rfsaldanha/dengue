@@ -68,7 +68,10 @@ website:
                     - dengue-cluster/sdtw_long_cum_scaled.qmd
                     - dengue-cluster/cluster_tsfeatures.qmd
                     - dengue-cluster/cluster_long_scaled_hier.qmd
-                    - dengue-cluster/cluster_multivariate.qmd
+                    - section: "Long time series"
+                      contents:
+                          - dengue-cluster/cluster_multivariate_all.qmd
+                          - dengue-cluster/cluster_multivariate_clim.qmd
               - section: "Municipality/year time series"
                 contents:
                     - dengue-cluster/cluster_mun_year.qmd

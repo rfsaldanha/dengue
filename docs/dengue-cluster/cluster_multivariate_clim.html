@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Raphael Saldanha">
+
+<title>Dengue AI - Climate variables multivariate clustering</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../dengue-cluster/cluster_mun_year.html" rel="next">
+<link href="../dengue-cluster/cluster_multivariate_all.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZMP18L536K"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
+</script>
+
+<script src="../site_libs/htmlwidgets-1.6.3/htmlwidgets.js"></script>
+<link href="../site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+<script src="../site_libs/datatables-binding-0.30/datatables.js"></script>
+<script src="../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="../site_libs/dt-core-1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="../site_libs/dt-core-1.13.4/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="../site_libs/dt-core-1.13.4/js/jquery.dataTables.min.js"></script>
+<link href="../site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
+<script src="../site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Dengue AI</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../dengue_data.html" rel="" target="" aria-current="page">
+ <span class="menu-text">Data</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../cluster_analysis.html" rel="" target="">
+ <span class="menu-text">Cluster analysis</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../dengue_model.html" rel="" target="">
+ <span class="menu-text">Modeling</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../software.html" rel="" target="">
+ <span class="menu-text">Software</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../publications.html" rel="" target="">
+ <span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../export-data/exported_data.html" rel="" target="">
+ <span class="menu-text">Exported data</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../presentations.html" rel="" target="">
+ <span class="menu-text">Presentations</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../summary.html" rel="" target="">
+ <span class="menu-text">Summary</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+    <a href="https://github.com/rfsaldanha/dengue" rel="" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../cluster_analysis.html">Cluster analysis</a></li><li class="breadcrumb-item"><a href="../dengue-cluster/cluster_long.html">Long time series</a></li><li class="breadcrumb-item"><a href="../dengue-cluster/cluster_multivariate_all.html">Long time series</a></li><li class="breadcrumb-item"><a href="../dengue-cluster/cluster_multivariate_clim.html">Climate variables multivariate clustering</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+ <span class="menu-text">Data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text">Dengue data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-data/raw_files.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Raw files</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-data/case_classification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Case classification analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-data/missing_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Missing data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-data/imputation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Imputation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-data/aggregated_database.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Export aggregated database</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../weather_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Weather data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../socioeconomic-data/socioeconomic_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Socio economic data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../bundled_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bundled data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Cluster analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../cluster_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Long time series</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_long.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Raw cases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_long_cum.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Raw cases, cumulative</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_long_scaled.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scaled cases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_long_cum_scaled.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scaled cases, cumulative</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/sdtw_long_cum_scaled.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SDTW, cumulative and scaled long time series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_tsfeatures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Time series features</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_long_scaled_hier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hierarchical clustering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Long time series</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth3 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_multivariate_all.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cases and climate variables multivariate clustering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_multivariate_clim.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Climate variables multivariate clustering</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+ <span class="menu-text">Municipality/year time series</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_mun_year.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Yearly time series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_mun_year_cumulative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cumulative time series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-cluster/cluster_mun_year_epi_year.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Epi year time series</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text">Modeling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+ <span class="menu-text">Denque and weather lags</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-model/dengue_weather_lag_class.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Classification task</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-model/dengue_weather_lag_reg.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Regression task</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-model/dengue_classification_symptoms_conditions_multi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dengue case classification</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
+ <span class="menu-text">Dengue time series modelling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-model/dengue_ts_overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Global and subset models workflow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-model/dengue_ts_global_subset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SBD clustering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-model/dengue_ts_global_subset_tsfeatures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Time series features clustering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dengue-model/dengue_ts_global_subset_tsfeatures_sparse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Time series features clustering, with robust sparse k-means</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../software.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Software</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../publications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Publications</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../export-data/exported_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exported data</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
+ <span class="menu-text">Presentations</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../presentations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../presentations/project_presentation.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+ <span class="menu-text">Project presentation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../presentations/short_project_presentation.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+ <span class="menu-text">Project presentation, short version</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../presentations/trajectory_health_data_information.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+ <span class="menu-text">A trajectory on health data and information</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../publications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Publications</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#packages" id="toc-packages" class="nav-link active" data-scroll-target="#packages">Packages</a></li>
+  <li><a href="#load-data" id="toc-load-data" class="nav-link" data-scroll-target="#load-data">Load data</a></li>
+  <li><a href="#prepare-data" id="toc-prepare-data" class="nav-link" data-scroll-target="#prepare-data">Prepare data</a></li>
+  <li><a href="#dtw-clustering" id="toc-dtw-clustering" class="nav-link" data-scroll-target="#dtw-clustering">DTW clustering</a>
+  <ul class="collapse">
+  <li><a href="#cluster-validity-indices-cvi" id="toc-cluster-validity-indices-cvi" class="nav-link" data-scroll-target="#cluster-validity-indices-cvi">Cluster Validity Indices (CVI)</a></li>
+  <li><a href="#partitions-size" id="toc-partitions-size" class="nav-link" data-scroll-target="#partitions-size">Partitions size</a></li>
+  <li><a href="#partition-results" id="toc-partition-results" class="nav-link" data-scroll-target="#partition-results">Partition results</a></li>
+  </ul></li>
+  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info">Session info</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Climate variables multivariate clustering</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Raphael Saldanha </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Last modification</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 23, 2023 | 16:09:37 +01:00</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>This notebook aims to cluster the Brazilian municipalities considering only climate indicators with multivariate clustering techniques.</p>
+<section id="packages" class="level2">
+<h2 class="anchored" data-anchor-id="packages">Packages</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(timetk)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dtwclust)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DT)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../functions.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="load-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-data">Load data</h2>
+<p>Daily, scaled cases, maximum temperature, minimum temperature and precipitation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> <span class="fu">data_dir</span>(<span class="st">"bundled_data/tdengue.parquet"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(mun, date, tmax, tmin, prec) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tdengue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 340179      5</code></pre>
+</div>
+</div>
+<p>Data for maps.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>uf_sf <span class="ot">&lt;-</span> geobr<span class="sc">::</span><span class="fu">read_state</span>(<span class="at">showProgress =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Using year 2010</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> geobr<span class="sc">::</span><span class="fu">read_municipality</span>(<span class="at">showProgress =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_make_valid</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_centroid</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Using year 2010</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: st_centroid assumes attributes are constant over geometries</code></pre>
+</div>
+</div>
+</section>
+<section id="prepare-data" class="level2">
+<h2 class="anchored" data-anchor-id="prepare-data">Prepare data</h2>
+<p>For clustering, the data must be a list of data frames with climate data and without date.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>gdengue <span class="ot">&lt;-</span> tdengue <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mun) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>date)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>mdengue <span class="ot">&lt;-</span> <span class="fu">group_split</span>(gdengue, <span class="at">.keep =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tslist</span>(<span class="at">simplify =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mdengue) <span class="ot">&lt;-</span> <span class="fu">group_keys</span>(gdengue)<span class="sc">$</span>mun</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(mdengue[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 3
+ $ 110002: num [1:501, 1:3] -13.182 0.285 0.37 0.491 0.697 ...
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : NULL
+  .. ..$ : chr [1:3] "tmax" "tmin" "prec"
+ $ 110004: num [1:501, 1:3] -13.182 0.285 0.37 0.491 0.697 ...
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : NULL
+  .. ..$ : chr [1:3] "tmax" "tmin" "prec"
+ $ 110011: num [1:501, 1:3] -8.48 -8.48 -8.48 -8.48 -8.48 ...
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : NULL
+  .. ..$ : chr [1:3] "tmax" "tmin" "prec"</code></pre>
+</div>
+</div>
+</section>
+<section id="dtw-clustering" class="level2">
+<h2 class="anchored" data-anchor-id="dtw-clustering">DTW clustering</h2>
+<p>Try from 2 to 20 partitions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>stdw_clust <span class="ot">&lt;-</span> <span class="fu">tsclust</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">series =</span> mdengue, </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"partitional"</span>, <span class="at">k =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">20</span>, </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">distance =</span> <span class="st">"dtw_basic"</span>, </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">13</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>6686.778 sec elapsed</code></pre>
+</div>
+</div>
+<section id="cluster-validity-indices-cvi" class="level3">
+<h3 class="anchored" data-anchor-id="cluster-validity-indices-cvi">Cluster Validity Indices (CVI)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(stdw_clust) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"k_"</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">20</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>res_cvi <span class="ot">&lt;-</span> <span class="fu">sapply</span>(stdw_clust, cvi, <span class="at">type =</span> <span class="st">"internal"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">"k"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>Sil)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(res_cvi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-d0c84786489e5f6a1060" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-d0c84786489e5f6a1060">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19"],["k_18","k_20","k_14","k_15","k_16","k_19","k_13","k_12","k_10","k_9","k_8","k_17","k_11","k_6","k_4","k_5","k_3","k_7","k_2"],[0.8899167991242594,0.8883256217337777,0.8812617949120912,0.8741081364153503,0.8716467303761131,0.8623335128377959,0.8322571086243719,0.8245508450184768,0.8204962862307149,0.7551836336440463,0.7514998677339797,0.7001140220935165,0.6731214573069555,0.66926872449731,0.6077493765909899,0.6031895792091775,0.6002138242439938,0.4491050216073818,0.2755625483692795],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[434.9552664807586,486.4833103065831,442.6977699513168,472.61997927939,454.56529210258,442.7989232318978,446.6895443139365,436.9895262471475,513.3732420837475,383.1281591188939,371.3590304910601,209.4959993819089,296.6810504821934,391.4552012985289,444.4357381403858,399.3072898184033,320.9915981500473,163.9862703285751,475.0077245810925],[0.5761055979176207,0.531660832816422,0.6774768117780195,1.031439431698208,0.7337116439401146,0.5780778819172803,0.9002821915547996,0.6978403618602438,0.5701223412680815,1.317739735280422,0.6748252939457057,3.814827472261368,1.535695647410969,0.9590906428830577,0.9474548879550549,1.170257908805042,0.763097565480101,1.825508262688989,0.7726237919058322],[3.901584085726969,3.974267188520706,2.928726556733286,2.384108068246703,2.270243391462416,2.372379717726751,2.228508154302114,1.981309852158244,1.763013581918018,2.431345057291421,1.94146429691172,8.399628451995101,3.298466550422474,1.877201518497994,1.698511083487208,1.986870349324164,0.9053625103244987,4.763233094825942,0.7726237919058322],[0.02857064718207406,0.02733942222738792,0.02157968806530844,0.02083205299690246,0.00540440126604672,0.01714781196089576,0.0152772592565997,0.02534389725620509,0.02527282825147299,0.01838293051182212,0.03351785015149097,0.01236076158822135,0.01236076158822135,0.02454241664142717,0.02453464678558406,0.01236076158822135,0.04175960458518767,0.01236076158822135,0.103197610343426],[0.01399200230965659,0.01085951803494056,0.01841645311369793,0.01597367117145079,0.01545476280823034,0.01287023517934864,0.02008319107798054,0.02273721055902796,0.02409731443104064,0.03746698305663075,0.04332177911012791,0.03176638005230887,0.03672599276353728,0.05667575436146815,0.09061514016549076,0.06776706004379743,0.1152548722100229,0.08577919745423024,0.9848255192385753]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>k<\/th>\n      <th>Sil<\/th>\n      <th>SF<\/th>\n      <th>CH<\/th>\n      <th>DB<\/th>\n      <th>DBstar<\/th>\n      <th>D<\/th>\n      <th>COP<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>m_sel_clust <span class="ot">&lt;-</span> stdw_clust[[res_cvi[[<span class="dv">1</span>,<span class="dv">1</span>]]]]</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m_sel_clust)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_multivariate_clim_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="partitions-size" class="level3">
+<h3 class="anchored" data-anchor-id="partitions-size">Partitions size</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(m_sel_clust<span class="sc">@</span>cluster)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18 
+230   7  33  17 143  18  43  11  13  54   4  20  26  11   2  12  14  21 </code></pre>
+</div>
+</div>
+</section>
+<section id="partition-results" class="level3">
+<h3 class="anchored" data-anchor-id="partition-results">Partition results</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>coords <span class="ot">&lt;-</span> coords <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">code_muni =</span> <span class="fu">substr</span>(code_muni, <span class="dv">0</span>, <span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>m_cluster_ids <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">code_muni =</span> <span class="fu">names</span>(mdengue),</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">as.character</span>(m_sel_clust<span class="sc">@</span>cluster)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(coords, <span class="at">by =</span> <span class="st">"code_muni"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(group, name_muni) <span class="sc">%&gt;%</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(<span class="at">object =</span> m_cluster_ids, <span class="at">file =</span> <span class="st">"m_clim_cluster_ids.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>m_cluster_ids <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(group, name_muni, abbrev_state) <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(group, name_muni) <span class="sc">%&gt;%</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div class="datatables html-widget html-fill-item" id="htmlwidget-e6866f05ba65f677b76b" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-e6866f05ba65f677b76b">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130","131","132","133","134","135","136","137","138","139","140","141","142","143","144","145","146","147","148","149","150","151","152","153","154","155","156","157","158","159","160","161","162","163","164","165","166","167","168","169","170","171","172","173","174","175","176","177","178","179","180","181","182","183","184","185","186","187","188","189","190","191","192","193","194","195","196","197","198","199","200","201","202","203","204","205","206","207","208","209","210","211","212","213","214","215","216","217","218","219","220","221","222","223","224","225","226","227","228","229","230","231","232","233","234","235","236","237","238","239","240","241","242","243","244","245","246","247","248","249","250","251","252","253","254","255","256","257","258","259","260","261","262","263","264","265","266","267","268","269","270","271","272","273","274","275","276","277","278","279","280","281","282","283","284","285","286","287","288","289","290","291","292","293","294","295","296","297","298","299","300","301","302","303","304","305","306","307","308","309","310","311","312","313","314","315","316","317","318","319","320","321","322","323","324","325","326","327","328","329","330","331","332","333","334","335","336","337","338","339","340","341","342","343","344","345","346","347","348","349","350","351","352","353","354","355","356","357","358","359","360","361","362","363","364","365","366","367","368","369","370","371","372","373","374","375","376","377","378","379","380","381","382","383","384","385","386","387","388","389","390","391","392","393","394","395","396","397","398","399","400","401","402","403","404","405","406","407","408","409","410","411","412","413","414","415","416","417","418","419","420","421","422","423","424","425","426","427","428","429","430","431","432","433","434","435","436","437","438","439","440","441","442","443","444","445","446","447","448","449","450","451","452","453","454","455","456","457","458","459","460","461","462","463","464","465","466","467","468","469","470","471","472","473","474","475","476","477","478","479","480","481","482","483","484","485","486","487","488","489","490","491","492","493","494","495","496","497","498","499","500","501","502","503","504","505","506","507","508","509","510","511","512","513","514","515","516","517","518","519","520","521","522","523","524","525","526","527","528","529","530","531","532","533","534","535","536","537","538","539","540","541","542","543","544","545","546","547","548","549","550","551","552","553","554","555","556","557","558","559","560","561","562","563","564","565","566","567","568","569","570","571","572","573","574","575","576","577","578","579","580","581","582","583","584","585","586","587","588","589","590","591","592","593","594","595","596","597","598","599","600","601","602","603","604","605","606","607","608","609","610","611","612","613","614","615","616","617","618","619","620","621","622","623","624","625","626","627","628","629","630","631","632","633","634","635","636","637","638","639","640","641","642","643","644","645","646","647","648","649","650","651","652","653","654","655","656","657","658","659","660","661","662","663","664","665","666","667","668","669","670","671","672","673","674","675","676","677","678","679"],["1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","10","11","11","11","11","12","12","12","12","12","12","12","12","12","12","12","12","12","12","12","12","12","12","12","12","13","13","13","13","13","13","13","13","13","13","13","13","13","13","13","13","13","13","13","13","13","13","13","13","13","13","14","14","14","14","14","14","14","14","14","14","14","15","15","16","16","16","16","16","16","16","16","16","16","16","16","17","17","17","17","17","17","17","17","17","17","17","17","17","17","18","18","18","18","18","18","18","18","18","18","18","18","18","18","18","18","18","18","18","18","18","2","2","2","2","2","2","2","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","6","6","6","6","6","6","6","6","6","6","6","6","6","6","6","6","6","6","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","7","8","8","8","8","8","8","8","8","8","8","8","9","9","9","9","9","9","9","9","9","9","9","9","9"],["Abreu E Lima","Acaraú","Alenquer","Alta Floresta","Americana","Angra Dos Reis","Anápolis","Aquiraz","Aracati","Arapiraca","Araripina","Araruama","Araxá","Araçatuba","Arcoverde","Ariquemes","Arujá","Assis","Atibaia","Avaré","Açailândia","Açu","Bacabal","Balsas","Barbalha","Barcarena","Barra","Barra Do Garças","Barretos","Barueri","Batatais","Bauru","Bebedouro","Belford Roxo","Benevides","Betim","Bocaiúva","Boituva","Bom Despacho","Cabo De Santo Agostinho","Cabo Frio","Cabreúva","Cacoal","Caicó","Cajamar","Camaragibe","Camaçari","Campina Grande","Canindé","Capanema","Capivari","Cataguases","Catanduva","Ceará-Mirim","Cidade Ocidental","Contagem","Corumbá","Cruzeiro","Cruzeiro Do Sul","Cubatão","Curitiba","Dourados","Embu","Estância","Eunápolis","Floriano","Formosa","Franca","Francisco Morato","Frutal","Garanhuns","Grajaú","Gravatá","Guanambi","Guarabira","Guarujá","Guarulhos","Guaxupé","Horizonte","Hortolândia","Ibiporã","Igarapé-Miri","Ilhéus","Ipixuna Do Pará","Ipojuca","Itabaiana","Itabira","Itabirito","Itaboraí","Itabuna","Itacoatiara","Itapagé","Itapecerica Da Serra","Itapecuru Mirim","Itaperuna","Itapevi","Itapira","Itaquaquecetuba","Itatiba","Ituiutaba","Itumbiara","Jaboatão Dos Guararapes","Jaboticabal","Jacareí","Jaguaquara","Jaguariúna","Janaúba","Januária","Japeri","Jaraguá","Jataí","Jequié","Ji-Paraná","João Monlevade","Juazeiro","Juazeiro Do Norte","Jundiaí","Juruti","Lagarto","Lagoa Santa","Lauro De Freitas","Lavras","Limeira","Lorena","Luís Eduardo Magalhães","Macaíba","Macaúbas","Maceió","Magé","Manhuaçu","Marechal Deodoro","Maricá","Maringá","Marília","Mesquita","Mococa","Mogi Guaçu","Monte Alto","Montenegro","Montes Claros","Morada Nova","Muriaé","Nova Andradina","Nova Serrana","Novo Repartimento","Olinda","Oriximiná","Osasco","Ourinhos","Pacajus","Palmeira Dos Índios","Paracatu","Paragominas","Paraíso Do Tocantins","Parnamirim","Parnaíba","Passos","Paudalho","Paulista","Paulo Afonso","Paço Do Lumiar","Penedo","Peruíbe","Petrolina","Pindamonhangaba","Piracicaba","Pirapora","Ponta Grossa","Porto Alegre","Porto Seguro","Porto Velho","Praia Grande","Presidente Prudente","Primavera Do Leste","Quirinópolis","Resende","Ribeirão Das Neves","Rio Bonito","Rio Das Ostras","Rio Largo","Rolândia","Rondonópolis","Russas","Sabará","Santa Bárbara D'oeste","Santa Isabel","Santa Rita","Santo André","Santo Antônio De Jesus","Santo Antônio Do Descoberto","Santos","Seropédica","Serrinha","Sertãozinho","Sidrolândia","Simões Filho","Sobral","Sorocaba","Sorriso","São Bernardo Do Campo","São Carlos","São Gonçalo Do Amarante","São José","São José Dos Pinhais","São Lourenço Da Mata","São Miguel Dos Campos","São Pedro Da Aldeia","São Sebastião","São Sebastião Do Paraíso","São Vicente","Tabatinga","Tailândia","Tangará Da Serra","Teófilo Otoni","Tianguá","Timbaúba","Timon","Toledo","Trairi","Três Lagoas","Tutóia","Ubatuba","Ubá","Valença","Valparaíso De Goiás","Vilhena","Volta Redonda","Votuporanga","Várzea Grande","Zé Doca","Araras","Barra Mansa","Belo Jardim","Bertioga","Blumenau","Cabedelo","Cachoeiras De Macacu","Cambé","Campo Alegre","Caratinga","Cascavel","Chapecó","Conceição Do Coité","Coroatá","Cáceres","Divinópolis","Ferraz De Vasconcelos","Francisco Beltrão","Goiana","Itaguaí","Itu","Jandira","Jaú","Lago Da Pedra","Lagoa Da Prata","Limoeiro Do Norte","Lins","Louveira","Lucas Do Rio Verde","Maranguape","Marechal Cândido Rondon","Mauá","Maués","Mirassol","Moji Mirim","Moreno","Nova Friburgo","Novo Gama","Pirassununga","Pouso Alegre","Quixeramobim","Rio Do Sul","Salgueiro","Santa Cruz Do Capibaribe","Santa Isabel Do Pará","Saquarema","Senhor Do Bonfim","Serra Talhada","Sete Lagoas","São Caetano Do Sul","São Francisco","Tobias Barreto","Valinhos","Óbidos","Cruz Alta","Fazenda Rio Grande","Gravataí","Pelotas","Aracruz","Araranguá","Breu Branco","Cachoeiro De Itapemirim","Camaquã","Cariacica","Colatina","Dom Eliseu","Itupiranga","Içara","Nova Venécia","Ouro Preto","Rondon Do Pará","Serra","São Mateus","Valença","Viana","Vigia","Vila Velha","Vitória","Bayeux","Cajazeiras","Campo Belo","Cosmópolis","Cotia","Cruz Das Almas","Franco Da Rocha","Ijuí","Itaberaba","Itapema","Itaúna","Jaru","Joinville","Leme","Mariana","Paranavaí","Pará De Minas","Porto Feliz","Rolim De Moura","Salto","Santa Maria","Santo Estêvão","Unaí","Viana","Vinhedo","Votorantim","Alfenas","Botucatu","Campo Formoso","Carazinho","Cerquilho","Ibiúna","Ipirá","Lajeado","Manicoré","Novo Hamburgo","Pedro Leopoldo","Parobé","Tramandaí","Bagé","Campo Bom","Canoinhas","Capão Da Canoa","Castro","Prudentópolis","Sant'ana Do Livramento","São Gabriel","União Da Vitória","Uruguaiana","Vacaria","Viseu","Barbacena","Bezerros","Campo Mourão","Caçapava","Codó","Cristalina","Itamaraju","Itapetinga","Nova Odessa","Pinhais","São Roque","Taquaritinga","Teixeira De Freitas","Telêmaco Borba","Alvorada","Barreirinhas","Bento Gonçalves","Biguaçu","Brejo Da Madre De Deus","Buíque","Cachoeira Do Sul","Caetité","Campos Do Jordão","Embu-Guaçu","Erechim","Guarapuava","Itapeva","Mafra","Pato Branco","Piedade","Sapé","São Leopoldo","Taquara","Vargem Grande Paulista","Videira","Farroupilha","Indaial","Laranjal Do Jari","Navegantes","Portel","Santo Amaro","Ulianópolis","Apucarana","Araucária","Barra Do Piraí","Buriticupu","Cachoeirinha","Caieiras","Candeias","Carapicuíba","Colombo","Congonhas","Coruripe","Delmiro Gouveia","Florianópolis","Gaspar","Ibirité","Indaiatuba","Inhumas","Itajaí","Itanhaém","Mongaguá","Monte Mor","Nossa Senhora Do Socorro","Passo Fundo","Pesqueira","Rio Grande Da Serra","Santa Rosa","Surubim","São Bento Do Una","São José Do Rio Pardo","Tomé-Açu","Três Rios","Umuarama","Várzea Paulista","Araci","Artur Nogueira","Canoas","Catu","Concórdia","Escada","Esmeraldas","Formiga","Mairiporã","Paranaguá","Pinheiro","Poços De Caldas","Ribeirão Pires","São Miguel Do Guamá","Tatuí","Três Pontas","União Dos Palmares","Abaetetuba","Acará","Acopiara","Alagoinhas","Altamira","Amparo","Ananindeua","Andradina","Aparecida De Goiânia","Aracaju","Araguari","Araguaína","Araraquara","Barra Do Corda","Barreiras","Belo Horizonte","Belém","Boa Viagem","Boa Vista","Bom Jesus Da Lapa","Bragança","Brasília","Brejo Santo","Brumado","Caldas Novas","Cametá","Campinas","Campo Grande","Campos Dos Goytacazes","Carpina","Cascavel","Castanhal","Catalão","Caucaia","Caxias","Chapadinha","Coari","Coronel Fabriciano","Crateús","Crato","Cuiabá","Curvelo","Diadema","Duque De Caxias","Feira De Santana","Fortaleza","Foz Do Iguaçu","Goianésia","Goiânia","Governador Valadares","Granja","Guarapari","Gurupi","Icó","Igarassu","Iguatu","Imperatriz","Ipatinga","Irecê","Itaituba","Itapipoca","Jacobina","Jacundá","João Pessoa","Juiz De Fora","Limoeiro","Linhares","Londrina","Luziânia","Macapá","Macaé","Manacapuru","Manaus","Marabá","Maracanaú","Marituba","Mineiros","Mogi Das Cruzes","Moju","Monte Alegre","Mossoró","Natal","Naviraí","Nilópolis","Niterói","Nova Iguaçu","Nova Lima","Olímpia","Pacatuba","Palmas","Parauapebas","Parintins","Patos","Patos De Minas","Paulínia","Petrópolis","Piripiri","Ponta Porã","Pontal","Ponte Nova","Porto Nacional","Quixadá","Recife","Redenção","Ribeira Do Pombal","Ribeirão Preto","Rio Branco","Rio Claro","Rio De Janeiro","Rio Verde","Rurópolis","Salvador","Santa Inês","Santa Luzia","Santana","Santarém","Senador Canedo","Sinop","Sousa","Sumaré","São Félix Do Xingu","São Gonçalo","São Joaquim Da Barra","São José De Ribamar","São José Do Rio Preto","São José Dos Campos","São João De Meriti","São Luís","São Paulo","Taubaté","Tauá","Tefé","Teresina","Timóteo","Trindade","Tucuruí","Uberaba","Uberlândia","Vargem Grande","Varginha","Vespasiano","Vitória Da Conquista","Vitória De Santo Antão","Alegrete","Camboriú","Campo Largo","Capitão Poço","Caçador","Esteio","Guapimirim","Irati","Itararé","Lages","Palmas","Santa Cruz Do Sul","Santo Ângelo","Sapiranga","Sapucaia Do Sul","São Bento Do Sul","Venâncio Aires","Xanxerê","Almirante Tamandaré","Arapongas","Balneário Camboriú","Beberibe","Birigui","Bragança Paulista","Brusque","Camocim","Caraguatatuba","Caruaru","Cianorte","Conselheiro Lafaiete","Eusébio","Fernandópolis","Guaratinguetá","Guaíba","Humaitá","Ibitinga","Itajubá","Jaraguá Do Sul","Leopoldina","Matão","Ouricuri","Palhoça","Palmares","Paracambi","Patrocínio","Planaltina","Porto Ferreira","Poá","Queimados","Santa Luzia","Santana De Parnaíba","Sarandi","Suzano","Taboão Da Serra","Teresópolis","Três Corações","Tucano","Tupã","Viamão","Viçosa","Águas Lindas De Goiás","Caxias Do Sul","Criciúma","Estância Velha","Itapetininga","Picos","Rio Grande","Santana Do Araguaia","São Cristóvão","São João Da Boa Vista","São João Del Rei","Viçosa Do Ceará","Breves","Campo Limpo Paulista","Casa Nova","Dias D'ávila","Euclides Da Cunha","Itupeva","Lençóis Paulista","Penápolis","Piraquara","Registro","São Borja","São Francisco Do Sul","Tubarão"],["PE","CE","PA","MT","SP","RJ","GO","CE","CE","AL","PE","RJ","MG","SP","PE","RO","SP","SP","SP","SP","MA","RN","MA","MA","CE","PA","BA","MT","SP","SP","SP","SP","SP","RJ","PA","MG","MG","SP","MG","PE","RJ","SP","RO","RN","SP","PE","BA","PB","CE","PA","SP","MG","SP","RN","GO","MG","MS","SP","AC","SP","PR","MS","SP","SE","BA","PI","GO","SP","SP","MG","PE","MA","PE","BA","PB","SP","SP","MG","CE","SP","PR","PA","BA","PA","PE","SE","MG","MG","RJ","BA","AM","CE","SP","MA","RJ","SP","SP","SP","SP","MG","GO","PE","SP","SP","BA","SP","MG","MG","RJ","GO","GO","BA","RO","MG","BA","CE","SP","PA","SE","MG","BA","MG","SP","SP","BA","RN","BA","AL","RJ","MG","AL","RJ","PR","SP","RJ","SP","SP","SP","RS","MG","CE","MG","MS","MG","PA","PE","PA","SP","SP","CE","AL","MG","PA","TO","RN","PI","MG","PE","PE","BA","MA","AL","SP","PE","SP","SP","MG","PR","RS","BA","RO","SP","SP","MT","GO","RJ","MG","RJ","RJ","AL","PR","MT","CE","MG","SP","SP","PB","SP","BA","GO","SP","RJ","BA","SP","MS","BA","CE","SP","MT","SP","SP","RN","SC","PR","PE","AL","RJ","SP","MG","SP","AM","PA","MT","MG","CE","PE","MA","PR","CE","MS","MA","SP","MG","RJ","GO","RO","RJ","SP","MT","MA","SP","RJ","PE","SP","SC","PB","RJ","PR","AL","MG","PR","SC","BA","MA","MT","MG","SP","PR","PE","RJ","SP","SP","SP","MA","MG","CE","SP","SP","MT","CE","PR","SP","AM","SP","SP","PE","RJ","GO","SP","MG","CE","SC","PE","PE","PA","RJ","BA","PE","MG","SP","MG","SE","SP","PA","RS","PR","RS","RS","ES","SC","PA","ES","RS","ES","ES","PA","PA","SC","ES","MG","PA","ES","ES","BA","ES","PA","ES","ES","PB","PB","MG","SP","SP","BA","SP","RS","BA","SC","MG","RO","SC","SP","MG","PR","MG","SP","RO","SP","RS","BA","MG","MA","SP","SP","MG","SP","BA","RS","SP","SP","BA","RS","AM","RS","MG","RS","RS","RS","RS","SC","RS","PR","PR","RS","RS","PR","RS","RS","PA","MG","PE","PR","SP","MA","GO","BA","BA","SP","PR","SP","SP","BA","PR","RS","MA","RS","SC","PE","PE","RS","BA","SP","SP","RS","PR","SP","SC","PR","SP","PB","RS","RS","SP","SC","RS","SC","AP","SC","PA","BA","PA","PR","PR","RJ","MA","RS","SP","BA","SP","PR","MG","AL","AL","SC","SC","MG","SP","GO","SC","SP","SP","SP","SE","RS","PE","SP","RS","PE","PE","SP","PA","RJ","PR","SP","BA","SP","RS","BA","SC","PE","MG","MG","SP","PR","MA","MG","SP","PA","SP","MG","AL","PA","PA","CE","BA","PA","SP","PA","SP","GO","SE","MG","TO","SP","MA","BA","MG","PA","CE","RR","BA","PA","DF","CE","BA","GO","PA","SP","MS","RJ","PE","CE","PA","GO","CE","MA","MA","AM","MG","CE","CE","MT","MG","SP","RJ","BA","CE","PR","GO","GO","MG","CE","ES","TO","CE","PE","CE","MA","MG","BA","PA","CE","BA","PA","PB","MG","PE","ES","PR","GO","AP","RJ","AM","AM","PA","CE","PA","GO","SP","PA","PA","RN","RN","MS","RJ","RJ","RJ","MG","SP","CE","TO","PA","AM","PB","MG","SP","RJ","PI","MS","SP","MG","TO","CE","PE","PA","BA","SP","AC","SP","RJ","GO","PA","BA","MA","MG","AP","PA","GO","MT","PB","SP","PA","RJ","SP","MA","SP","SP","RJ","MA","SP","SP","CE","AM","PI","MG","GO","PA","MG","MG","MA","MG","MG","BA","PE","RS","SC","PR","PA","SC","RS","RJ","PR","SP","SC","PR","RS","RS","RS","RS","SC","RS","SC","PR","PR","SC","CE","SP","SP","SC","CE","SP","PE","PR","MG","CE","SP","SP","RS","AM","SP","MG","SC","MG","SP","PE","SC","PE","RJ","MG","GO","SP","SP","RJ","MA","SP","PR","SP","SP","RJ","MG","BA","SP","RS","MG","GO","RS","SC","RS","SP","PI","RS","PA","SE","SP","MG","CE","PA","SP","BA","BA","BA","SP","SP","SP","PR","SP","RS","SC","SC"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>group<\/th>\n      <th>name_muni<\/th>\n      <th>abbrev_state<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> uf_sf, <span class="at">fill =</span> <span class="st">"lightgray"</span>, <span class="at">color =</span> <span class="st">"grey20"</span>, <span class="at">size=</span>.<span class="dv">15</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> m_cluster_ids, <span class="fu">aes</span>(<span class="at">color =</span> group), <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="cluster_multivariate_clim_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="session-info" class="level2">
+<h2 class="anchored" data-anchor-id="session-info">Session info</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.3.2 (2023-10-31)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 22.04.3 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0 
+LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0
+
+Random number generation:
+ RNG:     L'Ecuyer-CMRG 
+ Normal:  Inversion 
+ Sample:  Rejection 
+ 
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_CA.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_CA.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_CA.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_CA.UTF-8 LC_IDENTIFICATION=C       
+
+time zone: Europe/Paris
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] DT_0.30          sf_1.0-14        tictoc_1.2       kableExtra_1.3.4
+ [5] dtwclust_5.5.12  dtw_1.23-1       proxy_0.4-27     timetk_2.9.0    
+ [9] arrow_14.0.0     lubridate_1.9.3  forcats_1.0.0    stringr_1.5.1   
+[13] dplyr_1.1.4      purrr_1.0.2      readr_2.1.4      tidyr_1.3.0     
+[17] tibble_3.2.1     ggplot2_3.4.4    tidyverse_2.0.0 
+
+loaded via a namespace (and not attached):
+  [1] rstudioapi_0.15.0   jsonlite_1.8.7      wk_0.9.0           
+  [4] magrittr_2.0.3      modeltools_0.2-23   farver_2.1.1       
+  [7] rmarkdown_2.25      vctrs_0.6.4         webshot_0.5.5      
+ [10] htmltools_0.5.7     dials_1.2.0         curl_5.1.0         
+ [13] s2_1.1.4            sass_0.4.7          parallelly_1.36.0  
+ [16] KernSmooth_2.23-22  bslib_0.6.0         htmlwidgets_1.6.3  
+ [19] plyr_1.8.9          cachem_1.0.8        zoo_1.8-12         
+ [22] mime_0.12           lifecycle_1.0.4     iterators_1.0.14   
+ [25] pkgconfig_2.0.3     Matrix_1.6-2        R6_2.5.1           
+ [28] fastmap_1.1.1       future_1.33.0       shiny_1.8.0        
+ [31] tune_1.1.2          clue_0.3-65         digest_0.6.33      
+ [34] colorspace_2.1-0    furrr_0.3.1         RSpectra_0.16-1    
+ [37] crosstalk_1.2.0     labeling_0.4.3      fansi_1.0.5        
+ [40] yardstick_1.2.0     timechange_0.2.0    httr_1.4.7         
+ [43] compiler_4.3.2      bit64_4.0.5         withr_2.5.2        
+ [46] DBI_1.1.3           MASS_7.3-60         lava_1.7.3         
+ [49] classInt_0.4-10     tools_4.3.2         units_0.8-4        
+ [52] httpuv_1.6.12       flexclust_1.4-1     future.apply_1.11.0
+ [55] nnet_7.3-19         glue_1.6.2          promises_1.2.1     
+ [58] grid_4.3.2          cluster_2.1.4       reshape2_1.4.4     
+ [61] generics_0.1.3      recipes_1.0.8       gtable_0.3.4       
+ [64] tzdb_0.4.0          class_7.3-22        data.table_1.14.8  
+ [67] hms_1.1.3           rsample_1.2.0       xml2_1.3.5         
+ [70] utf8_1.2.4          ggrepel_0.9.4       geobr_1.8.1        
+ [73] foreach_1.5.2       pillar_1.9.0        later_1.3.1        
+ [76] splines_4.3.2       lhs_1.1.6           lattice_0.22-5     
+ [79] survival_3.5-7      bit_4.0.5           tidyselect_1.2.0   
+ [82] knitr_1.45          svglite_2.1.2       stats4_4.3.2       
+ [85] xfun_0.41           hardhat_1.3.0       timeDate_4022.108  
+ [88] stringi_1.8.1       DiceDesign_1.9      yaml_2.3.7         
+ [91] workflows_1.1.3     evaluate_0.23       codetools_0.2-19   
+ [94] cli_3.6.1           RcppParallel_5.1.7  rpart_4.1.21       
+ [97] xtable_1.8-4        systemfonts_1.0.5   jquerylib_0.1.4    
+[100] munsell_0.5.0       Rcpp_1.0.11         globals_0.16.2     
+[103] parallel_4.3.2      ellipsis_0.3.2      gower_1.0.1        
+[106] assertthat_0.2.1    parsnip_1.1.1       GPfit_1.0-8        
+[109] listenv_0.9.0       viridisLite_0.4.2   ipred_0.9-14       
+[112] scales_1.2.1        xts_0.13.1          prodlim_2023.08.28 
+[115] e1071_1.7-13        rlang_1.1.2         rvest_1.0.3        
+[118] shinyjs_2.1.0      </code></pre>
+</div>
+</div>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../dengue-cluster/cluster_multivariate_all.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Cases and climate variables multivariate clustering</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../dengue-cluster/cluster_mun_year.html" class="pagination-link">
+        <span class="nav-page-text">Yearly time series</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Website made with <a href="https://quarto.org/">Quarto</a>, by Raphael Saldanha.</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">Inria | LNCC | PCDaS</div>
+  </div>
+</footer>
+
+
+
+</body></html>
