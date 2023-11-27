@@ -88,9 +88,11 @@ website:
               - section: "Dengue time series modelling"
                 contents:
                     - dengue-model/dengue_ts_overview.qmd
-                    - dengue-model/dengue_ts_global_subset.qmd
-                    - dengue-model/dengue_ts_global_subset_tsfeatures.qmd
-                    - dengue-model/dengue_ts_global_subset_tsfeatures_sparse.qmd
+                    - section: "Univariate  models"
+                      contents:
+                          - dengue-model/dengue_ts_global_subset.qmd
+                          - dengue-model/dengue_ts_global_subset_tsfeatures.qmd
+                          - dengue-model/dengue_ts_global_subset_tsfeatures_sparse.qmd
               
         - software.qmd
         - publications.qmd
