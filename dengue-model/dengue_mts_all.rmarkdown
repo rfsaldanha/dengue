@@ -6,6 +6,8 @@ bibliography: references.bib
 ---
 
 
+
+
 This notebooks aims to reproduce the methodology of the paper submitted to the SBD2023 conference, implementing the global and subset modelling with a multivariate approach.
 
 This methodology aims to compare the performance of models trained with data from all municipalities time-series (*global models*) and models trained with subset of municipalities time-series (*subset models*).
@@ -13,6 +15,8 @@ This methodology aims to compare the performance of models trained with data fro
 Those subsets were created by a clustering algorithm considering the cases and climate time-series.
 
 ## Packages
+
+
 
 
 ```{r}
@@ -34,7 +38,11 @@ source("../functions.R")
 ```
 
 
+
+
 ## Load data
+
+
 
 
 ```{r}
@@ -44,6 +52,8 @@ tdengue <- read_parquet(file = data_dir("bundled_data/tdengue.parquet")) %>%
 ```
 
 
+
+
 ::: callout-note
 -   NA values are created when the lagged variables were calculated. The rows containing those NA values are dropped due machine learning regressors constraints.
 
@@ -51,14 +61,20 @@ tdengue <- read_parquet(file = data_dir("bundled_data/tdengue.parquet")) %>%
 :::
 
 
+
+
 ```{r}
 glimpse(tdengue)
 ```
 
 
+
+
 ## Clustering
 
 Here we load the results from this [clustering notebook](../dengue-cluster/cluster_multivariate_clim.qmd).
+
+
 
 
 ```{r}
@@ -70,7 +86,11 @@ table(clust_res$group)
 ```
 
 
+
+
 Join clustering results with bundled dataset.
+
+
 
 
 ```{r}
@@ -79,7 +99,11 @@ tdengue <- left_join(tdengue, clust_res, by = "mun") %>%
 ```
 
 
+
+
 Check for NAs.
+
+
 
 
 ```{r}
@@ -87,11 +111,15 @@ table(is.na(tdengue$group))
 ```
 
 
+
+
 ## Train and test split
 
 Split the data into training and testing. The function `time_series_split` handles the time series, not shuffling them, and considering the panel data format, as depicted in the message about overlapping timestamps detected.
 
 The last two years data will be used as the training set.
+
+
 
 
 ```{r}
@@ -106,9 +134,13 @@ tdengue_split
 ```
 
 
+
+
 #### K-folds
 
 The training set will be split into k folds.
+
+
 
 
 ```{r}
@@ -117,14 +149,20 @@ tdengue_split_folds <- training(tdengue_split) %>%
 ```
 
 
+
+
 ## Recipes
 
 The global and subset models training specification are called recipes. The procedure bellow creates a list of those recipes.
 
 
+
+
 ```{r}
 recipes_list <- list()
 ```
+
+
 
 
 ### Global
@@ -134,6 +172,8 @@ The global training recipe uses data from all municipalities for training the mo
 -   The date and group variables are removed prior training
 
 -   The municipality identification variable is treated as an Id variable, taking no place as a predictor in the training process
+
+
 
 
 ```{r}
@@ -147,6 +187,8 @@ rm(recipe_global)
 ```
 
 
+
+
 ### Groups
 
 -   For each group created by the clustering process, a specific training recipe will be created. For this, the first step is to filter rows from the training set, keeping only the rows belonging to the group in the loop
@@ -154,6 +196,8 @@ rm(recipe_global)
 -   The date and group variables are removed prior to training
 
 -   The municipality identification variable is treated as an Id variable, taking no place as a predictor in the training process
+
+
 
 
 ```{r}
@@ -173,11 +217,15 @@ for(g in unique(tdengue$group)){
 ```
 
 
+
+
 ## Regressors specification
 
 ### Random forest
 
 A Random Forest specification using the `ranger` engine. The `trees` and `min_n` hyperparameters will be tuned.
+
+
 
 
 ```{r}
@@ -190,9 +238,13 @@ rf_spec <- rand_forest(
 ```
 
 
+
+
 ### Workflow set
 
 This step creates a workflow set, combining the training recipes and regressors specifications.
+
+
 
 
 ```{r}
@@ -204,9 +256,13 @@ all_workflows <- workflow_set(
 ```
 
 
+
+
 ## Tune
 
 This step tunes the training hyperparameters of each workflow.
+
+
 
 
 ```{r}
@@ -227,6 +283,8 @@ toc()
 ```
 
 
+
+
 ## Fit
 
 Each workflow will be trained using the tuned hyperparameters, considering the RMSE metric as reference.
@@ -234,6 +292,8 @@ Each workflow will be trained using the tuned hyperparameters, considering the R
 This procedure creates a list of trained models, containing the fit results and a list of the municipalities used on the training of each workflow.
 
 The global workflow is trained with data from all municipalities and the subsets workflows are trained using the respective municipalities list given by the cluster algorithm.
+
+
 
 
 ```{r}
@@ -270,6 +330,8 @@ toc()
 ```
 
 
+
+
 ## Accuracy
 
 After training each workflow, the accuracy of the models are obtained applying the fitted models on the testing set.
@@ -277,6 +339,8 @@ After training each workflow, the accuracy of the models are obtained applying t
 For the global model, all municipalities are using for testing. For the subsets models, only data from the subset's municipalities are considered for testing.
 
 The RMSE metric is obtained for each workflow and municipality.
+
+
 
 
 ```{r}
@@ -306,7 +370,11 @@ for(t in 1:length(trained_models)){
 ```
 
 
+
+
 This plot presents the RMSE distribution across the workflows.
+
+
 
 
 ```{r}
@@ -315,7 +383,11 @@ ggplot(data = models_accuracy, aes(x = .model_id, y = rmse, fill = .model_desc))
 ```
 
 
+
+
 ### Breakdown
+
+
 
 
 ```{r}
@@ -368,7 +440,11 @@ models_accuracy %>%
 ```
 
 
+
+
 ## Session info
+
+
 
 
 ```{r}
@@ -376,9 +452,13 @@ sessionInfo()
 ```
 
 
+
+
 ## Useful links
 
 -   <https://business-science.github.io/modeltime/articles/modeling-panel-data.html>
 
 -   <https://blog.bguarisma.com/series/time-series-forecasting>
+
+
 
