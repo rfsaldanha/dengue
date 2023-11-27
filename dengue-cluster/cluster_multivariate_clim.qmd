@@ -66,13 +66,13 @@ glimpse(mdengue[1:3])
 
 ## DTW clustering
 
-Try from 3 to 20 partitions.
+Try from 2 to 5 partitions.
 
 ```{r}
 tic()
 stdw_clust <- tsclust(
   series = mdengue, 
-  type = "partitional", k = 3:20, 
+  type = "partitional", k = 2:5, 
   distance = "dtw_basic", 
   seed = 13
 )
@@ -82,7 +82,7 @@ toc()
 ### Cluster Validity Indices (CVI)
 
 ```{r}
-names(stdw_clust) <- paste0("k_", 3:20)
+names(stdw_clust) <- paste0("k_", 2:5)
 res_cvi <- sapply(stdw_clust, cvi, type = "internal") %>% 
   t() %>%
   as_tibble(rownames = "k") %>%
