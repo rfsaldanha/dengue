@@ -106,15 +106,15 @@ gtag('js', new Date());
 gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </script>
 
-<script src="../site_libs/htmlwidgets-1.6.3/htmlwidgets.js"></script>
+<script src="../site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
 <link href="../site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
-<script src="../site_libs/datatables-binding-0.30/datatables.js"></script>
+<script src="../site_libs/datatables-binding-0.28/datatables.js"></script>
 <script src="../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <link href="../site_libs/dt-core-1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
 <link href="../site_libs/dt-core-1.13.4/css/jquery.dataTables.extra.css" rel="stylesheet">
 <script src="../site_libs/dt-core-1.13.4/js/jquery.dataTables.min.js"></script>
-<link href="../site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
-<script src="../site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+<link href="../site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
+<script src="../site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
 
 
 <link rel="stylesheet" href="../styles.css">
@@ -591,7 +591,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 27, 2023 | 16:11:25 +01:00</p>
+      <p class="date">November 27, 2023 | 12:49:35 -03:00</p>
     </div>
   </div>
   
@@ -627,7 +627,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(tdengue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 163326      5</code></pre>
+<pre><code>[1] 331980      5</code></pre>
 </div>
 </div>
 <p>Data for maps.</p>
@@ -665,15 +665,15 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(mdengue[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 3
- $ 110002: num [1:501, 1:3] -13.182 0.285 0.37 0.491 0.697 ...
+ $ 110002: num [1:1001, 1:3] -14.518 0.299 0.299 0.393 0.393 ...
   ..- attr(*, "dimnames")=List of 2
   .. ..$ : NULL
   .. ..$ : chr [1:3] "tmax" "tmin" "prec"
- $ 110012: num [1:501, 1:3] -13.182 0.285 0.37 0.491 0.697 ...
+ $ 110012: num [1:1001, 1:3] -14.518 0.299 0.299 0.393 0.393 ...
   ..- attr(*, "dimnames")=List of 2
   .. ..$ : NULL
   .. ..$ : chr [1:3] "tmax" "tmin" "prec"
- $ 110020: num [1:501, 1:3] -13.182 0.285 0.37 0.491 0.697 ...
+ $ 110020: num [1:1001, 1:3] -14.518 0.299 0.299 0.393 0.393 ...
   ..- attr(*, "dimnames")=List of 2
   .. ..$ : NULL
   .. ..$ : chr [1:3] "tmax" "tmin" "prec"</code></pre>
@@ -693,7 +693,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>13.215 sec elapsed</code></pre>
+<pre><code>30.191 sec elapsed</code></pre>
 </div>
 </div>
 <section id="cluster-validity-indices-cvi" class="level3">
@@ -708,8 +708,8 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(res_cvi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-f489769a3a6cb3e4f808" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-f489769a3a6cb3e4f808">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["k_5","k_4","k_3","k_2"],[0.7920313105315638,0.733853099899494,0.7077865071555971,0.628178977575385],[0,0,0,0],[293.9772254056423,263.6237969108163,298.0692120859704,179.3942061236711],[0.7894093666880725,0.916318538056945,0.7792793901196049,1.164778107351365],[2.010125826864279,1.809278692820609,1.120676141544393,1.164778107351365],[0.03706283855497067,0.07158738327275282,0.07359674946274285,0.07359674946274285],[0.04426002655151667,0.06059642550676951,0.07044049309223617,0.1252298204137956]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>k<\/th>\n      <th>Sil<\/th>\n      <th>SF<\/th>\n      <th>CH<\/th>\n      <th>DB<\/th>\n      <th>DBstar<\/th>\n      <th>D<\/th>\n      <th>COP<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-9a3a6cb3e4f80868c585" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-9a3a6cb3e4f80868c585">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["k_5","k_4","k_3","k_2"],[0.7956875850879431,0.7357453295535062,0.6800903183678049,0.3203225404032219],[0,0,0,0],[291.6570259822248,251.5579911988959,273.2771607470059,111.1776401033615],[0.8195090468598127,0.614826687589783,0.7726932710468508,1.223686795681302],[2.320491606044528,2.394516331840521,1.535842604949903,1.223686795681302],[0.06200030226193576,0.01737168528509853,0.06998465172731703,0.1181275232975209],[0.04094891521778685,0.05840338785997486,0.2087162503824385,0.8672374888311931]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>k<\/th>\n      <th>Sil<\/th>\n      <th>SF<\/th>\n      <th>CH<\/th>\n      <th>DB<\/th>\n      <th>DBstar<\/th>\n      <th>D<\/th>\n      <th>COP<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4,5,6,7,8]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="cell">
@@ -728,7 +728,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div class="cell-output cell-output-stdout">
 <pre><code>
   1   2   3   4   5 
- 95 126  42  36  27 </code></pre>
+127  97  25  41  43 </code></pre>
 </div>
 </div>
 </section>
@@ -758,8 +758,8 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
-<div class="datatables html-widget html-fill-item" id="htmlwidget-68c585aa1003e105a8d8" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-68c585aa1003e105a8d8">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130","131","132","133","134","135","136","137","138","139","140","141","142","143","144","145","146","147","148","149","150","151","152","153","154","155","156","157","158","159","160","161","162","163","164","165","166","167","168","169","170","171","172","173","174","175","176","177","178","179","180","181","182","183","184","185","186","187","188","189","190","191","192","193","194","195","196","197","198","199","200","201","202","203","204","205","206","207","208","209","210","211","212","213","214","215","216","217","218","219","220","221","222","223","224","225","226","227","228","229","230","231","232","233","234","235","236","237","238","239","240","241","242","243","244","245","246","247","248","249","250","251","252","253","254","255","256","257","258","259","260","261","262","263","264","265","266","267","268","269","270","271","272","273","274","275","276","277","278","279","280","281","282","283","284","285","286","287","288","289","290","291","292","293","294","295","296","297","298","299","300","301","302","303","304","305","306","307","308","309","310","311","312","313","314","315","316","317","318","319","320","321","322","323","324","325","326"],["1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5"],["Abaetetuba","Alagoinhas","Altamira","Ananindeua","Aparecida De Goiânia","Aracaju","Araguari","Araguaína","Araraquara","Barreiras","Belo Horizonte","Belém","Boa Vista","Bragança","Brasília","Cametá","Campinas","Campo Grande","Campos Dos Goytacazes","Castanhal","Catalão","Caucaia","Caxias","Coronel Fabriciano","Crato","Cuiabá","Diadema","Duque De Caxias","Feira De Santana","Fortaleza","Foz Do Iguaçu","Goiânia","Governador Valadares","Guarapari","Igarassu","Iguatu","Imperatriz","Ipatinga","Itaituba","Itapipoca","João Pessoa","Juiz De Fora","Linhares","Londrina","Luziânia","Macapá","Macaé","Manaus","Marabá","Maracanaú","Marituba","Mogi Das Cruzes","Mossoró","Natal","Nilópolis","Niterói","Nova Iguaçu","Palmas","Parauapebas","Parintins","Patos","Patos De Minas","Paulínia","Petrópolis","Recife","Ribeirão Preto","Rio Branco","Rio Claro","Rio De Janeiro","Rio Verde","Salvador","Santa Luzia","Santana","Santarém","Senador Canedo","Sinop","Sumaré","São Félix Do Xingu","São Gonçalo","São José De Ribamar","São José Do Rio Preto","São José Dos Campos","São João De Meriti","São Luís","São Paulo","Taubaté","Teresina","Trindade","Tucuruí","Uberaba","Uberlândia","Varginha","Vespasiano","Vitória Da Conquista","Vitória De Santo Antão","Abreu E Lima","Americana","Angra Dos Reis","Anápolis","Arapiraca","Araruama","Araxá","Araçatuba","Ariquemes","Assis","Atibaia","Açailândia","Bacabal","Barcarena","Barretos","Barueri","Bauru","Belford Roxo","Betim","Cabo De Santo Agostinho","Cabo Frio","Camaragibe","Camaçari","Campina Grande","Catanduva","Contagem","Corumbá","Cubatão","Curitiba","Dourados","Embu","Eunápolis","Formosa","Franca","Francisco Morato","Garanhuns","Guarujá","Guarulhos","Hortolândia","Ilhéus","Itabira","Itaboraí","Itabuna","Itacoatiara","Itapecerica Da Serra","Itaperuna","Itapevi","Itaquaquecetuba","Itatiba","Ituiutaba","Itumbiara","Jaboatão Dos Guararapes","Jacareí","Japeri","Jataí","Jequié","Ji-Paraná","Juazeiro","Juazeiro Do Norte","Jundiaí","Lagarto","Lauro De Freitas","Lavras","Limeira","Maceió","Magé","Maricá","Maringá","Marília","Mesquita","Mogi Guaçu","Montes Claros","Muriaé","Nova Serrana","Olinda","Osasco","Ourinhos","Paragominas","Parnamirim","Parnaíba","Passos","Paulista","Paulo Afonso","Paço Do Lumiar","Petrolina","Pindamonhangaba","Piracicaba","Ponta Grossa","Porto Alegre","Porto Seguro","Porto Velho","Praia Grande","Presidente Prudente","Resende","Ribeirão Das Neves","Rio Das Ostras","Rondonópolis","Sabará","Santa Bárbara D'oeste","Santa Rita","Santo André","Santo Antônio De Jesus","Santos","Sertãozinho","Simões Filho","Sobral","Sorocaba","São Bernardo Do Campo","São Carlos","São Gonçalo Do Amarante","São José","São José Dos Pinhais","São Lourenço Da Mata","São Pedro Da Aldeia","São Vicente","Tailândia","Tangará Da Serra","Teófilo Otoni","Timon","Toledo","Três Lagoas","Ubá","Valparaíso De Goiás","Vilhena","Volta Redonda","Várzea Grande","Almirante Tamandaré","Arapongas","Araras","Bagé","Balneário Camboriú","Barra Mansa","Birigui","Blumenau","Bragança Paulista","Brusque","Cambé","Caraguatatuba","Caruaru","Cascavel","Chapecó","Conselheiro Lafaiete","Divinópolis","Ferraz De Vasconcelos","Guaratinguetá","Itaguaí","Itu","Jandira","Jaraguá Do Sul","Jaú","Maranguape","Mauá","Nova Friburgo","Novo Gama","Palhoça","Pouso Alegre","Poá","Queimados","Santa Cruz Do Capibaribe","Santana De Parnaíba","Sete Lagoas","Suzano","São Caetano Do Sul","Taboão Da Serra","Teresópolis","Valinhos","Viamão","Águas Lindas De Goiás","Apucarana","Araucária","Barbacena","Barra Do Piraí","Botucatu","Cachoeirinha","Caieiras","Carapicuíba","Caxias Do Sul","Codó","Colombo","Cotia","Criciúma","Florianópolis","Franco Da Rocha","Ibirité","Indaiatuba","Itajaí","Itanhaém","Itapetininga","Joinville","Leme","Nossa Senhora Do Socorro","Novo Hamburgo","Passo Fundo","Pinhais","Poços De Caldas","Ribeirão Pires","Rio Grande","Salto","Santa Maria","Teixeira De Freitas","Umuarama","Uruguaiana","Votorantim","Várzea Paulista","Alvorada","Aracruz","Bento Gonçalves","Breves","Cachoeiro De Itapemirim","Campo Largo","Canoas","Cariacica","Colatina","Erechim","Fazenda Rio Grande","Gravataí","Guarapuava","Lages","Mairiporã","Paranaguá","Pelotas","Piraquara","Santa Cruz Do Sul","Sapucaia Do Sul","Serra","São Leopoldo","São Mateus","Tatuí","Tubarão","Vila Velha","Vitória"],["PA","BA","PA","PA","GO","SE","MG","TO","SP","BA","MG","PA","RR","PA","DF","PA","SP","MS","RJ","PA","GO","CE","MA","MG","CE","MT","SP","RJ","BA","CE","PR","GO","MG","ES","PE","CE","MA","MG","PA","CE","PB","MG","ES","PR","GO","AP","RJ","AM","PA","CE","PA","SP","RN","RN","RJ","RJ","RJ","TO","PA","AM","PB","MG","SP","RJ","PE","SP","AC","SP","RJ","GO","BA","MG","AP","PA","GO","MT","SP","PA","RJ","MA","SP","SP","RJ","MA","SP","SP","PI","GO","PA","MG","MG","MG","MG","BA","PE","PE","SP","RJ","GO","AL","RJ","MG","SP","RO","SP","SP","MA","MA","PA","SP","SP","SP","RJ","MG","PE","RJ","PE","BA","PB","SP","MG","MS","SP","PR","MS","SP","BA","GO","SP","SP","PE","SP","SP","SP","BA","MG","RJ","BA","AM","SP","RJ","SP","SP","SP","MG","GO","PE","SP","RJ","GO","BA","RO","BA","CE","SP","SE","BA","MG","SP","AL","RJ","RJ","PR","SP","RJ","SP","MG","MG","MG","PE","SP","SP","PA","RN","PI","MG","PE","BA","MA","PE","SP","SP","PR","RS","BA","RO","SP","SP","RJ","MG","RJ","MT","MG","SP","PB","SP","BA","SP","SP","BA","CE","SP","SP","SP","RN","SC","PR","PE","RJ","SP","PA","MT","MG","MA","PR","MS","MG","GO","RO","RJ","MT","PR","PR","SP","RS","SC","RJ","SP","SC","SP","SC","PR","SP","PE","PR","SC","MG","MG","SP","SP","RJ","SP","SP","SC","SP","CE","SP","RJ","GO","SC","MG","SP","RJ","PE","SP","MG","SP","SP","SP","RJ","SP","RS","GO","PR","PR","MG","RJ","SP","RS","SP","SP","RS","MA","PR","SP","SC","SC","SP","MG","SP","SC","SP","SP","SC","SP","SE","RS","RS","PR","MG","SP","RS","SP","RS","BA","PR","RS","SP","SP","RS","ES","RS","PA","ES","PR","RS","ES","ES","RS","PR","RS","PR","SC","SP","PR","RS","PR","RS","RS","ES","RS","ES","SP","SC","ES","ES"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>group<\/th>\n      <th>name_muni<\/th>\n      <th>abbrev_state<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-aa1003e105a8d8df3105" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-aa1003e105a8d8df3105">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130","131","132","133","134","135","136","137","138","139","140","141","142","143","144","145","146","147","148","149","150","151","152","153","154","155","156","157","158","159","160","161","162","163","164","165","166","167","168","169","170","171","172","173","174","175","176","177","178","179","180","181","182","183","184","185","186","187","188","189","190","191","192","193","194","195","196","197","198","199","200","201","202","203","204","205","206","207","208","209","210","211","212","213","214","215","216","217","218","219","220","221","222","223","224","225","226","227","228","229","230","231","232","233","234","235","236","237","238","239","240","241","242","243","244","245","246","247","248","249","250","251","252","253","254","255","256","257","258","259","260","261","262","263","264","265","266","267","268","269","270","271","272","273","274","275","276","277","278","279","280","281","282","283","284","285","286","287","288","289","290","291","292","293","294","295","296","297","298","299","300","301","302","303","304","305","306","307","308","309","310","311","312","313","314","315","316","317","318","319","320","321","322","323","324","325","326","327","328","329","330","331","332","333"],["1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","3","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5","5"],["Abreu E Lima","Americana","Angra Dos Reis","Anápolis","Arapiraca","Araruama","Araxá","Araçatuba","Ariquemes","Assis","Atibaia","Açailândia","Bacabal","Barcarena","Barretos","Barueri","Bauru","Belford Roxo","Betim","Cabo De Santo Agostinho","Cabo Frio","Camaragibe","Camaçari","Campina Grande","Catanduva","Contagem","Corumbá","Cubatão","Curitiba","Dourados","Embu","Eunápolis","Formosa","Franca","Francisco Morato","Garanhuns","Guarujá","Guarulhos","Hortolândia","Ilhéus","Itabaiana","Itabira","Itaboraí","Itabuna","Itacoatiara","Itapecerica Da Serra","Itaperuna","Itapevi","Itaquaquecetuba","Itatiba","Ituiutaba","Itumbiara","Jaboatão Dos Guararapes","Jacareí","Japeri","Jataí","Jequié","Ji-Paraná","Juazeiro","Juazeiro Do Norte","Jundiaí","Lagarto","Lauro De Freitas","Lavras","Limeira","Maceió","Magé","Maricá","Maringá","Marília","Mesquita","Mogi Guaçu","Montes Claros","Muriaé","Nova Serrana","Olinda","Osasco","Ourinhos","Paragominas","Parnamirim","Parnaíba","Passos","Paulista","Paulo Afonso","Paço Do Lumiar","Petrolina","Pindamonhangaba","Piracicaba","Ponta Grossa","Porto Alegre","Porto Seguro","Porto Velho","Praia Grande","Presidente Prudente","Resende","Ribeirão Das Neves","Rio Das Ostras","Rondonópolis","Sabará","Santa Bárbara D'oeste","Santa Rita","Santo André","Santo Antônio De Jesus","Santos","Sertãozinho","Simões Filho","Sobral","Sorocaba","São Bernardo Do Campo","São Carlos","São Gonçalo Do Amarante","São José","São José Dos Pinhais","São Lourenço Da Mata","São Pedro Da Aldeia","São Vicente","Tailândia","Tangará Da Serra","Teófilo Otoni","Timon","Toledo","Três Lagoas","Ubá","Valparaíso De Goiás","Vilhena","Volta Redonda","Várzea Grande","Abaetetuba","Alagoinhas","Altamira","Ananindeua","Aparecida De Goiânia","Aracaju","Araguari","Araguaína","Araraquara","Barreiras","Belo Horizonte","Belém","Boa Vista","Bragança","Brasília","Cametá","Campinas","Campo Grande","Campos Dos Goytacazes","Castanhal","Catalão","Caucaia","Caxias","Coronel Fabriciano","Crato","Cuiabá","Diadema","Duque De Caxias","Feira De Santana","Fortaleza","Foz Do Iguaçu","Goiânia","Governador Valadares","Guarapari","Igarassu","Iguatu","Imperatriz","Ipatinga","Itaituba","Itapipoca","João Pessoa","Juiz De Fora","Linhares","Londrina","Luziânia","Macapá","Macaé","Manacapuru","Manaus","Marabá","Maracanaú","Marituba","Mogi Das Cruzes","Mossoró","Natal","Nilópolis","Niterói","Nova Iguaçu","Nova Lima","Palmas","Parauapebas","Parintins","Patos","Patos De Minas","Paulínia","Petrópolis","Recife","Ribeirão Preto","Rio Branco","Rio Claro","Rio De Janeiro","Rio Verde","Salvador","Santa Luzia","Santana","Santarém","Senador Canedo","Sinop","Sumaré","São Félix Do Xingu","São Gonçalo","São José De Ribamar","São José Do Rio Preto","São José Dos Campos","São João De Meriti","São Luís","São Paulo","Taubaté","Teresina","Trindade","Tucuruí","Uberaba","Uberlândia","Varginha","Vespasiano","Vitória Da Conquista","Vitória De Santo Antão","Alvorada","Aracruz","Bagé","Bento Gonçalves","Breves","Cachoeiro De Itapemirim","Campo Largo","Cariacica","Colatina","Erechim","Fazenda Rio Grande","Gravataí","Guarapuava","Lages","Pelotas","Piraquara","Santa Cruz Do Sul","Sapucaia Do Sul","Serra","São Leopoldo","São Mateus","Tubarão","Valença","Vila Velha","Vitória","Apucarana","Araucária","Barbacena","Barra Do Piraí","Bayeux","Botucatu","Cachoeirinha","Caieiras","Canoas","Carapicuíba","Caxias Do Sul","Codó","Colombo","Cotia","Criciúma","Florianópolis","Franco Da Rocha","Ibirité","Indaiatuba","Itajaí","Itanhaém","Itapetininga","Joinville","Leme","Mairiporã","Nossa Senhora Do Socorro","Novo Hamburgo","Paranaguá","Passo Fundo","Pinhais","Poços De Caldas","Ribeirão Pires","Rio Grande","Salto","Santa Maria","Tatuí","Teixeira De Freitas","Umuarama","Uruguaiana","Votorantim","Várzea Paulista","Almirante Tamandaré","Arapongas","Araras","Balneário Camboriú","Barra Mansa","Birigui","Blumenau","Bragança Paulista","Brusque","Cambé","Caraguatatuba","Caruaru","Cascavel","Chapecó","Conselheiro Lafaiete","Divinópolis","Ferraz De Vasconcelos","Guaratinguetá","Guaíba","Itaguaí","Itu","Jandira","Jaraguá Do Sul","Jaú","Maranguape","Mauá","Nova Friburgo","Novo Gama","Palhoça","Pouso Alegre","Poá","Queimados","Santa Cruz Do Capibaribe","Santana De Parnaíba","Sarandi","Sete Lagoas","Suzano","São Caetano Do Sul","Taboão Da Serra","Teresópolis","Valinhos","Viamão","Águas Lindas De Goiás"],["PE","SP","RJ","GO","AL","RJ","MG","SP","RO","SP","SP","MA","MA","PA","SP","SP","SP","RJ","MG","PE","RJ","PE","BA","PB","SP","MG","MS","SP","PR","MS","SP","BA","GO","SP","SP","PE","SP","SP","SP","BA","SE","MG","RJ","BA","AM","SP","RJ","SP","SP","SP","MG","GO","PE","SP","RJ","GO","BA","RO","BA","CE","SP","SE","BA","MG","SP","AL","RJ","RJ","PR","SP","RJ","SP","MG","MG","MG","PE","SP","SP","PA","RN","PI","MG","PE","BA","MA","PE","SP","SP","PR","RS","BA","RO","SP","SP","RJ","MG","RJ","MT","MG","SP","PB","SP","BA","SP","SP","BA","CE","SP","SP","SP","RN","SC","PR","PE","RJ","SP","PA","MT","MG","MA","PR","MS","MG","GO","RO","RJ","MT","PA","BA","PA","PA","GO","SE","MG","TO","SP","BA","MG","PA","RR","PA","DF","PA","SP","MS","RJ","PA","GO","CE","MA","MG","CE","MT","SP","RJ","BA","CE","PR","GO","MG","ES","PE","CE","MA","MG","PA","CE","PB","MG","ES","PR","GO","AP","RJ","AM","AM","PA","CE","PA","SP","RN","RN","RJ","RJ","RJ","MG","TO","PA","AM","PB","MG","SP","RJ","PE","SP","AC","SP","RJ","GO","BA","MG","AP","PA","GO","MT","SP","PA","RJ","MA","SP","SP","RJ","MA","SP","SP","PI","GO","PA","MG","MG","MG","MG","BA","PE","RS","ES","RS","RS","PA","ES","PR","ES","ES","RS","PR","RS","PR","SC","RS","PR","RS","RS","ES","RS","ES","SC","BA","ES","ES","PR","PR","MG","RJ","PB","SP","RS","SP","RS","SP","RS","MA","PR","SP","SC","SC","SP","MG","SP","SC","SP","SP","SC","SP","SP","SE","RS","PR","RS","PR","MG","SP","RS","SP","RS","SP","BA","PR","RS","SP","SP","PR","PR","SP","SC","RJ","SP","SC","SP","SC","PR","SP","PE","PR","SC","MG","MG","SP","SP","RS","RJ","SP","SP","SC","SP","CE","SP","RJ","GO","SC","MG","SP","RJ","PE","SP","PR","MG","SP","SP","SP","RJ","SP","RS","GO"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>group<\/th>\n      <th>name_muni<\/th>\n      <th>abbrev_state<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="cell">
@@ -779,12 +779,11 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.3.2 (2023-10-31)
-Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 22.04.3 LTS
+Platform: x86_64-conda-linux-gnu (64-bit)
+Running under: CentOS Linux 7 (Core)
 
 Matrix products: default
-BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0 
-LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0
+BLAS/LAPACK: /home/raphaelfs/miniconda3/envs/quarto/lib/libopenblasp-r0.3.25.so;  LAPACK version 3.11.0
 
 Random number generation:
  RNG:     L'Ecuyer-CMRG 
@@ -792,66 +791,66 @@ Random number generation:
  Sample:  Rejection 
  
 locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_CA.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_CA.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_CA.UTF-8       LC_NAME=C                 
+ [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=pt_BR.UTF-8        LC_COLLATE=pt_BR.UTF-8    
+ [5] LC_MONETARY=pt_BR.UTF-8    LC_MESSAGES=pt_BR.UTF-8   
+ [7] LC_PAPER=pt_BR.UTF-8       LC_NAME=C                 
  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_CA.UTF-8 LC_IDENTIFICATION=C       
+[11] LC_MEASUREMENT=pt_BR.UTF-8 LC_IDENTIFICATION=C       
 
-time zone: Europe/Paris
+time zone: America/Sao_Paulo
 tzcode source: system (glibc)
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] DT_0.30          sf_1.0-14        tictoc_1.2       kableExtra_1.3.4
- [5] dtwclust_5.5.12  dtw_1.23-1       proxy_0.4-27     timetk_2.9.0    
- [9] arrow_14.0.0.1   lubridate_1.9.3  forcats_1.0.0    stringr_1.5.1   
-[13] dplyr_1.1.4      purrr_1.0.2      readr_2.1.4      tidyr_1.3.0     
-[17] tibble_3.2.1     ggplot2_3.4.4    tidyverse_2.0.0 
+ [1] DT_0.28          sf_1.0-14        tictoc_1.2       kableExtra_1.3.4
+ [5] dtwclust_5.5.12  dtw_1.23-1       proxy_0.4-27     timetk_2.8.2    
+ [9] arrow_12.0.0     lubridate_1.9.2  forcats_1.0.0    stringr_1.5.0   
+[13] dplyr_1.1.2      purrr_1.0.1      readr_2.1.4      tidyr_1.3.0     
+[17] tibble_3.2.1     ggplot2_3.4.2    tidyverse_2.0.0 
 
 loaded via a namespace (and not attached):
-  [1] rstudioapi_0.15.0   jsonlite_1.8.7      wk_0.9.0           
+  [1] rstudioapi_0.14     jsonlite_1.8.5      wk_0.7.3           
   [4] magrittr_2.0.3      modeltools_0.2-23   farver_2.1.1       
-  [7] rmarkdown_2.25      vctrs_0.6.4         webshot_0.5.5      
- [10] htmltools_0.5.7     dials_1.2.0         curl_5.1.0         
- [13] s2_1.1.4            sass_0.4.7          parallelly_1.36.0  
- [16] KernSmooth_2.23-22  bslib_0.6.0         htmlwidgets_1.6.3  
- [19] plyr_1.8.9          cachem_1.0.8        zoo_1.8-12         
- [22] mime_0.12           lifecycle_1.0.4     iterators_1.0.14   
- [25] pkgconfig_2.0.3     Matrix_1.6-2        R6_2.5.1           
- [28] fastmap_1.1.1       future_1.33.0       shiny_1.8.0        
- [31] tune_1.1.2          clue_0.3-65         digest_0.6.33      
+  [7] rmarkdown_2.22      vctrs_0.6.3         webshot_0.5.4      
+ [10] htmltools_0.5.5     dials_1.2.0         curl_5.0.2         
+ [13] s2_1.1.4            sass_0.4.6          parallelly_1.36.0  
+ [16] KernSmooth_2.23-21  bslib_0.4.2         htmlwidgets_1.6.2  
+ [19] plyr_1.8.8          cachem_1.0.8        zoo_1.8-12         
+ [22] mime_0.12           lifecycle_1.0.3     iterators_1.0.14   
+ [25] pkgconfig_2.0.3     Matrix_1.5-4.1      R6_2.5.1           
+ [28] fastmap_1.1.1       future_1.32.0       shiny_1.7.4        
+ [31] tune_1.1.2          clue_0.3-64         digest_0.6.31      
  [34] colorspace_2.1-0    furrr_0.3.1         RSpectra_0.16-1    
- [37] crosstalk_1.2.1     labeling_0.4.3      fansi_1.0.5        
- [40] yardstick_1.2.0     timechange_0.2.0    httr_1.4.7         
- [43] compiler_4.3.2      bit64_4.0.5         withr_2.5.2        
- [46] DBI_1.1.3           MASS_7.3-60         lava_1.7.3         
- [49] classInt_0.4-10     tools_4.3.2         units_0.8-4        
- [52] httpuv_1.6.12       flexclust_1.4-1     future.apply_1.11.0
- [55] nnet_7.3-19         glue_1.6.2          promises_1.2.1     
+ [37] crosstalk_1.2.0     labeling_0.4.2      fansi_1.0.4        
+ [40] yardstick_1.2.0     timechange_0.2.0    httr_1.4.6         
+ [43] compiler_4.3.2      bit64_4.0.5         withr_2.5.0        
+ [46] DBI_1.1.3           MASS_7.3-60         lava_1.7.2.1       
+ [49] classInt_0.4-9      tools_4.3.2         units_0.8-2        
+ [52] httpuv_1.6.11       flexclust_1.4-1     future.apply_1.11.0
+ [55] nnet_7.3-19         glue_1.6.2          promises_1.2.0.1   
  [58] grid_4.3.2          cluster_2.1.4       reshape2_1.4.4     
- [61] generics_0.1.3      recipes_1.0.8       gtable_0.3.4       
+ [61] generics_0.1.3      recipes_1.0.6       gtable_0.3.3       
  [64] tzdb_0.4.0          class_7.3-22        data.table_1.14.8  
- [67] hms_1.1.3           rsample_1.2.0       xml2_1.3.5         
- [70] utf8_1.2.4          ggrepel_0.9.4       geobr_1.8.1        
+ [67] hms_1.1.3           rsample_1.2.0       xml2_1.3.4         
+ [70] utf8_1.2.3          ggrepel_0.9.3       geobr_1.8.1        
  [73] foreach_1.5.2       pillar_1.9.0        later_1.3.1        
- [76] splines_4.3.2       lhs_1.1.6           lattice_0.22-5     
- [79] survival_3.5-7      bit_4.0.5           tidyselect_1.2.0   
- [82] knitr_1.45          svglite_2.1.2       stats4_4.3.2       
- [85] xfun_0.41           hardhat_1.3.0       timeDate_4022.108  
- [88] stringi_1.8.2       DiceDesign_1.9      yaml_2.3.7         
- [91] workflows_1.1.3     evaluate_0.23       codetools_0.2-19   
- [94] cli_3.6.1           RcppParallel_5.1.7  rpart_4.1.21       
- [97] xtable_1.8-4        systemfonts_1.0.5   jquerylib_0.1.4    
-[100] munsell_0.5.0       Rcpp_1.0.11         globals_0.16.2     
+ [76] splines_4.3.2       lhs_1.1.6           lattice_0.21-8     
+ [79] survival_3.5-5      bit_4.0.5           tidyselect_1.2.0   
+ [82] knitr_1.43          svglite_2.1.1       stats4_4.3.2       
+ [85] xfun_0.39           hardhat_1.3.0       timeDate_4022.108  
+ [88] stringi_1.7.12      DiceDesign_1.9      yaml_2.3.7         
+ [91] workflows_1.1.3     evaluate_0.21       codetools_0.2-19   
+ [94] cli_3.6.1           RcppParallel_5.1.7  rpart_4.1.19       
+ [97] xtable_1.8-4        systemfonts_1.0.4   jquerylib_0.1.4    
+[100] munsell_0.5.0       Rcpp_1.0.10         globals_0.16.2     
 [103] parallel_4.3.2      ellipsis_0.3.2      gower_1.0.1        
-[106] assertthat_0.2.1    parsnip_1.1.1       GPfit_1.0-8        
-[109] listenv_0.9.0       viridisLite_0.4.2   ipred_0.9-14       
-[112] scales_1.2.1        xts_0.13.1          prodlim_2023.08.28 
-[115] e1071_1.7-13        rlang_1.1.2         rvest_1.0.3        
+[106] assertthat_0.2.1    parsnip_1.1.0       GPfit_1.0-8        
+[109] listenv_0.9.0       viridisLite_0.4.2   ipred_0.9-13       
+[112] scales_1.2.1        xts_0.13.1          prodlim_2019.11.13 
+[115] e1071_1.7-13        rlang_1.1.1         rvest_1.0.3        
 [118] shinyjs_2.1.0      </code></pre>
 </div>
 </div>
