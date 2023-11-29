@@ -95,6 +95,10 @@ website:
                           - dengue-model/dengue_ts_global_subset.qmd
                           - dengue-model/dengue_ts_global_subset_tsfeatures.qmd
                           - dengue-model/dengue_ts_global_subset_tsfeatures_sparse.qmd
+                    - section: "Multivariate  models"
+                      contents:
+                          - dengue-model/dengue_mts_all.qmd
+                          - dengue-model/dengue_mts_climate.qmd
               
         - software.qmd
         - publications.qmd

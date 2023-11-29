@@ -8,23 +8,6 @@
     ]
   },
   {
-    "listing": "/cluster_analysis.html",
-    "items": [
-      "/dengue-cluster/cluster_multivariate_clim.html",
-      "/dengue-cluster/cluster_multivariate_all.html",
-      "/dengue-cluster/cluster_tsfeatures.html",
-      "/dengue-cluster/cluster_long_cum.html",
-      "/dengue-cluster/cluster_long.html",
-      "/dengue-cluster/sdtw_long_cum_scaled.html",
-      "/dengue-cluster/cluster_long_scaled.html",
-      "/dengue-cluster/cluster_long_cum_scaled.html",
-      "/dengue-cluster/cluster_mun_year_epi_year.html",
-      "/dengue-cluster/cluster_mun_year_cumulative.html",
-      "/dengue-cluster/cluster_mun_year.html",
-      "/dengue-cluster/cluster_long_scaled_hier.html"
-    ]
-  },
-  {
     "listing": "/summary.html",
     "items": [
       "/dengue-data/aggregated_database.html",
@@ -59,12 +42,31 @@
     "listing": "/dengue_model.html",
     "items": [
       "/dengue-model/dengue_ts_global_subset.html",
-      "/dengue-model/dengue_ts_overview.html",
-      "/dengue-model/dengue_ts_global_subset_tsfeatures.html",
-      "/dengue-model/dengue_ts_global_subset_tsfeatures_sparse.html",
-      "/dengue-model/dengue_classification_symptoms_conditions_multi.html",
       "/dengue-model/dengue_weather_lag_reg.html",
-      "/dengue-model/dengue_weather_lag_class.html"
+      "/dengue-model/dengue_weather_lag_class.html",
+      "/dengue-model/dengue_mts_all.html",
+      "/dengue-model/dengue_ts_global_subset_tsfeatures_sparse.html",
+      "/dengue-model/dengue_mts_climate.html",
+      "/dengue-model/dengue_classification_symptoms_conditions_multi.html",
+      "/dengue-model/dengue_ts_global_subset_tsfeatures.html",
+      "/dengue-model/dengue_ts_overview.html"
+    ]
+  },
+  {
+    "listing": "/cluster_analysis.html",
+    "items": [
+      "/dengue-cluster/cluster_long_scaled.html",
+      "/dengue-cluster/cluster_mun_year_epi_year.html",
+      "/dengue-cluster/sdtw_long_cum_scaled.html",
+      "/dengue-cluster/cluster_long_scaled_hier.html",
+      "/dengue-cluster/cluster_mun_year.html",
+      "/dengue-cluster/cluster_long_cum.html",
+      "/dengue-cluster/cluster_tsfeatures.html",
+      "/dengue-cluster/cluster_long_cum_scaled.html",
+      "/dengue-cluster/cluster_long.html",
+      "/dengue-cluster/cluster_multivariate_clim.html",
+      "/dengue-cluster/cluster_mun_year_cumulative.html",
+      "/dengue-cluster/cluster_multivariate_all.html"
     ]
   }
 ]
