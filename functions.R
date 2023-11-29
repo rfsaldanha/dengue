@@ -14,8 +14,9 @@ data_dir <- function(dest){
     ref <- "/data/raphaelfs/dengue_data_files"
   } else if(node_name == "rfsaldanha") {
     ref <- "/home/raphael/projects/dengue/dengue_data_files"
+  } else if(node_name == "MacBook-Air-M1-de-Raphael.local") {
+    ref <- "~/Library/Mobile Documents/com~apple~CloudDocs/Projetos/dengue/dengue_data_files/"
   }
-  #TODO: include macos location
   
   ref <- file.path(ref, dest)
   
