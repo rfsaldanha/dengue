@@ -57,26 +57,28 @@ website:
             - socioeconomic-data/socioeconomic_data.qmd
             - bundled_data.qmd
         - section: "Cluster analysis"
-          contents: 
-              - cluster_analysis.qmd
-              - section: "Long time series"
-                contents: 
-                    - dengue-cluster/cluster_long.qmd
-                    - dengue-cluster/cluster_long_cum.qmd
-                    - dengue-cluster/cluster_long_scaled.qmd
-                    - dengue-cluster/cluster_long_cum_scaled.qmd
-                    - dengue-cluster/sdtw_long_cum_scaled.qmd
-                    - dengue-cluster/cluster_tsfeatures.qmd
-                    - dengue-cluster/cluster_long_scaled_hier.qmd
-                    - section: "Long time series"
-                      contents:
-                          - dengue-cluster/cluster_multivariate_all.qmd
-                          - dengue-cluster/cluster_multivariate_clim.qmd
-              - section: "Municipality/year time series"
-                contents:
-                    - dengue-cluster/cluster_mun_year.qmd
-                    - dengue-cluster/cluster_mun_year_cumulative.qmd
-                    - dengue-cluster/cluster_mun_year_epi_year.qmd
+          contents:
+            - cluster_analysis.qmd
+            - section: "Univariate"
+              contents: 
+                  - section: "Long time series"
+                    contents: 
+                        - dengue-cluster/cluster_long.qmd
+                        - dengue-cluster/cluster_long_cum.qmd
+                        - dengue-cluster/cluster_long_scaled.qmd
+                        - dengue-cluster/cluster_long_cum_scaled.qmd
+                        - dengue-cluster/sdtw_long_cum_scaled.qmd
+                        - dengue-cluster/cluster_tsfeatures.qmd
+                        - dengue-cluster/cluster_long_scaled_hier.qmd
+                  - section: "Municipality/year time series"
+                    contents:
+                        - dengue-cluster/cluster_mun_year.qmd
+                        - dengue-cluster/cluster_mun_year_cumulative.qmd
+                        - dengue-cluster/cluster_mun_year_epi_year.qmd
+            - section: "Multivariate"
+              contents:
+                  - dengue-cluster/cluster_multivariate_all.qmd
+                  - dengue-cluster/cluster_multivariate_clim.qmd
         - section: "Modeling"
           contents: 
               - dengue_model.qmd
