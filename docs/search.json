@@ -4,7 +4,7 @@
     "href": "presentations.html",
     "title": "Overview",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Author\n        \n     \n  \n\n\n\n\n  \n\n\n\n\nSpecialized AI Models for Predicting Dengue Disease\n\n\n\n\n\n\n\n\n\n\n\n\nSaldanha, Raphael et al\n\n\n\n\n\n\n  \n\n\n\n\nSpecialized AI Models for Predicting Dengue Disease\n\n\n[Short version]\n\n\n\n\n\n\n\n\n\nRaphael Saldanha et al.\n\n\n\n\n\n\n  \n\n\n\n\nA trajectory on health data and information\n\n\n\n\n\n\n\n\n\n\n\n\nRaphael Saldanha\n\n\n\n\n\n\nNo matching items\n\n Back to top"
+    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Author\n        \n     \n  \n\n\n\n\n  \n\n\n\n\nSpecialized AI Models for Predicting Dengue Disease\n\n\n[Short version]\n\n\n\n\n\n\n\n\n\nRaphael Saldanha et al.\n\n\n\n\n\n\n  \n\n\n\n\nSpecialized AI Models for Predicting Dengue Disease\n\n\n\n\n\n\n\n\n\n\n\n\nSaldanha, Raphael et al\n\n\n\n\n\n\n  \n\n\n\n\nA trajectory on health data and information\n\n\n\n\n\n\n\n\n\n\n\n\nRaphael Saldanha\n\n\n\n\n\n\nNo matching items\n\n Back to top"
   },
   {
     "objectID": "dengue-cluster/cluster_mun_year_epi_year.html",
@@ -542,8 +542,8 @@
     "objectID": "presentations/trajectory_health_data_information.html#some-context",
     "href": "presentations/trajectory_health_data_information.html#some-context",
     "title": "A trajectory on health data and information",
-    "section": "Some context",
-    "text": "Some context\n\nUndergrad on Geography (UFJF)\nSpecialization on Statistics (UFJF)\nMaster’s at Public Health (UFJF)\nPhD on Health Information and Communication (Fiocruz)\nPostdoctoral researcher at Inria, France: Institut national de recherche en sciences et technologies du numérique"
+    "section": "",
+    "text": "Undergrad on Geography (UFJF)\nSpecialization on Statistics (UFJF)\nMaster’s at Public Health (UFJF)\nPhD on Health Information and Communication (Fiocruz)\nPostdoctoral researcher at Inria, France: Institut national de recherche en sciences et technologies du numérique"
   },
   {
     "objectID": "presentations/trajectory_health_data_information.html#geography-and-health",
@@ -626,8 +626,8 @@
     "objectID": "presentations/project_presentation.html#building-and-selecting-specialized-ai-models-for-predicting-dengue-disease",
     "href": "presentations/project_presentation.html#building-and-selecting-specialized-ai-models-for-predicting-dengue-disease",
     "title": "Specialized AI Models for Predicting Dengue Disease",
-    "section": "Building and Selecting Specialized AI Models for Predicting Dengue Disease",
-    "text": "Building and Selecting Specialized AI Models for Predicting Dengue Disease\n\nSALDANHA, Raphael (Inria)\nAKBARINIA, Reza (Inria)\nPENA, Eduardo (UTFPR)\nRIBEIRO, Victor (LNCC)\nPORTO, Fabio (LNCC)"
+    "section": "",
+    "text": "SALDANHA, Raphael (Inria)\nAKBARINIA, Reza (Inria)\nPENA, Eduardo (UTFPR)\nRIBEIRO, Victor (LNCC)\nPORTO, Fabio (LNCC)"
   },
   {
     "objectID": "presentations/project_presentation.html#context",
@@ -648,21 +648,21 @@
     "href": "presentations/project_presentation.html#dengue-spread",
     "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Dengue spread",
-    "text": "Dengue spread\n\nGuzman; Harris, 2015"
+    "text": "Dengue spread\n\n\n\nGuzman; Harris, 2015"
   },
   {
     "objectID": "presentations/project_presentation.html#dengue-transmission-cycle",
     "href": "presentations/project_presentation.html#dengue-transmission-cycle",
     "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Dengue transmission cycle",
-    "text": "Dengue transmission cycle\n\nmosquitoalert.com"
+    "text": "Dengue transmission cycle\n\n\n\nmosquitoalert.com"
   },
   {
     "objectID": "presentations/project_presentation.html#dengue-symptons",
     "href": "presentations/project_presentation.html#dengue-symptons",
     "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Dengue symptons",
-    "text": "Dengue symptons\n\nmosquitoalert.com"
+    "text": "Dengue symptons\n\n\n\nmosquitoalert.com"
   },
   {
     "objectID": "presentations/project_presentation.html#aedes-breeding-sites",
@@ -676,7 +676,7 @@
     "href": "presentations/project_presentation.html#probable-dengue-cases-in-brazil",
     "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Probable dengue cases in Brazil",
-    "text": "Probable dengue cases in Brazil\nper epidemiological week of symptoms onset\n\nMS. Boletim epidemiológico vol. 54 n. 1 (2023)"
+    "text": "Probable dengue cases in Brazil\nper epidemiological week of symptoms onset\n\n\n\nMS. Boletim epidemiológico vol. 54 n. 1 (2023)"
   },
   {
     "objectID": "presentations/project_presentation.html#dengue-on-the-news",
@@ -690,21 +690,21 @@
     "href": "presentations/project_presentation.html#dengue-outbreaks-over-time",
     "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Dengue outbreaks over time",
-    "text": "Dengue outbreaks over time\n\nAzevedo et al, 2020"
+    "text": "Dengue outbreaks over time\n\n\n\nAzevedo et al, 2020"
   },
   {
     "objectID": "presentations/project_presentation.html#dengue-and-weather-covariates",
     "href": "presentations/project_presentation.html#dengue-and-weather-covariates",
     "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Dengue and weather covariates",
-    "text": "Dengue and weather covariates\n\nLSE Blogs"
+    "text": "Dengue and weather covariates\n\n\n\nLSE Blogs"
   },
   {
     "objectID": "presentations/project_presentation.html#dengue-over-time",
     "href": "presentations/project_presentation.html#dengue-over-time",
     "title": "Specialized AI Models for Predicting Dengue Disease",
     "section": "Dengue over time",
-    "text": "Dengue over time\nand different regions\n\nBrito et al. 2021"
+    "text": "Dengue over time\nand different regions\n\n\n\nBrito et al. 2021"
   },
   {
     "objectID": "presentations/project_presentation.html#territory-diversity",
@@ -1026,14 +1026,14 @@
     "href": "summary.html",
     "title": "Summary",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n  \n\n\n\n\nMultivariate clustering, all data model\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 27, 2023 | 16:28:49 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nClimate variables multivariate clustering\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 27, 2023 | 16:11:25 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nCases and climate variables multivariate clustering\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 27, 2023 | 11:15:04 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nMultivariate clustering, all data model\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 27, 2023 | 11:13:14 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nMultivariate clustering, climate model\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 27, 2023 | 09:34:32 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nTime series features\n\n\nwith scaled cases\n\n\n\n\n\n\n\n\n\nNovember 9, 2023 | 09:31:30 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nRaw cases, cumulative\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 9, 2023 | 08:49:00 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nRaw cases\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 9, 2023 | 08:37:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nSDTW, cumulative and scaled long time series\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 8, 2023 | 11:38:02 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nScaled cases\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 8, 2023 | 09:33:03 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nScaled cases, cumulative\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 8, 2023 | 09:32:53 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nSBD clustering\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 8, 2023 | 09:04:57 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nCase classification analysis\n\n\n\n\n\n\n\n\n\n\n\n\nSeptember 11, 2023 | 17:48:35 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nEpi year time series\n\n\n\n\n\n\n\n\n\n\n\n\nAugust 24, 2023 | 11:03:14 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nCumulative time series\n\n\n\n\n\n\n\n\n\n\n\n\nAugust 24, 2023 | 10:22:34 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nYearly time series\n\n\n\n\n\n\n\n\n\n\n\n\nAugust 24, 2023 | 09:43:27 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nHierarchical clustering\n\n\nwith scaled cases\n\n\n\n\n\n\n\n\n\nAugust 22, 2023 | 12:07:13 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nExport aggregated database\n\n\n\n\n\n\n\n\n\n\n\n\nAugust 22, 2023 | 10:20:13 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nImputation\n\n\n\n\n\n\n\n\n\n\n\n\nAugust 22, 2023 | 09:54:22 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nMissing data analysis\n\n\n\n\n\n\n\n\n\n\n\n\nAugust 22, 2023 | 09:46:35 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nRaw files\n\n\n\n\n\n\n\n\n\n\n\n\nAugust 22, 2023 | 09:42:46 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nGlobal and subset models workflow\n\n\n\n\n\n\n\n\n\n\n\n\nJuly 18, 2023 | 12:02:25 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nTime series features clustering\n\n\n\n\n\n\n\n\n\n\n\n\nJuly 18, 2023 | 10:51:41 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nTime series features clustering, with robust sparse k-means\n\n\n\n\n\n\n\n\n\n\n\n\nJuly 13, 2023 | 15:50:22 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nDengue case classification\n\n\nby symptoms and clinical condition\n\n\n\n\n\n\n\n\n\nJuly 11, 2023 | 15:09:47 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nRegression task\n\n\n\n\n\n\n\n\n\n\n\n\nJuly 4, 2023 | 14:34:58 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nClassification task\n\n\n\n\n\n\n\n\n\n\n\n\nJuly 4, 2023 | 14:32:43 +02:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\nNo matching items\n\n\n  \n\n Back to top"
+    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n  \n\n\n\n\nExport aggregated database\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nImputation\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nRaw files\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nMissing data analysis\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nCase classification analysis\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nScaled cases\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nEpi year time series\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nSDTW, cumulative and scaled long time series\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nHierarchical clustering\n\n\nwith scaled cases\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nYearly time series\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nRaw cases, cumulative\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nTime series features\n\n\nwith scaled cases\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nScaled cases, cumulative\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nRaw cases\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nClimate variables multivariate clustering\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nCumulative time series\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nCases and climate variables multivariate clustering\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nSBD clustering\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nRegression task\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nClassification task\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nMultivariate clustering, all data model\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nTime series features clustering, with robust sparse k-means\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nMultivariate clustering, climate model\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nDengue case classification\n\n\nby symptoms and clinical condition\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nTime series features clustering\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nGlobal and subset models workflow\n\n\n\n\n\n\n\n\n\n\n\n\nNovember 29, 2023 | 11:16:54 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\nNo matching items\n\n\n  \n\n Back to top"
   },
   {
     "objectID": "presentations/short_project_presentation.html#context",
     "href": "presentations/short_project_presentation.html#context",
     "title": "Specialized AI Models for Predicting Dengue Disease",
-    "section": "Context",
-    "text": "Context\n\nRaphael SALDANHA: Degrees on Geography, Statistics, Public Health and Health Information\nPostdoc call from International Relations Department of Inria. Duration of 24 months (2023-2024)\nSupervisors: Prof. Reza Akbarinia (Inria) and Prof. Fabio Porto (LNCC)"
+    "section": "",
+    "text": "Raphael SALDANHA: Degrees on Geography, Statistics, Public Health and Health Information\nPostdoc call from International Relations Department of Inria. Duration of 24 months (2023-2024)\nSupervisors: Prof. Reza Akbarinia (Inria) and Prof. Fabio Porto (LNCC)"
   },
   {
     "objectID": "presentations/short_project_presentation.html#arboviruses",
@@ -1902,5 +1902,26 @@
     "title": "Multivariate clustering, all data model",
     "section": "Useful links",
     "text": "Useful links\n\nhttps://business-science.github.io/modeltime/articles/modeling-panel-data.html\nhttps://blog.bguarisma.com/series/time-series-forecasting"
+  },
+  {
+    "objectID": "presentations/project_presentation.html",
+    "href": "presentations/project_presentation.html",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "",
+    "text": "SALDANHA, Raphael (Inria)\nAKBARINIA, Reza (Inria)\nPENA, Eduardo (UTFPR)\nRIBEIRO, Victor (LNCC)\nPORTO, Fabio (LNCC)"
+  },
+  {
+    "objectID": "presentations/short_project_presentation.html",
+    "href": "presentations/short_project_presentation.html",
+    "title": "Specialized AI Models for Predicting Dengue Disease",
+    "section": "",
+    "text": "Raphael SALDANHA: Degrees on Geography, Statistics, Public Health and Health Information\nPostdoc call from International Relations Department of Inria. Duration of 24 months (2023-2024)\nSupervisors: Prof. Reza Akbarinia (Inria) and Prof. Fabio Porto (LNCC)"
+  },
+  {
+    "objectID": "presentations/trajectory_health_data_information.html",
+    "href": "presentations/trajectory_health_data_information.html",
+    "title": "A trajectory on health data and information",
+    "section": "",
+    "text": "Undergrad on Geography (UFJF)\nSpecialization on Statistics (UFJF)\nMaster’s at Public Health (UFJF)\nPhD on Health Information and Communication (Fiocruz)\nPostdoctoral researcher at Inria, France: Institut national de recherche en sciences et technologies du numérique"
   }
 ]
