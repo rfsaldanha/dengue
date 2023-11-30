@@ -126,6 +126,21 @@ recipes_list <- append(recipes_list, list(global = recipe_global))
 rm(recipe_global)
 ```
 
+### Global with Id
+
+This global model has the group variable as a predictor, in one-hot encoding form.
+
+```{r}
+recipe_global_id <- recipe(cases ~ ., data = training(tdengue_split)) %>%
+  step_rm(date) %>%
+  step_dummy(group, one_hot = TRUE) %>%
+  update_role(mun, new_role = "id variable")
+
+recipes_list <- append(recipes_list, list(global_id = recipe_global_id))
+
+rm(recipe_global_id)
+```
+
 ### Groups
 
 -   For each group created by the clustering process, a specific training recipe will be created. For this, the first step is to filter rows from the training set, keeping only the rows belonging to the group in the loop
