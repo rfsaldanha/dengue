@@ -131,14 +131,14 @@ rm(recipe_global)
 This global model has the group variable as a predictor, in one-hot encoding form.
 
 ```{r}
-recipe_global_id <- recipe(cases ~ ., data = training(tdengue_split)) %>%
+recipe_globalID <- recipe(cases ~ ., data = training(tdengue_split)) %>%
   step_rm(date) %>%
   step_dummy(group, one_hot = TRUE) %>%
   update_role(mun, new_role = "id variable")
 
-recipes_list <- append(recipes_list, list(global_id = recipe_global_id))
+recipes_list <- append(recipes_list, list(globalID = recipe_globalID))
 
-rm(recipe_global_id)
+rm(recipe_globalID)
 ```
 
 ### Groups
