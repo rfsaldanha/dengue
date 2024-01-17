@@ -12,8 +12,14 @@ acc <- read_delim(file = "~/Downloads/model_acc.csv", delim = ";", locale = loca
 acc %>%
   filter(diff < 0)
 
-0.28/acc %>%
+acc %>%
   filter(diff == 0)
 
 acc %>%
   filter(diff > 0)
+
+acc %>%
+  mutate(perc = g/global) %>% 
+  arrange(diff)
+
+hist(acc$diff)
