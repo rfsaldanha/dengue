@@ -1,0 +1,225 @@
+---
+title: "Classification task"
+author: Raphael Saldanha
+date: last-modified
+---
+
+This notebook models the relationship between dengue cases and weather variables using a classification of dengue cases as outbreak level (anomaly) or base level.
+
+## Packages
+
+```{r}
+#| message: false
+library(tidyverse)
+library(tidymodels)
+library(finetune)
+library(themis)
+library(arrow)
+library(timetk)
+library(rpart.plot)
+library(vip)
+library(doParallel)
+cl <- makeCluster(10)
+registerDoParallel(cl)
+on.exit(stopCluster(cl))
+
+source("../functions.R")
+```
+
+## Dengue data
+
+### Subset and aggregate
+
+Rio de Janeiro, RJ, aggregated by month.
+
+```{r}
+dengue_rj <- open_dataset(data_dir("dengue_data/parquet_aggregated/dengue_md.parquet")) %>%
+  filter(mun == 431490) %>%
+  collect() %>%
+  summarise_by_time(.date_var = date, .by = "month", freq = sum(freq, na.rm = TRUE))
+```
+
+```{r}
+plot_time_series(.data = dengue_rj, .date_var = date, .value = freq, .smooth = FALSE, .title = "Dengue, absolute number of cases")
+```
+
+### Classify
+
+```{r}
+plot_anomaly_diagnostics(.data = dengue_rj, .date_var = date, .value = freq, .alpha = 0.10, .max_anomalies = 10, .legend_show = FALSE)
+```
+
+```{r}
+dengue_rj_anom <- tk_anomaly_diagnostics(.data = dengue_rj, .date_var = date, .value = freq, .alpha = 0.10, .max_anomalies = 1) %>%
+  select(date, anomaly) %>%
+  mutate(anomaly = as.factor(anomaly))
+```
+
+```{r}
+dengue_rj <- inner_join(dengue_rj, dengue_rj_anom) 
+```
+
+```{r}
+prop.table(table(dengue_rj$anomaly))
+```
+
+## Weather data
+
+```{r}
+tmax <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/tmax.parquet")) %>%
+  filter(code_muni == 4314902) %>%
+  filter(name == "Tmax_mean") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue_rj$date) & date <= max(dengue_rj$date)) %>%
+  summarise_by_time(.date_var = date, .by = "month", value = mean(value, na.rm = TRUE)) %>%
+  rename(tmax = value)
+
+tmin <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/tmin.parquet")) %>%
+  filter(code_muni == 4314902) %>%
+  filter(name == "Tmin_mean") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue_rj$date) & date <= max(dengue_rj$date)) %>%
+  summarise_by_time(.date_var = date, .by = "month", value = mean(value, na.rm = TRUE)) %>%
+  rename(tmin = value)
+
+prec <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/pr.parquet")) %>%
+  filter(code_muni == 4314902) %>%
+  filter(name == "pr_sum") %>%
+  select(date, value) %>%
+  collect() %>%
+  filter(date >= min(dengue_rj$date) & date <= max(dengue_rj$date)) %>%
+  summarise_by_time(.date_var = date, .by = "month", value = sum(value, na.rm = TRUE)) %>%
+  rename(prec = value)
+```
+
+```{r}
+plot_time_series(.data = tmax, .date_var = date, .value = tmax, .smooth = FALSE, .title = "Max temp, average")
+```
+
+```{r}
+plot_time_series(.data = tmin, .date_var = date, .value = tmin, .smooth = FALSE, .title = "Min temp, average")
+```
+
+```{r}
+plot_time_series(.data = prec, .date_var = date, .value = prec, .smooth = FALSE, .title = "Precipitation, sum")
+```
+
+## Join data
+
+```{r}
+res <- inner_join(x = dengue_rj, y = tmax, by = "date") %>%
+  inner_join(tmin, by = "date") %>%
+  inner_join(prec, by = "date") %>%
+  select(date, anomaly, tmax, tmin, prec)
+```
+
+### Time lag
+
+-   Remove date
+
+-   Lag variables: 6 months
+
+```{r}
+res_prep <- res %>%
+  select(-date) %>%
+  tk_augment_lags(
+    .value = c(tmax, tmin, prec), 
+    .lags = 1:6
+  )
+```
+
+## Model
+
+### Recipe
+
+```{r}
+bal_rec <- 
+  recipe(anomaly ~ ., res_prep) %>%
+  step_downsample(anomaly, under_ratio = tune())
+```
+
+### Learners
+
+```{r}
+tree_spec <- decision_tree(
+  cost_complexity = tune(),
+  tree_depth = tune(),
+  min_n = tune()
+) %>%
+  set_engine("rpart") %>%
+  set_mode("classification")
+```
+
+### Folding
+
+```{r}
+folds <- vfold_cv(
+  data = res_prep, 
+  v = 10, 
+  strata = anomaly
+)
+```
+
+### Fit model
+
+```{r}
+wf <- 
+  workflow() %>%
+  add_model(tree_spec) %>%
+  add_recipe(bal_rec)
+```
+
+```{r}
+tuned <- wf %>%
+  tune_race_anova(
+    resamples = folds,
+    grid = 50,
+    metrics = metric_set(accuracy),
+    control = control_race(verbose_elim = TRUE)
+  )
+```
+
+```{r}
+best_tuned <- tuned %>%
+  select_best("accuracy")
+```
+
+```{r}
+final_wf <- 
+  wf %>%
+  finalize_workflow(best_tuned)
+```
+
+```{r}
+fitted <- final_wf %>%
+  fit(data = res_prep)
+```
+
+```{r}
+fitted %>% extract_fit_engine() %>%
+  rpart.plot(roundint = FALSE)
+```
+
+```{r}
+augment(fitted, new_data = res_prep) %>%
+    conf_mat(truth = anomaly, estimate = .pred_class)
+```
+
+```{r}
+augment(fitted, new_data = res_prep) %>%
+    accuracy(truth = anomaly, estimate = .pred_class)
+```
+
+```{r}
+fitted %>% 
+  extract_fit_engine() %>% 
+  vip()
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```
