@@ -4,7 +4,7 @@ author: Raphael Saldanha
 date: last-modified
 ---
 
-This notebook aims to study the relationship between Dengue cases incidence with lagged climate indicators.
+This notebook aims to study the relationship between Dengue cases incidence with lagged climate indicators, specially the co-occurrence of specific climate conditions that precedes an outbreak.
 
 ## Packages
 
@@ -13,6 +13,7 @@ This notebook aims to study the relationship between Dengue cases incidence with
 library(tidyverse)
 library(tidymodels)
 library(hotspots)
+library(DT)
 library(finetune)
 library(bonsai)
 library(themis)
@@ -32,11 +33,11 @@ source("../functions.R")
 
 ### Dengue
 
-Municipality dengue cases indidence, aggregated by month.
-
 ```{r}
-code_muni <- 3304557
+code_muni <- 3304557 # Rio de Janeiro, RJ
 ```
+
+The original data on municipality dengue cases incidence present daily observations and is summarized by month.
 
 ```{r}
 dengue_df <- open_dataset(data_dir("dengue_data/parquet_aggregated/dengue_md.parquet")) %>%
@@ -72,15 +73,19 @@ dengue_df_anom %>%
 dengue_df <- inner_join(dengue_df, dengue_df_anom) 
 ```
 
+Proportion table of anomalous (yes) and not anomalous (not) months.
+
 ```{r}
 prop.table(table(dengue_df$anomaly))
 ```
 
 ### Weather data
 
+The available weather data is also originally presented in daily observations and aggregate to months. For temperature indicators, the mean is used, for precipitation, the sum is used for aggregation.
+
 ```{r}
 tmax <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/tmax.parquet")) %>%
-  filter(code_muni == 3304557) %>%
+  filter(code_muni == code_muni) %>%
   filter(name == "Tmax_mean") %>%
   select(date, value) %>%
   collect() %>%
@@ -89,7 +94,7 @@ tmax <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/tmax.parque
   rename(tmax = value)
 
 tmin <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/tmin.parquet")) %>%
-  filter(code_muni == 3304557) %>%
+  filter(code_muni == code_muni) %>%
   filter(name == "Tmin_mean") %>%
   select(date, value) %>%
   collect() %>%
@@ -98,7 +103,7 @@ tmin <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/tmin.parque
   rename(tmin = value)
 
 prec <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/pr.parquet")) %>%
-  filter(code_muni == 3304557) %>%
+  filter(code_muni == code_muni) %>%
   filter(name == "pr_sum") %>%
   select(date, value) %>%
   collect() %>%
@@ -109,6 +114,8 @@ prec <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/pr.parquet"
 
 ### Join data
 
+Join dengue and weather datasets.
+
 ```{r}
 res <- inner_join(x = dengue_df, y = tmax, by = "date") %>%
   inner_join(tmin, by = "date") %>%
@@ -118,9 +125,7 @@ res <- inner_join(x = dengue_df, y = tmax, by = "date") %>%
 
 ### Time lag
 
--   Remove date
-
--   Lag variables: 6 months
+This step produces time lagged variables (from 1 to 6 months) from the weather indicators, remove the date variable, and omit records with missing data (only present after the time lag procedure).
 
 ```{r}
 res_prep <- res %>%
@@ -132,7 +137,13 @@ res_prep <- res %>%
   na.omit()
 ```
 
+```{r}
+head(res_prep) %>% datatable()
+```
+
 ### Dataset split
+
+Splits the dataset into training and testing.
 
 ```{r}
 res_split <- initial_time_split(
@@ -145,6 +156,8 @@ train_data <- training(res_split)
 test_data <- testing(res_split)
 ```
 
+Remove old objects and triggers a memory garbage collection.
+
 ```{r}
 rm(dengue_df, dengue_df_anom, res, res_prep)
 gc()
@@ -153,6 +166,8 @@ gc()
 ## Modeling
 
 ### Recipes
+
+Creates model recipes with the model specitication, data (train dataset). Several recipes are created with different methods to balance the training dataset.
 
 ```{r}
 rec_upsample <- 
@@ -194,6 +209,8 @@ rec_adasyn <-
 
 ### Learners
 
+Decision trees are choose due its directly interpretability and rules extraction. Two learners are created with different engines (rpart and partykit).
+
 ```{r}
 tree_rp_spec <- decision_tree(
   cost_complexity = tune(),
@@ -215,6 +232,8 @@ tree_pk_spec <- decision_tree(
 
 ### Folding
 
+Creates a v-fold for cross-validation.
+
 ```{r}
 folds <- vfold_cv(
   data = train_data, 
@@ -224,6 +243,8 @@ folds <- vfold_cv(
 ```
 
 ### Workflow setting
+
+This step creates an modeling workflow by combining the recipes and learners options.
 
 ```{r}
 wf_set <- 
@@ -242,7 +263,9 @@ wf_set <-
   )
 ```
 
-### Hyperparameter tuning
+### Hyper-parameter tuning
+
+This step tune hyper-parameters from the models (learners and balancing steps) using an ANOVA race.
 
 ```{r}
 tune_results <- wf_set %>%
@@ -256,6 +279,8 @@ tune_results <- wf_set %>%
 ```
 
 ### Best workflow and model selection
+
+Based on the tuning results, this step identifies the best learner strategy and best model hyper-parameters based on the ROC-AUC metric.
 
 ```{r}
 best_wf <- tune_results %>% 
@@ -271,6 +296,8 @@ best_tune <- tune_results %>%
 ```
 
 ### Finalize workflow
+
+Finalizes the workflow with the choose learner and hyper-parameter combination, performing the last fit of the model with the entire dataset.
 
 ```{r}
 fitted_wf <- tune_results %>%
