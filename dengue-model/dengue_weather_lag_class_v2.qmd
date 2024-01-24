@@ -4,7 +4,7 @@ author: Raphael Saldanha
 date: last-modified
 ---
 
-This notebook models the relationship between dengue cases and weather variables using a classification of dengue cases as outbreak level (anomaly) or base level.
+This notebook aims to study the relationship between Dengue cases incidence with lagged climate indicators.
 
 ## Packages
 
@@ -12,7 +12,9 @@ This notebook models the relationship between dengue cases and weather variables
 #| message: false
 library(tidyverse)
 library(tidymodels)
+library(hotspots)
 library(finetune)
+library(bonsai)
 library(themis)
 library(arrow)
 library(timetk)
@@ -26,90 +28,89 @@ on.exit(stopCluster(cl))
 source("../functions.R")
 ```
 
-## Dengue data
+## Dataset construction
 
-### Subset and aggregate
+### Dengue
 
-Rio de Janeiro, RJ, aggregated by month.
+Municipality dengue cases indidence, aggregated by month.
 
 ```{r}
-dengue_rj <- open_dataset(data_dir("dengue_data/parquet_aggregated/dengue_md.parquet")) %>%
-  filter(mun == 431490) %>%
+code_muni <- 3304557
+```
+
+```{r}
+dengue_df <- open_dataset(data_dir("dengue_data/parquet_aggregated/dengue_md.parquet")) %>%
+  filter(mun == !!substr(code_muni, 0, 6)) %>%
   collect() %>%
   summarise_by_time(.date_var = date, .by = "month", freq = sum(freq, na.rm = TRUE))
 ```
 
-```{r}
-plot_time_series(.data = dengue_rj, .date_var = date, .value = freq, .smooth = FALSE, .title = "Dengue, absolute number of cases")
-```
+#### Classify
 
-### Classify
+Based on the observed frequency distribution of cases, we classify the months as anomalous or not.
 
 ```{r}
-plot_anomaly_diagnostics(.data = dengue_rj, .date_var = date, .value = freq, .alpha = 0.10, .max_anomalies = 10, .legend_show = FALSE)
-```
+hot_ref <- hotspots(x = dengue_df$freq, var.est = "mad")$positive.cut
 
-```{r}
-dengue_rj_anom <- tk_anomaly_diagnostics(.data = dengue_rj, .date_var = date, .value = freq, .alpha = 0.10, .max_anomalies = 1) %>%
-  select(date, anomaly) %>%
+dengue_df_anom <- dengue_df %>%
+  mutate(anomaly = if_else(freq >= hot_ref, "Yes", "No")) %>%
   mutate(anomaly = as.factor(anomaly))
 ```
 
 ```{r}
-dengue_rj <- inner_join(dengue_rj, dengue_rj_anom) 
+dengue_df_anom %>%
+  ggplot(aes(x = date, y = freq, fill = anomaly)) +
+  geom_bar(stat = "identity") +
+  scale_fill_discrete(direction = -1) +
+  theme(
+    legend.position = "bottom",
+    legend.direction = "horizontal"
+  )
 ```
 
 ```{r}
-prop.table(table(dengue_rj$anomaly))
+dengue_df <- inner_join(dengue_df, dengue_df_anom) 
 ```
 
-## Weather data
+```{r}
+prop.table(table(dengue_df$anomaly))
+```
+
+### Weather data
 
 ```{r}
 tmax <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/tmax.parquet")) %>%
-  filter(code_muni == 4314902) %>%
+  filter(code_muni == 3304557) %>%
   filter(name == "Tmax_mean") %>%
   select(date, value) %>%
   collect() %>%
-  filter(date >= min(dengue_rj$date) & date <= max(dengue_rj$date)) %>%
+  filter(date >= min(dengue_df$date) & date <= max(dengue_df$date)) %>%
   summarise_by_time(.date_var = date, .by = "month", value = mean(value, na.rm = TRUE)) %>%
   rename(tmax = value)
 
 tmin <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/tmin.parquet")) %>%
-  filter(code_muni == 4314902) %>%
+  filter(code_muni == 3304557) %>%
   filter(name == "Tmin_mean") %>%
   select(date, value) %>%
   collect() %>%
-  filter(date >= min(dengue_rj$date) & date <= max(dengue_rj$date)) %>%
+  filter(date >= min(dengue_df$date) & date <= max(dengue_df$date)) %>%
   summarise_by_time(.date_var = date, .by = "month", value = mean(value, na.rm = TRUE)) %>%
   rename(tmin = value)
 
 prec <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/pr.parquet")) %>%
-  filter(code_muni == 4314902) %>%
+  filter(code_muni == 3304557) %>%
   filter(name == "pr_sum") %>%
   select(date, value) %>%
   collect() %>%
-  filter(date >= min(dengue_rj$date) & date <= max(dengue_rj$date)) %>%
+  filter(date >= min(dengue_df$date) & date <= max(dengue_df$date)) %>%
   summarise_by_time(.date_var = date, .by = "month", value = sum(value, na.rm = TRUE)) %>%
   rename(prec = value)
 ```
 
-```{r}
-plot_time_series(.data = tmax, .date_var = date, .value = tmax, .smooth = FALSE, .title = "Max temp, average")
-```
+### Join data
 
 ```{r}
-plot_time_series(.data = tmin, .date_var = date, .value = tmin, .smooth = FALSE, .title = "Min temp, average")
-```
-
-```{r}
-plot_time_series(.data = prec, .date_var = date, .value = prec, .smooth = FALSE, .title = "Precipitation, sum")
-```
-
-## Join data
-
-```{r}
-res <- inner_join(x = dengue_rj, y = tmax, by = "date") %>%
+res <- inner_join(x = dengue_df, y = tmax, by = "date") %>%
   inner_join(tmin, by = "date") %>%
   inner_join(prec, by = "date") %>%
   select(date, anomaly, tmax, tmin, prec)
@@ -127,23 +128,74 @@ res_prep <- res %>%
   tk_augment_lags(
     .value = c(tmax, tmin, prec), 
     .lags = 1:6
+  ) %>% 
+  na.omit()
+```
+
+### Dataset split
+
+```{r}
+res_split <- initial_time_split(
+  data = res_prep, 
+  prop = .8, 
+  lag = 6
+)
+
+train_data <- training(res_split)
+test_data <- testing(res_split)
+```
+
+```{r}
+rm(dengue_df, dengue_df_anom, res, res_prep)
+gc()
+```
+
+## Modeling
+
+### Recipes
+
+```{r}
+rec_upsample <- 
+  recipe(anomaly ~ ., train_data) %>%
+  step_upsample(
+    anomaly, 
+    over_ratio = tune()
   )
 ```
 
-## Model
-
-### Recipe
+```{r}
+rec_rose <- 
+  recipe(anomaly ~ ., train_data) %>%
+  step_rose(
+    anomaly, 
+    over_ratio = tune()
+  )
+```
 
 ```{r}
-bal_rec <- 
-  recipe(anomaly ~ ., res_prep) %>%
-  step_downsample(anomaly, under_ratio = tune())
+rec_smote <- 
+  recipe(anomaly ~ ., train_data) %>%
+  step_smote(
+    anomaly, 
+    over_ratio = tune(),
+    neighbors = tune()
+  )
+```
+
+```{r}
+rec_adasyn <- 
+  recipe(anomaly ~ ., train_data) %>%
+  step_adasyn(
+    anomaly, 
+    over_ratio = tune(),
+    neighbors = tune()
+  )
 ```
 
 ### Learners
 
 ```{r}
-tree_spec <- decision_tree(
+tree_rp_spec <- decision_tree(
   cost_complexity = tune(),
   tree_depth = tune(),
   min_n = tune()
@@ -152,68 +204,114 @@ tree_spec <- decision_tree(
   set_mode("classification")
 ```
 
+```{r}
+tree_pk_spec <- decision_tree(
+  tree_depth = tune(),
+  min_n = tune()
+) %>%
+  set_engine("partykit") %>%
+  set_mode("classification")
+```
+
 ### Folding
 
 ```{r}
 folds <- vfold_cv(
-  data = res_prep, 
+  data = train_data, 
   v = 10, 
   strata = anomaly
 )
 ```
 
-### Fit model
+### Workflow setting
 
 ```{r}
-wf <- 
-  workflow() %>%
-  add_model(tree_spec) %>%
-  add_recipe(bal_rec)
-```
-
-```{r}
-tuned <- wf %>%
-  tune_race_anova(
-    resamples = folds,
-    grid = 50,
-    metrics = metric_set(accuracy),
-    control = control_race(verbose_elim = TRUE)
+wf_set <- 
+  workflow_set(
+    preproc = list(
+      upsample = rec_upsample,
+      rose = rec_rose, 
+      smote = rec_smote, 
+      adasyn = rec_adasyn
+    ),
+    models = list(
+      dt_rp = tree_rp_spec, 
+      dt_pk = tree_pk_spec
+    ),
+    cross = TRUE
   )
 ```
 
-```{r}
-best_tuned <- tuned %>%
-  select_best("accuracy")
-```
+### Hyperparameter tuning
 
 ```{r}
-final_wf <- 
-  wf %>%
-  finalize_workflow(best_tuned)
+tune_results <- wf_set %>%
+  workflow_map(
+    "tune_race_anova",
+    resamples = folds,
+    grid = 50,
+    control = control_race(parallel_over = "everything"),
+    verbose = TRUE
+  )
 ```
 
-```{r}
-fitted <- final_wf %>%
-  fit(data = res_prep)
-```
+### Best workflow and model selection
 
 ```{r}
-fitted %>% extract_fit_engine() %>%
-  rpart.plot(roundint = FALSE)
+best_wf <- tune_results %>% 
+  rank_results(rank_metric = "roc_auc") %>% 
+  filter(.metric == "roc_auc") %>% 
+  select(wflow_id, model, .config, accuracy = mean, rank) %>%
+  slice(1) %>%
+  pull(wflow_id)
+
+best_tune <- tune_results %>%
+  extract_workflow_set_result(id = best_wf) %>%
+  select_best(metric = "roc_auc")
 ```
 
-```{r}
-augment(fitted, new_data = res_prep) %>%
-    conf_mat(truth = anomaly, estimate = .pred_class)
-```
+### Finalize workflow
 
 ```{r}
-augment(fitted, new_data = res_prep) %>%
-    accuracy(truth = anomaly, estimate = .pred_class)
+fitted_wf <- tune_results %>%
+  extract_workflow(id = best_wf) %>%
+  finalize_workflow(best_tune) %>%
+  last_fit(split = res_split)
 ```
 
+## Results
+
+### Decision tree plot
+
 ```{r}
-fitted %>% 
+extracted_engine <-  fitted_wf %>% extract_fit_engine()
+
+if(class(extracted_engine)[1] == "constparty"){
+  plot(extracted_engine)
+} else (
+  rpart.plot(extracted_engine, roundint = FALSE)
+)
+  
+```
+
+### Confusion matrix
+
+```{r}
+augment(fitted_wf) %>%
+  conf_mat(truth = anomaly, estimate = .pred_class)
+```
+
+### Model performance metrics
+
+```{r}
+augment(fitted_wf) %>%
+  metrics(truth = anomaly, estimate = .pred_class, .pred_Yes)
+```
+
+### Variable importance plot
+
+```{r}
+fitted_wf %>% 
   extract_fit_engine() %>% 
   vip()
 ```
