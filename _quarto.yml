@@ -82,10 +82,7 @@ website:
         - section: "Modeling"
           contents: 
               - dengue_model.qmd
-              - section: "Denque and weather lags"
-                contents: 
-                    - dengue-model/dengue_weather_lag_class.qmd
-                    - dengue-model/dengue_weather_lag_reg.qmd
+              - dengue-model/dengue_weather_lag_class_v2.qmd
               - dengue-model/dengue_classification_symptoms_conditions_multi.qmd
               - section: "Dengue time series modelling"
                 contents:
