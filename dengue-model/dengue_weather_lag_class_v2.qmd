@@ -261,7 +261,7 @@ wf_set <-
   )
 ```
 
-### Hyper-parameter tuning
+### Tuning
 
 This step tune hyper-parameters from the models (learners and balancing steps) using an ANOVA race.
 
@@ -269,6 +269,7 @@ This step tune hyper-parameters from the models (learners and balancing steps) u
 tune_results <- wf_set %>%
   workflow_map(
     "tune_race_anova",
+    seed = 345,
     resamples = folds,
     grid = 50,
     control = control_race(parallel_over = "everything"),
