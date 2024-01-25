@@ -15,7 +15,6 @@ library(tidymodels)
 library(hotspots)
 library(DT)
 library(finetune)
-library(bonsai)
 library(themis)
 library(arrow)
 library(timetk)
@@ -56,7 +55,7 @@ hot_ref <- hotspots(
 )$positive.cut
 
 dengue_df_anom <- dengue_df %>%
-  mutate(anomaly = if_else(freq >= hot_ref, "Yes", "No")) %>%
+  mutate(anomaly = if_else(freq >= hot_ref, TRUE, FALSE)) %>%
   mutate(anomaly = as.factor(anomaly))
 ```
 
@@ -210,6 +209,15 @@ rec_adasyn <-
   )
 ```
 
+```{r}
+rec_downsample <- 
+  recipe(anomaly ~ ., train_data) %>%
+  step_downsample(
+    anomaly, 
+    under_ratio = tune()
+  )
+```
+
 ### Learners
 
 Decision trees are choose due its directly interpretability and rules extraction. Two learners are created with different engines (rpart and partykit).
@@ -221,15 +229,6 @@ tree_rp_spec <- decision_tree(
   min_n = tune()
 ) %>%
   set_engine("rpart") %>%
-  set_mode("classification")
-```
-
-```{r}
-tree_pk_spec <- decision_tree(
-  tree_depth = tune(),
-  min_n = tune()
-) %>%
-  set_engine("partykit") %>%
   set_mode("classification")
 ```
 
@@ -256,11 +255,11 @@ wf_set <-
       upsample = rec_upsample,
       rose = rec_rose, 
       smote = rec_smote, 
-      adasyn = rec_adasyn
+      adasyn = rec_adasyn,
+      downsample = rec_downsample
     ),
     models = list(
-      dt_rp = tree_rp_spec, 
-      dt_pk = tree_pk_spec
+      dt = tree_rp_spec
     ),
     cross = TRUE
   )
@@ -277,6 +276,14 @@ tune_results <- wf_set %>%
     seed = 345,
     resamples = folds,
     grid = 50,
+    metrics = metric_set(
+      accuracy, 
+      bal_accuracy,
+      roc_auc, 
+      ppv,
+      sens,
+      spec
+    ),
     control = control_race(parallel_over = "everything"),
     verbose = TRUE
   )
@@ -287,9 +294,13 @@ tune_results <- wf_set %>%
 Based on the tuning results, this step identifies the best learner strategy and best model hyper-parameters based on the ROC-AUC metric.
 
 ```{r}
+target_metric <- "bal_accuracy"
+```
+
+```{r}
 best_wf <- tune_results %>% 
-  rank_results(rank_metric = "roc_auc") %>% 
-  filter(.metric == "roc_auc") %>% 
+  rank_results(rank_metric = target_metric) %>% 
+  filter(.metric == target_metric) %>% 
   select(wflow_id, model, .config, accuracy = mean, rank) %>%
   slice(1) %>%
   pull(wflow_id)
@@ -300,7 +311,7 @@ print(best_wf)
 ```{r}
 best_tune <- tune_results %>%
   extract_workflow_set_result(id = best_wf) %>%
-  select_best(metric = "roc_auc")
+  select_best(metric = target_metric)
 
 t(best_tune)
 ```
@@ -323,12 +334,7 @@ fitted_wf <- tune_results %>%
 ```{r}
 extracted_engine <-  fitted_wf %>% extract_fit_engine()
 
-if(class(extracted_engine)[1] == "constparty"){
-  plot(extracted_engine)
-} else (
-  rpart.plot(extracted_engine, roundint = FALSE)
-)
-  
+rpart.plot(extracted_engine, roundint = FALSE)
 ```
 
 ### Confusion matrix
@@ -341,8 +347,17 @@ augment(fitted_wf) %>%
 ### Model performance metrics
 
 ```{r}
+multi_metric <- metric_set(
+  accuracy, 
+  bal_accuracy,
+  roc_auc, 
+  ppv,
+  sens,
+  spec
+)
+
 augment(fitted_wf) %>%
-  metrics(truth = anomaly, estimate = .pred_class, .pred_Yes)
+  multi_metric(truth = anomaly, estimate = .pred_class, .pred_TRUE)
 ```
 
 ### Variable importance plot
