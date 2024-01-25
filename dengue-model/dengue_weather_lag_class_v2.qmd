@@ -32,7 +32,7 @@ source("../functions.R")
 ### Dengue
 
 ```{r}
-code_muni <- 3304557 # Rio de Janeiro, RJ
+code_muni <- 3136702 # Juiz de Fora, MG
 ```
 
 The original data on municipality dengue cases incidence present daily observations and is summarized by month.
@@ -49,7 +49,11 @@ dengue_df <- open_dataset(data_dir("dengue_data/parquet_aggregated/dengue_md.par
 Based on the observed frequency distribution of cases, we classify the months as anomalous or not.
 
 ```{r}
-hot_ref <- hotspots(x = dengue_df$freq, var.est = "mad")$positive.cut
+hot_ref <- hotspots(
+  x = dengue_df$freq, 
+  p = 0.99, 
+  var.est = "mad",
+)$positive.cut
 
 dengue_df_anom <- dengue_df %>%
   mutate(anomaly = if_else(freq >= hot_ref, "Yes", "No")) %>%
@@ -132,6 +136,7 @@ res_prep <- res %>%
     .value = c(tmax, tmin, prec), 
     .lags = 1:6
   ) %>% 
+  select(-tmax, -tmin, -prec) %>%
   na.omit()
 ```
 
@@ -289,9 +294,15 @@ best_wf <- tune_results %>%
   slice(1) %>%
   pull(wflow_id)
 
+print(best_wf)
+```
+
+```{r}
 best_tune <- tune_results %>%
   extract_workflow_set_result(id = best_wf) %>%
   select_best(metric = "roc_auc")
+
+t(best_tune)
 ```
 
 ### Finalize workflow
