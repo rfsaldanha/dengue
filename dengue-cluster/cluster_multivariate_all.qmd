@@ -34,6 +34,10 @@ tdengue <- open_dataset(sources = data_dir("bundled_data/tdengue.parquet")) %>%
 dim(tdengue)
 ```
 
+```{r}
+length(unique(tdengue$mun))
+```
+
 Data for maps.
 
 ```{r}
@@ -135,7 +139,7 @@ m_cluster_ids %>%
 ```{r}
 ggplot() +
   geom_sf(data = uf_sf, fill = "lightgray", color = "grey20", size=.15, show.legend = FALSE) +
-  geom_sf(data = m_cluster_ids, aes(color = group), size = 2) +
+  geom_sf(data = m_cluster_ids, aes(color = group), size = 2, alpha = 0.7) +
   theme_minimal()
 ```
 

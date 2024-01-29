@@ -51,7 +51,7 @@ glimpse(tdengue)
 
 ## Clustering
 
-Here we load the results from this [clustering notebook](../dengue-cluster/cluster_multivariate_clim.qmd).
+Here we load the results from this [clustering notebook](../dengue-cluster/cluster_multivariate_all.qmd).
 
 ```{r}
 clust_res <- readRDS("../dengue-cluster/m_cluster_ids.rds") %>%
@@ -108,7 +108,7 @@ The global and subset models training specification are called recipes. The proc
 recipes_list <- list()
 ```
 
-### Global
+### Global model
 
 The global training recipe uses data from all municipalities for training the models.
 
@@ -126,14 +126,29 @@ recipes_list <- append(recipes_list, list(global = recipe_global))
 rm(recipe_global)
 ```
 
-### Global with Id
+### Global model with subset ID (one-hot-encoding)
 
 This global model has the group variable as a predictor, in one-hot encoding form.
 
 ```{r}
-recipe_globalID <- recipe(cases ~ ., data = training(tdengue_split)) %>%
+recipe_globalHotID <- recipe(cases ~ ., data = training(tdengue_split)) %>%
   step_rm(date) %>%
   step_dummy(group, one_hot = TRUE) %>%
+  update_role(mun, new_role = "id variable")
+
+recipes_list <- append(recipes_list, list(globalHotID = recipe_globalHotID))
+
+rm(recipe_globalHotID)
+```
+
+### Global model with subset ID (factor)
+
+This global model has the group variable as a predictor, as a factor.
+
+```{r}
+recipe_globalID <- recipe(cases ~ ., data = training(tdengue_split)) %>%
+  step_rm(date) %>%
+  step_mutate(group = as.factor(group)) %>%
   update_role(mun, new_role = "id variable")
 
 recipes_list <- append(recipes_list, list(globalID = recipe_globalID))
@@ -176,7 +191,7 @@ rf_spec <- rand_forest(
   trees = tune(),
   min_n = tune()
 ) %>%
-  set_engine("ranger") %>%
+  set_engine("ranger", respect.unordered.factors = TRUE) %>%
   set_mode("regression")
 ```
 
