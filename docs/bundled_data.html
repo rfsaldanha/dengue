@@ -604,7 +604,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">December 1, 2023 | 09:07:18 +01:00</p>
+      <p class="date">November 27, 2023 | 12:49:35 -03:00</p>
     </div>
   </div>
   
@@ -711,9 +711,15 @@ Note
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>dengue_year) <span class="sc">%&gt;%</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(prec, <span class="at">by =</span> <span class="st">"date"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(tmax, <span class="at">by =</span> <span class="st">"date"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(tmin, <span class="at">by =</span> <span class="st">"date"</span>)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(dengue, prec, tmax, tmin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(tmin, <span class="at">by =</span> <span class="st">"date"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in inner_join(., pop, by = c(dengue_year = "year", "mun")): Detected an unexpected many-to-many relationship between `x` and `y`.
+ℹ Row 1 of `x` matches multiple rows in `y`.
+ℹ Row 13 of `y` matches multiple rows in `x`.
+ℹ If a many-to-many relationship is expected, set `relationship =
+  "many-to-many"` to silence this warning.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(dengue, prec, tmax, tmin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -733,32 +739,32 @@ Note
 <h3 class="anchored" data-anchor-id="cleaning-and-basic-features">Cleaning and basic features</h3>
 <p>Due the sparsity of dengue cases, only municipalities with more than 100,000 inhabitants are filtered.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List municipalities with moren than 10k inhab</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>mun_vec <span class="ot">&lt;-</span> pop <span class="sc">%&gt;%</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="fu">max</span>(year)) <span class="sc">%&gt;%</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pop <span class="sc">&gt;=</span> <span class="dv">100000</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(mun)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(pop)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List municipalities with moren than 10k inhab</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>mun_vec <span class="ot">&lt;-</span> pop <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="fu">max</span>(year)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pop <span class="sc">&gt;=</span> <span class="dv">100000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(mun)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(pop)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> tdengue <span class="sc">%&gt;%</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remove municipalilities with zero population</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pop <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Keep only municipalities in the list</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(mun <span class="sc">%in%</span> mun_vec) <span class="sc">%&gt;%</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Compute dengue rate per population</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(cases = cases/pop*100000) %&gt;%</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remove population</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>pop) <span class="sc">%&gt;%</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Round values</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(cases, prec, tmax, tmin), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="at">digits =</span> <span class="dv">2</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pad weeks </span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mun) <span class="sc">%&gt;%</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pad_by_time</span>(date, <span class="at">.by =</span> <span class="st">"week"</span>, <span class="at">.pad_value =</span> <span class="dv">0</span>, <span class="at">.start_date =</span> <span class="fu">min</span>(tdengue<span class="sc">$</span>date), <span class="at">.end_date =</span> <span class="fu">max</span>(tdengue<span class="sc">$</span>date)) <span class="sc">%&gt;%</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> tdengue <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remove municipalilities with zero population</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pop <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Keep only municipalities in the list</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(mun <span class="sc">%in%</span> mun_vec) <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Compute dengue rate per population</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(cases = cases/pop*100000) %&gt;%</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remove population</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>pop) <span class="sc">%&gt;%</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Round values</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(cases, prec, tmax, tmin), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="at">digits =</span> <span class="dv">2</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pad weeks </span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mun) <span class="sc">%&gt;%</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pad_by_time</span>(date, <span class="at">.by =</span> <span class="st">"week"</span>, <span class="at">.pad_value =</span> <span class="dv">0</span>, <span class="at">.start_date =</span> <span class="fu">min</span>(tdengue<span class="sc">$</span>date), <span class="at">.end_date =</span> <span class="fu">max</span>(tdengue<span class="sc">$</span>date)) <span class="sc">%&gt;%</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Municipalities remaining at the dataset: 326</p>
+<p>Municipalities remaining at the dataset: 158</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -780,31 +786,31 @@ Warning
 x' = \frac{x - \mu}{\sigma}
 \]</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> tdengue <span class="sc">%&gt;%</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cases_raw =</span> cases) <span class="sc">%&gt;%</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mun) <span class="sc">%&gt;%</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">%&gt;%</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cases_cum_raw =</span> <span class="fu">cumsum</span>(cases_raw)) <span class="sc">%&gt;%</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cases_cum =</span> cases_cum_raw) <span class="sc">%&gt;%</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(cases, cases_cum, prec, tmax, tmin), <span class="sc">~</span> <span class="fu">standardize_vec</span>(.x, <span class="at">silent =</span> <span class="cn">TRUE</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> tdengue <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cases_raw =</span> cases) <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mun) <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(date) <span class="sc">%&gt;%</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cases_cum_raw =</span> <span class="fu">cumsum</span>(cases_raw)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cases_cum =</span> cases_cum_raw) <span class="sc">%&gt;%</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(cases, cases_cum, prec, tmax, tmin), <span class="sc">~</span> <span class="fu">standardize_vec</span>(.x, <span class="at">silent =</span> <span class="cn">TRUE</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="lag-and-rolling-lag-variables" class="level3">
 <h3 class="anchored" data-anchor-id="lag-and-rolling-lag-variables">Lag and rolling lag variables</h3>
 <p>Creates lagged variables from standardized dengue cases and weather variables, from 1 to 6 weeks.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> tdengue <span class="sc">%&gt;%</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mun) <span class="sc">%&gt;%</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tk_augment_lags</span>(<span class="at">.value =</span> <span class="fu">c</span>(cases, prec, tmax, tmin), <span class="at">.lags =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># tk_augment_slidify(</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   .value = contains("_lag"), </span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   .period = c(2, 4, 6), </span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   .f = ~ mean(.x, na.rm = TRUE), </span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   .partial = TRUE,</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   .align   = "center"</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ) %&gt;%</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tdengue <span class="ot">&lt;-</span> tdengue <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(mun) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tk_augment_lags</span>(<span class="at">.value =</span> <span class="fu">c</span>(cases, prec, tmax, tmin), <span class="at">.lags =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># tk_augment_slidify(</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   .value = contains("_lag"), </span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   .period = c(2, 4, 6), </span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   .f = ~ mean(.x, na.rm = TRUE), </span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   .partial = TRUE,</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   .align   = "center"</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ) %&gt;%</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -824,113 +830,113 @@ Warning
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(tdengue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(tdengue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 163,326
-Columns: 33
-$ mun           &lt;chr&gt; "110002", "110002", "110002", "110002", "110002", "11000…
-$ date          &lt;date&gt; 2010-12-26, 2011-01-02, 2011-01-09, 2011-01-16, 2011-01…
-$ cases         &lt;dbl&gt; -0.51044592, 0.66804904, 0.66804904, 0.07880156, 0.66804…
-$ prec          &lt;dbl&gt; -1.949441733, 1.595820245, 1.609000327, 1.566288162, 1.1…
-$ tmax          &lt;dbl&gt; -13.18226058, 0.28500953, 0.37007540, 0.49095848, 0.6969…
-$ tmin          &lt;dbl&gt; -8.3409156, 0.9663965, 1.0293750, 0.9933873, 0.9618981, …
-$ cases_raw     &lt;dbl&gt; 0, 2, 2, 1, 2, 5, 0, 1, 2, 1, 0, 2, 1, 2, 2, 0, 0, 0, 1,…
-$ cases_cum_raw &lt;dbl&gt; 0, 2, 4, 5, 7, 12, 12, 13, 15, 16, 16, 18, 19, 21, 23, 2…
-$ cases_cum     &lt;dbl&gt; -1.463959, -1.445297, -1.426635, -1.417304, -1.398642, -…
-$ cases_lag1    &lt;dbl&gt; NA, -0.51044592, 0.66804904, 0.66804904, 0.07880156, 0.6…
-$ prec_lag1     &lt;dbl&gt; NA, -1.949441733, 1.595820245, 1.609000327, 1.566288162,…
-$ tmax_lag1     &lt;dbl&gt; NA, -13.18226058, 0.28500953, 0.37007540, 0.49095848, 0.…
-$ tmin_lag1     &lt;dbl&gt; NA, -8.3409156, 0.9663965, 1.0293750, 0.9933873, 0.96189…
-$ cases_lag2    &lt;dbl&gt; NA, NA, -0.51044592, 0.66804904, 0.66804904, 0.07880156,…
-$ prec_lag2     &lt;dbl&gt; NA, NA, -1.949441733, 1.595820245, 1.609000327, 1.566288…
-$ tmax_lag2     &lt;dbl&gt; NA, NA, -13.18226058, 0.28500953, 0.37007540, 0.49095848…
-$ tmin_lag2     &lt;dbl&gt; NA, NA, -8.3409156, 0.9663965, 1.0293750, 0.9933873, 0.9…
-$ cases_lag3    &lt;dbl&gt; NA, NA, NA, -0.51044592, 0.66804904, 0.66804904, 0.07880…
-$ prec_lag3     &lt;dbl&gt; NA, NA, NA, -1.949441733, 1.595820245, 1.609000327, 1.56…
-$ tmax_lag3     &lt;dbl&gt; NA, NA, NA, -13.18226058, 0.28500953, 0.37007540, 0.4909…
-$ tmin_lag3     &lt;dbl&gt; NA, NA, NA, -8.3409156, 0.9663965, 1.0293750, 0.9933873,…
-$ cases_lag4    &lt;dbl&gt; NA, NA, NA, NA, -0.51044592, 0.66804904, 0.66804904, 0.0…
-$ prec_lag4     &lt;dbl&gt; NA, NA, NA, NA, -1.949441733, 1.595820245, 1.609000327, …
-$ tmax_lag4     &lt;dbl&gt; NA, NA, NA, NA, -13.18226058, 0.28500953, 0.37007540, 0.…
-$ tmin_lag4     &lt;dbl&gt; NA, NA, NA, NA, -8.3409156, 0.9663965, 1.0293750, 0.9933…
-$ cases_lag5    &lt;dbl&gt; NA, NA, NA, NA, NA, -0.51044592, 0.66804904, 0.66804904,…
-$ prec_lag5     &lt;dbl&gt; NA, NA, NA, NA, NA, -1.949441733, 1.595820245, 1.6090003…
-$ tmax_lag5     &lt;dbl&gt; NA, NA, NA, NA, NA, -13.18226058, 0.28500953, 0.37007540…
-$ tmin_lag5     &lt;dbl&gt; NA, NA, NA, NA, NA, -8.3409156, 0.9663965, 1.0293750, 0.…
-$ cases_lag6    &lt;dbl&gt; NA, NA, NA, NA, NA, NA, -0.51044592, 0.66804904, 0.66804…
-$ prec_lag6     &lt;dbl&gt; NA, NA, NA, NA, NA, NA, -1.9494417, 1.5958202, 1.6090003…
-$ tmax_lag6     &lt;dbl&gt; NA, NA, NA, NA, NA, NA, -13.18226058, 0.28500953, 0.3700…
-$ tmin_lag6     &lt;dbl&gt; NA, NA, NA, NA, NA, NA, -8.3409156, 0.9663965, 1.0293750…</code></pre>
+<pre><code>Rows: 157,932
+Columns: 34
+$ mun           &lt;chr&gt; "110020", "110020", "110020", "110020", "110020", "11002…
+$ date          &lt;date&gt; 2010-12-26, 2011-01-02, 2011-01-02, 2011-01-09, 2011-01…
+$ cases         &lt;dbl&gt; -0.52012692, 0.15581861, 0.15581861, 0.07132542, 0.07132…
+$ age_group     &lt;chr&gt; NA, "Total", "Total", "Total", "Total", "Total", "Total"…
+$ prec          &lt;dbl&gt; -1.9551115, 1.5969131, 1.5969131, 1.6101183, 1.6101183, …
+$ tmax          &lt;dbl&gt; -14.51841512, 0.29909540, 0.29909540, 0.39269005, 0.3926…
+$ tmin          &lt;dbl&gt; -8.6560935, 0.9932740, 0.9932740, 1.0585670, 1.0585670, …
+$ cases_raw     &lt;dbl&gt; 0, 8, 8, 7, 7, 4, 4, 10, 10, 13, 13, 5, 5, 8, 8, 7, 7, 6…
+$ cases_cum_raw &lt;dbl&gt; 0, 8, 16, 23, 30, 34, 38, 48, 58, 71, 84, 89, 94, 102, 1…
+$ cases_cum     &lt;dbl&gt; -1.582778, -1.578801, -1.574824, -1.571344, -1.567865, -…
+$ cases_lag1    &lt;dbl&gt; NA, -0.52012692, 0.15581861, 0.15581861, 0.07132542, 0.0…
+$ prec_lag1     &lt;dbl&gt; NA, -1.9551115, 1.5969131, 1.5969131, 1.6101183, 1.61011…
+$ tmax_lag1     &lt;dbl&gt; NA, -14.51841512, 0.29909540, 0.29909540, 0.39269005, 0.…
+$ tmin_lag1     &lt;dbl&gt; NA, -8.6560935, 0.9932740, 0.9932740, 1.0585670, 1.05856…
+$ cases_lag2    &lt;dbl&gt; NA, NA, -0.52012692, 0.15581861, 0.15581861, 0.07132542,…
+$ prec_lag2     &lt;dbl&gt; NA, NA, -1.9551115, 1.5969131, 1.5969131, 1.6101183, 1.6…
+$ tmax_lag2     &lt;dbl&gt; NA, NA, -14.51841512, 0.29909540, 0.29909540, 0.39269005…
+$ tmin_lag2     &lt;dbl&gt; NA, NA, -8.6560935, 0.9932740, 0.9932740, 1.0585670, 1.0…
+$ cases_lag3    &lt;dbl&gt; NA, NA, NA, -0.52012692, 0.15581861, 0.15581861, 0.07132…
+$ prec_lag3     &lt;dbl&gt; NA, NA, NA, -1.9551115, 1.5969131, 1.5969131, 1.6101183,…
+$ tmax_lag3     &lt;dbl&gt; NA, NA, NA, -14.51841512, 0.29909540, 0.29909540, 0.3926…
+$ tmin_lag3     &lt;dbl&gt; NA, NA, NA, -8.6560935, 0.9932740, 0.9932740, 1.0585670,…
+$ cases_lag4    &lt;dbl&gt; NA, NA, NA, NA, -0.52012692, 0.15581861, 0.15581861, 0.0…
+$ prec_lag4     &lt;dbl&gt; NA, NA, NA, NA, -1.9551115, 1.5969131, 1.5969131, 1.6101…
+$ tmax_lag4     &lt;dbl&gt; NA, NA, NA, NA, -14.51841512, 0.29909540, 0.29909540, 0.…
+$ tmin_lag4     &lt;dbl&gt; NA, NA, NA, NA, -8.6560935, 0.9932740, 0.9932740, 1.0585…
+$ cases_lag5    &lt;dbl&gt; NA, NA, NA, NA, NA, -0.52012692, 0.15581861, 0.15581861,…
+$ prec_lag5     &lt;dbl&gt; NA, NA, NA, NA, NA, -1.9551115, 1.5969131, 1.5969131, 1.…
+$ tmax_lag5     &lt;dbl&gt; NA, NA, NA, NA, NA, -14.51841512, 0.29909540, 0.29909540…
+$ tmin_lag5     &lt;dbl&gt; NA, NA, NA, NA, NA, -8.6560935, 0.9932740, 0.9932740, 1.…
+$ cases_lag6    &lt;dbl&gt; NA, NA, NA, NA, NA, NA, -0.52012692, 0.15581861, 0.15581…
+$ prec_lag6     &lt;dbl&gt; NA, NA, NA, NA, NA, NA, -1.9551115, 1.5969131, 1.5969131…
+$ tmax_lag6     &lt;dbl&gt; NA, NA, NA, NA, NA, NA, -14.51841512, 0.29909540, 0.2990…
+$ tmin_lag6     &lt;dbl&gt; NA, NA, NA, NA, NA, NA, -8.6560935, 0.9932740, 0.9932740…</code></pre>
 </div>
 </div>
 </section>
 <section id="save-result" class="level2">
 <h2 class="anchored" data-anchor-id="save-result">Save result</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_parquet</span>(<span class="at">x =</span> tdengue, <span class="at">sink =</span> <span class="fu">data_dir</span>(<span class="st">"bundled_data/tdengue.parquet"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_parquet</span>(<span class="at">x =</span> tdengue, <span class="at">sink =</span> <span class="fu">data_dir</span>(<span class="st">"bundled_data/tdengue.parquet"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="session-info" class="level2">
 <h2 class="anchored" data-anchor-id="session-info">Session info</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.3.2 (2023-10-31)
-Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 22.04.3 LTS
+Platform: x86_64-conda-linux-gnu (64-bit)
+Running under: CentOS Linux 7 (Core)
 
 Matrix products: default
-BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0 
-LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0
+BLAS/LAPACK: /home/raphaelfs/miniconda3/envs/quarto/lib/libopenblasp-r0.3.25.so;  LAPACK version 3.11.0
 
 locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_CA.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_CA.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_CA.UTF-8       LC_NAME=C                 
+ [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=pt_BR.UTF-8        LC_COLLATE=pt_BR.UTF-8    
+ [5] LC_MONETARY=pt_BR.UTF-8    LC_MESSAGES=pt_BR.UTF-8   
+ [7] LC_PAPER=pt_BR.UTF-8       LC_NAME=C                 
  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_CA.UTF-8 LC_IDENTIFICATION=C       
+[11] LC_MEASUREMENT=pt_BR.UTF-8 LC_IDENTIFICATION=C       
 
-time zone: Europe/Paris
+time zone: America/Sao_Paulo
 tzcode source: system (glibc)
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] timetk_2.9.0       yardstick_1.2.0    workflowsets_1.0.1 workflows_1.1.3   
- [5] tune_1.1.2         rsample_1.2.0      recipes_1.0.8      parsnip_1.1.1     
- [9] modeldata_1.2.0    infer_1.0.5        dials_1.2.0        scales_1.2.1      
-[13] broom_1.0.5        tidymodels_1.1.1   brpop_0.3.0        arrow_14.0.0.1    
-[17] lubridate_1.9.3    forcats_1.0.0      stringr_1.5.1      dplyr_1.1.4       
-[21] purrr_1.0.2        readr_2.1.4        tidyr_1.3.0        tibble_3.2.1      
-[25] ggplot2_3.4.4      tidyverse_2.0.0   
+ [1] timetk_2.8.2       yardstick_1.2.0    workflowsets_1.0.0 workflows_1.1.3   
+ [5] tune_1.1.2         rsample_1.2.0      recipes_1.0.6      parsnip_1.1.0     
+ [9] modeldata_1.1.0    infer_1.0.4        dials_1.2.0        scales_1.2.1      
+[13] broom_1.0.4        tidymodels_1.0.0   brpop_0.1.5        arrow_12.0.0      
+[17] lubridate_1.9.2    forcats_1.0.0      stringr_1.5.0      dplyr_1.1.2       
+[21] purrr_1.0.1        readr_2.1.4        tidyr_1.3.0        tibble_3.2.1      
+[25] ggplot2_3.4.2      tidyverse_2.0.0   
 
 loaded via a namespace (and not attached):
  [1] tidyselect_1.2.0    timeDate_4022.108   fastmap_1.1.1      
- [4] digest_0.6.33       rpart_4.1.21        timechange_0.2.0   
- [7] lifecycle_1.0.4     survival_3.5-7      magrittr_2.0.3     
-[10] compiler_4.3.2      rlang_1.1.2         tools_4.3.2        
-[13] utf8_1.2.4          yaml_2.3.7          data.table_1.14.8  
-[16] knitr_1.45          htmlwidgets_1.6.3   bit_4.0.5          
-[19] DiceDesign_1.9      withr_2.5.2         nnet_7.3-19        
-[22] grid_4.3.2          fansi_1.0.5         xts_0.13.1         
-[25] colorspace_2.1-0    future_1.33.0       iterators_1.0.14   
-[28] globals_0.16.2      MASS_7.3-60         anytime_0.3.9      
-[31] cli_3.6.1           rmarkdown_2.25      generics_0.1.3     
-[34] rstudioapi_0.15.0   future.apply_1.11.0 tzdb_0.4.0         
-[37] splines_4.3.2       assertthat_0.2.1    parallel_4.3.2     
-[40] vctrs_0.6.4         hardhat_1.3.0       Matrix_1.6-2       
-[43] jsonlite_1.8.7      hms_1.1.3           bit64_4.0.5        
-[46] listenv_0.9.0       foreach_1.5.2       gower_1.0.1        
-[49] glue_1.6.2          parallelly_1.36.0   codetools_0.2-19   
-[52] stringi_1.8.2       gtable_0.3.4        GPfit_1.0-8        
-[55] munsell_0.5.0       pillar_1.9.0        furrr_0.3.1        
-[58] htmltools_0.5.7     ipred_0.9-14        lava_1.7.3         
-[61] R6_2.5.1            lhs_1.1.6           evaluate_0.23      
-[64] lattice_0.22-5      backports_1.4.1     class_7.3-22       
-[67] Rcpp_1.0.11         prodlim_2023.08.28  padr_0.6.2         
-[70] xfun_0.41           zoo_1.8-12          pkgconfig_2.0.3    </code></pre>
+ [4] digest_0.6.31       rpart_4.1.19        timechange_0.2.0   
+ [7] lifecycle_1.0.3     survival_3.5-5      magrittr_2.0.3     
+[10] compiler_4.3.2      rlang_1.1.1         tools_4.3.2        
+[13] utf8_1.2.3          yaml_2.3.7          knitr_1.43         
+[16] htmlwidgets_1.6.2   bit_4.0.5           DiceDesign_1.9     
+[19] withr_2.5.0         nnet_7.3-19         grid_4.3.2         
+[22] fansi_1.0.4         xts_0.13.1          colorspace_2.1-0   
+[25] future_1.32.0       iterators_1.0.14    globals_0.16.2     
+[28] MASS_7.3-60         anytime_0.3.9       cli_3.6.1          
+[31] rmarkdown_2.22      generics_0.1.3      rstudioapi_0.14    
+[34] future.apply_1.11.0 tzdb_0.4.0          splines_4.3.2      
+[37] assertthat_0.2.1    parallel_4.3.2      vctrs_0.6.3        
+[40] hardhat_1.3.0       Matrix_1.5-4.1      jsonlite_1.8.5     
+[43] hms_1.1.3           bit64_4.0.5         listenv_0.9.0      
+[46] foreach_1.5.2       gower_1.0.1         glue_1.6.2         
+[49] parallelly_1.36.0   codetools_0.2-19    stringi_1.7.12     
+[52] gtable_0.3.3        munsell_0.5.0       GPfit_1.0-8        
+[55] pillar_1.9.0        furrr_0.3.1         htmltools_0.5.5    
+[58] ipred_0.9-13        lava_1.7.2.1        R6_2.5.1           
+[61] lhs_1.1.6           evaluate_0.21       lattice_0.21-8     
+[64] backports_1.4.1     class_7.3-22        Rcpp_1.0.10        
+[67] prodlim_2019.11.13  padr_0.6.2          xfun_0.39          
+[70] zoo_1.8-12          pkgconfig_2.0.3    </code></pre>
 </div>
 </div>
 
