@@ -306,7 +306,7 @@ for(t in 1:length(trained_models)){
 This plot presents the RMSE distribution across the workflows.
 
 ```{r}
-ggplot(data = models_accuracy, aes(x = .model_id, y = rmse, fill = .model_desc)) +
+ggplot(data = models_accuracy, aes(x = .model_id, y = rmse, fill = .model_desc, fill = .model_id)) +
   geom_boxplot()
 ```
 
