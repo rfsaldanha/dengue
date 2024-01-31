@@ -108,13 +108,13 @@ The population estimate is constant over each year.
 
 ### Cleaning and basic features
 
-Due the sparsity of dengue cases, only municipalities with more than 100,000 inhabitants are filtered.
+Due the sparsity of dengue cases, only municipalities with more than 50,000 inhabitants are filtered.
 
 ```{r}
-# List municipalities with moren than 10k inhab
+# List municipalities with moren than 50k inhab
 mun_vec <- pop %>%
   filter(year == max(year)) %>%
-  filter(pop >= 100000) %>%
+  filter(pop >= 50000) %>%
   pull(mun)
 
 rm(pop)
