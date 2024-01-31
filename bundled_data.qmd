@@ -91,14 +91,6 @@ tmin <- open_dataset(sources = data_dir("weather_data/parquet/brdwgd/tmin.parque
 Join dengue cases, population and weather variables.
 
 ```{r}
-dim(dengue)
-dim(pop)
-dim(prec)
-dim(tmax)
-dim(tmin)
-```
-
-```{r}
 tdengue <- dengue %>%
   mutate(dengue_year = year(date)) %>%
   inner_join(pop, by = c("dengue_year" = "year", "mun")) %>%
