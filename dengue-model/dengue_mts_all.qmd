@@ -221,7 +221,7 @@ race_results <-
     "tune_race_anova",
     seed = 345,
     resamples = tdengue_split_folds,
-    grid = 10,
+    grid = 25,
     control = control_race(parallel_over = "everything"),
     verbose = TRUE
   )
