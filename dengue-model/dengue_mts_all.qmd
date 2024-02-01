@@ -294,7 +294,7 @@ for(t in 1:length(trained_models)){
   res <- calib_tbl %>% 
       modeltime_accuracy(
         acc_by_id = TRUE, 
-        metric_set = metric_set(rmse, mape)
+        metric_set = metric_set(rmse)
       )
   
   res$.model_id <- word(names(trained_models[t]), 1, sep = "_")
@@ -303,11 +303,16 @@ for(t in 1:length(trained_models)){
 }
 ```
 
+```{r}
+saveRDS(object = models_accuracy, file = "mts_all_accuracy.rds")
+```
+
 This plot presents the RMSE distribution across the workflows.
 
 ```{r}
-ggplot(data = models_accuracy, aes(x = .model_id, y = rmse, fill = .model_desc, fill = .model_id)) +
-  geom_boxplot()
+ggplot(data = models_accuracy, aes(x = .model_id, y = rmse, fill = .model_id)) +
+  geom_boxplot() +
+  theme(legend.position = "none")
 ```
 
 ### Breakdown
