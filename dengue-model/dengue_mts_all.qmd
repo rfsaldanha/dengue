@@ -97,7 +97,7 @@ The training set will be split into k folds.
 
 ```{r}
 tdengue_split_folds <- training(tdengue_split) %>%
-  vfold_cv(v = 5)
+  vfold_cv(v = 10)
 ```
 
 ## Recipes
