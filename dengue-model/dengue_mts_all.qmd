@@ -78,13 +78,13 @@ table(is.na(tdengue$group))
 
 Split the data into training and testing. The function `time_series_split` handles the time series, not shuffling them, and considering the panel data format, as depicted in the message about overlapping timestamps detected.
 
-The last two years data will be used as the training set.
+The last three years data will be used as the training set.
 
 ```{r}
 tdengue_split <- tdengue %>%
   time_series_split(
     date_var = date, 
-    assess = 52*2,
+    assess = 52*3,
     cumulative = TRUE
   )
 
