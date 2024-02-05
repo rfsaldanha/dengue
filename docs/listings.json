@@ -27,9 +27,12 @@
   {
     "listing": "/summary.html",
     "items": [
+      "/dengue-data/raw_files_zika.html",
+      "/dengue-data/raw_files_chik.html",
+      "/dengue-data/raw_files_chik.html",
       "/dengue-cluster/cluster_multivariate_all.html",
-      "/dengue-model/dengue_weather_lag_class_v2.html",
       "/dengue-model/dengue_mts_all.html",
+      "/dengue-model/dengue_weather_lag_class_v2.html",
       "/dengue-data/imputation.html",
       "/dengue-data/missing_data.html",
       "/dengue-data/raw_files.html",

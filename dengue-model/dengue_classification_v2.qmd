@@ -1,0 +1,224 @@
+---
+title: "Dengue case classification"
+subtitle: "by symptoms and clinical condition"
+author: Raphael Saldanha
+date: last-modified
+---
+
+The objective of this notebook is to predict a dengue suspected case based on its symptoms, clinical conditions and other patient related variables.
+
+This trained model may be used to reclassify suspected dengue cases with inconclusive diagnosis.
+
+## Packages
+
+```{r}
+#| message: false
+library(tidyverse)
+library(arrow)
+library(knitr)
+library(lubridate)
+library(tidymodels)
+library(finetune)
+library(bonsai)
+library(tictoc)
+library(vip)
+```
+
+## Data
+
+-   Data prior to 2016 does not have patient symptoms and clinical conditions.
+
+-   Cases classified as inconclusive are discarded for model training.
+
+```{r}
+# Data sources
+files_list <- c(
+  "../dengue-data/parquets/dengue_2016.parquet",
+  "../dengue-data/parquets/dengue_2017.parquet",
+  "../dengue-data/parquets/dengue_2018.parquet",
+  "../dengue-data/parquets/dengue_2019.parquet",
+  "../dengue-data/parquets/dengue_2020.parquet",
+  "../dengue-data/parquets/dengue_2021.parquet"
+)
+
+# Independent variables
+x_vars <- c("FEBRE", "MIALGIA", "CEFALEIA", 
+            "EXANTEMA", "VOMITO", "NAUSEA", 
+            "DOR_COSTAS", "CONJUNTVIT", 
+            "ARTRITE", "ARTRALGIA", "PETEQUIA_N", 
+            "LEUCOPENIA", "LACO", "DOR_RETRO", 
+            "DIABETES", "HEMATOLOG", "HEPATOPAT", 
+            "HEPATOPAT", "RENAL", "HIPERTENSA",
+            "ACIDO_PEPT", "AUTO_IMUNE")
+
+# Prepare data
+dengue <- arrow::open_dataset(sources = files_list) %>%
+  # Select variables
+  select(all_of(c("CLASSI_FIN", "COMUNINF", "IDADEanos", "DT_SIN_PRI", x_vars))) %>%
+  # Filter out "Inconclusivo" cases
+  filter(CLASSI_FIN != "Inconclusivo") %>%
+  # Collect data from parquet files
+  collect() %>%
+  # Prepare variables
+  mutate(CLASSI_FIN = case_when(
+    CLASSI_FIN != "Descartado" ~ TRUE,
+    .default = FALSE
+  )) %>%
+  mutate(CLASSI_FIN = as.factor(CLASSI_FIN)) %>%
+  mutate(DT_SIN_PRI = as_date(DT_SIN_PRI)) %>%
+  mutate(COMUNINF = as.factor(COMUNINF)) %>%
+  mutate_at(.vars = x_vars, .funs = ~ . == "Sim") 
+```
+
+```{r}
+# Smaller dataset for tests
+dengue <- sample_n(dengue, 500000)
+```
+
+## Modeling
+
+### Train and test dataset split
+
+-   Proportion between training and test: 3/4
+
+```{r}
+set.seed(123)
+
+dengue_split <- dengue %>%
+  initial_split(prop = 3/4, strata = CLASSI_FIN)
+
+dengue_train <- training(dengue_split)
+dengue_test <- testing(dengue_split)
+
+set.seed(234)
+dengue_folds <- vfold_cv(dengue_train, strata = CLASSI_FIN)
+```
+
+### Recipes
+
+```{r}
+dengue_rec_1 <- 
+  recipe(CLASSI_FIN ~ . , data = dengue_train) %>%
+  step_rm(COMUNINF) %>%
+  step_rm(DT_SIN_PRI) %>%
+  #step_date(DT_SIN_PRI, features = c("month", "week", "semester", "quarter"), keep_original_cols = FALSE) %>%
+  step_integer(all_predictors())
+```
+
+### Specifications
+
+#### XGB
+
+```{r}
+xgb_spec <-
+  boost_tree(
+    trees = tune(),
+    min_n = tune(),
+    mtry = tune()
+  ) %>%
+  set_engine("xgboost") %>%
+  set_mode("classification")
+```
+
+#### Decision tree
+
+```{r}
+cart_spec <-
+  decision_tree(
+    cost_complexity = tune(), 
+    min_n = tune()
+  ) %>% 
+  set_engine("rpart") %>% 
+  set_mode("classification")
+```
+
+### Workflows
+
+```{r}
+all_workflows <- 
+  workflow_set(
+    preproc = list(recipe_1 = dengue_rec_1),
+    models = list(xgb = xgb_spec, cart = cart_spec)
+  )
+```
+
+### Tuning
+
+```{r}
+doParallel::registerDoParallel()
+
+race_ctrl <- control_race(parallel_over = "everything")
+
+tic()
+race_results <- 
+  all_workflows %>%
+  workflow_map(
+    "tune_race_anova",
+    seed = 345,
+    resamples = dengue_folds,
+    grid = 10,
+    control = race_ctrl
+  )
+toc()
+```
+
+#### Race metrics
+
+```{r}
+train_rank_results <- rank_results(race_results, rank_metric = "roc_auc")
+
+train_rank_results
+```
+
+```{r}
+autoplot(race_results, metric = "roc_auc")
+```
+
+### Last fit
+
+```{r}
+selection_train <- train_rank_results %>%
+  arrange(-mean) %>%
+  pull(wflow_id) %>%
+  first()
+
+selection_train
+```
+
+```{r}
+best_results <- race_results %>%
+  extract_workflow_set_result(selection_train) %>%
+  select_best("accuracy")
+
+best_results
+```
+
+```{r}
+last_fit <- race_results %>%
+  extract_workflow(selection_train) %>%
+  finalize_workflow(best_results) %>%
+  last_fit(dengue_split)
+```
+
+### Evaluate on test
+
+```{r}
+collect_metrics(last_fit)
+```
+
+```{r}
+collect_predictions(last_fit) %>%
+    conf_mat(CLASSI_FIN, .pred_class)
+```
+
+```{r}
+last_fit %>%
+  extract_fit_engine() %>%
+  vip()
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```
