@@ -5,9 +5,7 @@ author: Raphael Saldanha
 date: last-modified
 ---
 
-The objective of this notebook is to predict a dengue suspected case based on its symptoms, clinical conditions and other patient related variables.
-
-This trained model may be used to reclassify suspected dengue cases with inconclusive diagnosis.
+The objective of this notebook is to train a model to reclassify inconclusive cases of dengue, zika and chikungunya based on the symptoms, clinical conditions and other patient related variables presented by confirmed and discarded cases
 
 ## Packages
 
@@ -22,23 +20,26 @@ library(finetune)
 library(bonsai)
 library(tictoc)
 library(vip)
+source("../functions.R")
 ```
 
 ## Data
 
--   Data prior to 2016 does not have patient symptoms and clinical conditions.
-
 -   Cases classified as inconclusive are discarded for model training.
+
+### Dengue
+
+-   Data prior to 2016 does not have patient symptoms and clinical conditions.
 
 ```{r}
 # Data sources
 files_list <- c(
-  "../dengue-data/parquets/dengue_2016.parquet",
-  "../dengue-data/parquets/dengue_2017.parquet",
-  "../dengue-data/parquets/dengue_2018.parquet",
-  "../dengue-data/parquets/dengue_2019.parquet",
-  "../dengue-data/parquets/dengue_2020.parquet",
-  "../dengue-data/parquets/dengue_2021.parquet"
+  data_dir("dengue_data/parquets/dengue_2016.parquet"),
+  data_dir("dengue_data/parquets/dengue_2017.parquet"),
+  data_dir("dengue_data/parquets/dengue_2018.parquet"),
+  data_dir("dengue_data/parquets/dengue_2019.parquet"),
+  data_dir("dengue_data/parquets/dengue_2020.parquet"),
+  data_dir("dengue_data/parquets/dengue_2021.parquet")
 )
 
 # Independent variables
@@ -61,8 +62,8 @@ dengue <- arrow::open_dataset(sources = files_list) %>%
   collect() %>%
   # Prepare variables
   mutate(CLASSI_FIN = case_when(
-    CLASSI_FIN != "Descartado" ~ TRUE,
-    .default = FALSE
+    CLASSI_FIN != "Descartado" ~ "Dengue",
+    .default = "Discarded"
   )) %>%
   mutate(CLASSI_FIN = as.factor(CLASSI_FIN)) %>%
   mutate(DT_SIN_PRI = as_date(DT_SIN_PRI)) %>%
@@ -70,10 +71,76 @@ dengue <- arrow::open_dataset(sources = files_list) %>%
   mutate_at(.vars = x_vars, .funs = ~ . == "Sim") 
 ```
 
+
+### Chikungunya
+
+-   Data prior to 2017 does not have patient symptoms and clinical conditions.
+
 ```{r}
-# Smaller dataset for tests
-dengue <- sample_n(dengue, 500000)
+# Data sources
+files_list <- c(
+  data_dir("chik_data/parquets/chik_2017.parquet"),
+  data_dir("chik_data/parquets/chik_2018.parquet"),
+  data_dir("chik_data/parquets/chik_2019.parquet"),
+  data_dir("chik_data/parquets/chik_2020.parquet"),
+  data_dir("chik_data/parquets/chik_2021.parquet")
+)
+
+# Independent variables
+x_vars <- c("FEBRE", "MIALGIA", "CEFALEIA", 
+            "EXANTEMA", "VOMITO", "NAUSEA", 
+            "DOR_COSTAS", "CONJUNTVIT", 
+            "ARTRITE", "ARTRALGIA", "PETEQUIA_N", 
+            "LEUCOPENIA", "LACO", "DOR_RETRO", 
+            "DIABETES", "HEMATOLOG", "HEPATOPAT", 
+            "HEPATOPAT", "RENAL", "HIPERTENSA",
+            "ACIDO_PEPT", "AUTO_IMUNE")
+
+# Prepare data
+chik <- arrow::open_dataset(sources = files_list) %>%
+  # Select variables
+  select(all_of(c("CLASSI_FIN", "COMUNINF", "IDADEanos", "DT_SIN_PRI", x_vars))) %>%
+  # Filter out "Inconclusivo" cases
+  filter(CLASSI_FIN != "Inconclusivo") %>%
+  # Collect data from parquet files
+  collect() %>%
+  # Prepare variables
+  mutate(CLASSI_FIN = case_when(
+    CLASSI_FIN != "Descartado" ~ "Chikungunya",
+    .default = "Discarded"
+  )) %>%
+  mutate(CLASSI_FIN = as.factor(CLASSI_FIN)) %>%
+  mutate(DT_SIN_PRI = as_date(DT_SIN_PRI)) %>%
+  mutate(COMUNINF = as.factor(COMUNINF)) %>%
+  mutate_at(.vars = x_vars, .funs = ~ . == "Sim") 
 ```
+
+### Work dataset
+
+```{r}
+dcdata <- bind_rows(dengue, chik)
+```
+
+```{r}
+rm(dengue, chik)
+gc(full = TRUE, verbose = FALSE)
+```
+
+## Case classification distribution
+
+```{r}
+dim(dcdata)
+```
+
+
+```{r}
+dcdata %>%
+  group_by(CLASSI_FIN) %>%
+  summarise(freq = n()) %>%
+  ungroup()
+```
+
+
 
 ## Modeling
 
@@ -84,21 +151,20 @@ dengue <- sample_n(dengue, 500000)
 ```{r}
 set.seed(123)
 
-dengue_split <- dengue %>%
+dcdata_split <- dcdata %>%
   initial_split(prop = 3/4, strata = CLASSI_FIN)
 
-dengue_train <- training(dengue_split)
-dengue_test <- testing(dengue_split)
+dcdata_train <- training(dcdata_split)
+dcdata_test <- testing(dcdata_split)
 
-set.seed(234)
-dengue_folds <- vfold_cv(dengue_train, strata = CLASSI_FIN)
+dcdata_folds <- vfold_cv(dcdata_train, v = 10, strata = CLASSI_FIN)
 ```
 
 ### Recipes
 
 ```{r}
-dengue_rec_1 <- 
-  recipe(CLASSI_FIN ~ . , data = dengue_train) %>%
+rec_1 <- 
+  recipe(CLASSI_FIN ~ . , data = dcdata_train) %>%
   step_rm(COMUNINF) %>%
   step_rm(DT_SIN_PRI) %>%
   #step_date(DT_SIN_PRI, features = c("month", "week", "semester", "quarter"), keep_original_cols = FALSE) %>%
