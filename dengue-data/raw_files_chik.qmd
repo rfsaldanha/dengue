@@ -26,20 +26,20 @@ node_name()
 ## Data download
 
 ```{r}
-for(a in 2016:2021){
-  tmp <- fetch_datasus(
-    year_start = a, year_end = a,
-    information_system = "SINAN-CHIKUNGUNYA"
-  )
-
-  write_parquet(x = tmp, sink = paste0(data_dir("chik_data/parquets_raw/raw_chik_"),a, ".parquet"))
-
-  tmp <- process_sinan_chikungunya(data = tmp)
-
-  write_parquet(x = tmp, sink = paste0(data_dir("chik_data/parquets/chik_"), a, ".parquet"))
-
-  rm(tmp)
-}
+# for(a in 2016:2021){
+#   tmp <- fetch_datasus(
+#     year_start = a, year_end = a,
+#     information_system = "SINAN-CHIKUNGUNYA"
+#   )
+# 
+#   write_parquet(x = tmp, sink = paste0(data_dir("chik_data/parquets_raw/raw_chik_"),a, ".parquet"))
+# 
+#   tmp <- process_sinan_chikungunya(data = tmp)
+# 
+#   write_parquet(x = tmp, sink = paste0(data_dir("chik_data/parquets/chik_"), a, ".parquet"))
+# 
+#   rm(tmp)
+# }
 ```
 
 ::: callout-warning

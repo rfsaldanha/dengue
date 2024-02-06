@@ -1,6 +1,6 @@
 ---
 title: "Subset Modeling"
-subtitle: "A Domain Partitioning Strategy for Data-efficient Machine-Learning"
+subtitle: "A Domain Partitioning Strategy for Data-efficient Machine Learning"
 author: "Raphael Saldanha"
 institute: "Inria"
 #date: "2024-02-06"
@@ -39,7 +39,7 @@ revealjs-plugins:
 
 2.  **Identify** a number of subsets $S$ on $D$
 
-3.  **Train** ML models on each $S_i$
+3.  **Train** ML models on each $S_k$
 
 4.  For inference, **assign** the incoming sample to the corresponding $S_k$
 
@@ -47,9 +47,9 @@ revealjs-plugins:
 
 ## Method
 
-![](images/global_subsets.png){width="300"} 
+![](images/global_subsets.png){width="300"}
 
-## Method
+## Workflow
 
 ```{mermaid}
 flowchart LR
@@ -66,26 +66,22 @@ P1 --> AC[Accuracy comparison]
 P2 --> AC
 ```
 
-## Method
+## Subsets identification
 
--  The subset may have *a priori* definitions
+-   The subset may have *a priori* definitions
 
--  Or identified with **data-driven methods**, like **clustering** techniques
+-   Or may be identified with **data-driven methods**, like **clustering** techniques
 
+## Preliminary results
 
-
-## Datasets
-
--  **Dengue dataset**. Contains 10 year time series of dengue cases incidence on Brazilian municipalities and related predictors, as temperature and rainfall.
-   -  The subsets models rendered a better performance on 116 out of 333 municipalities: a **improvement of 34.83%**.
-
--  We need **another dataset** to help generalize our findings.
+-   **Dengue dataset**. A 10 year time series of dengue cases incidence on Brazilian municipalities and related predictors, as temperature and rainfall.
+    -   $k=5$ subsets were identified (multivariate DTW)
+    -   The subsets models rendered a better performance on 116 out of 333 municipalities in comparison with the global model. An **improvement of 34.83%**.
+-   We would like to test on **more datasets** to help generalize our findings.
 
 ## GeoLifeCLEF 2023 competition
 
--  Large-scale training dataset of 5M plant occurrences 
--  Validation set of 5K plots
--  Test set with 20K plots
--  Baseline model Spatial Random Forest (PA), trained with Presence-Absence data and longitude/latitude as covariates
-
-
+-   Large-scale training dataset of 5M plant occurrences
+-   Validation set of 5K plots
+-   Test set with 20K plots
+-   Baseline model Spatial Random Forest (PA), trained with Presence-Absence data and longitude/latitude as covariates
