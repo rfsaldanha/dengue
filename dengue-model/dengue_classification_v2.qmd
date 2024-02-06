@@ -5,7 +5,7 @@ author: Raphael Saldanha
 date: last-modified
 ---
 
-The objective of this notebook is to train a model to reclassify inconclusive cases of dengue, zika and chikungunya based on the symptoms, clinical conditions and other patient related variables presented by confirmed and discarded cases
+The objective of this notebook is to train a model based on laboratory-confirmed or discarded cases of Dengue and Chikungunya in Brazil, based on the symptoms, clinical conditions and other patient related variables. This trained model will be used to assess the accuracy of clinical-confirmed cases, and to reclassify cases diagnosis judged as inconclusive.
 
 ## Packages
 
@@ -16,6 +16,7 @@ library(arrow)
 library(knitr)
 library(lubridate)
 library(tidymodels)
+library(themis)
 library(finetune)
 library(bonsai)
 library(tictoc)
@@ -23,17 +24,18 @@ library(vip)
 source("../functions.R")
 ```
 
-## Data
+## Source Data
 
--   Cases classified as inconclusive are discarded for model training.
+Datasets from SINAN Dengue and Chikungunya were previously downloaded from the Brazilian Health Ministry in DBC format, pre-processed (variables labels) and converted to the parquet format.
 
 ### Dengue
 
--   Data prior to 2016 does not have patient symptoms and clinical conditions.
+-   Data prior to 2016 does not have patient symptoms and clinical conditions
+-   Data from 2016 to 2021 is being considered
 
 ```{r}
 # Data sources
-files_list <- c(
+dengue_files_list <- c(
   data_dir("dengue_data/parquets/dengue_2016.parquet"),
   data_dir("dengue_data/parquets/dengue_2017.parquet"),
   data_dir("dengue_data/parquets/dengue_2018.parquet"),
@@ -41,7 +43,11 @@ files_list <- c(
   data_dir("dengue_data/parquets/dengue_2020.parquet"),
   data_dir("dengue_data/parquets/dengue_2021.parquet")
 )
+```
 
+`x_vars` contains the list of variables regarding symptoms and clinical conditions. `other_vars` contains names of other variables of interest.
+
+```{r}
 # Independent variables
 x_vars <- c("FEBRE", "MIALGIA", "CEFALEIA", 
             "EXANTEMA", "VOMITO", "NAUSEA", 
@@ -52,70 +58,450 @@ x_vars <- c("FEBRE", "MIALGIA", "CEFALEIA",
             "HEPATOPAT", "RENAL", "HIPERTENSA",
             "ACIDO_PEPT", "AUTO_IMUNE")
 
-# Prepare data
-dengue <- arrow::open_dataset(sources = files_list) %>%
-  # Select variables
-  select(all_of(c("CLASSI_FIN", "COMUNINF", "IDADEanos", "DT_SIN_PRI", x_vars))) %>%
-  # Filter out "Inconclusivo" cases
-  filter(CLASSI_FIN != "Inconclusivo") %>%
-  # Collect data from parquet files
-  collect() %>%
-  # Prepare variables
-  mutate(CLASSI_FIN = case_when(
-    CLASSI_FIN != "Descartado" ~ "Dengue",
-    .default = "Discarded"
-  )) %>%
-  mutate(CLASSI_FIN = as.factor(CLASSI_FIN)) %>%
-  mutate(DT_SIN_PRI = as_date(DT_SIN_PRI)) %>%
-  mutate(COMUNINF = as.factor(COMUNINF)) %>%
-  mutate_at(.vars = x_vars, .funs = ~ . == "Sim") 
+other_vars <- c("COMUNINF", "IDADEanos", "DT_SIN_PRI")
 ```
 
+We will read the datasets and select the variables on interest.
+
+```{r}
+# Prepare data
+dengue_full <- arrow::open_dataset(sources = dengue_files_list) |>
+  # Select variables
+  select(all_of(c("CLASSI_FIN", "CRITERIO", other_vars, x_vars))) |>
+  collect()
+```
+
+The full dengue dataset present the following dimensions
+
+```{r}
+dim(dengue_full)
+```
+
+The variable `CLASSI_FIN` present the case's diagnoses and \`CRITERIO\` present the method used to determine the diagnose.
+
+```{r}
+dengue_full <- dengue_full |>
+  # Prepare variables
+  mutate(CLASSI_FIN = case_when(
+    str_detect(tolower(CLASSI_FIN), "dengue") ~ "Positive Dengue",
+    CLASSI_FIN == "Descartado" ~ "Discarded Dengue",
+    CLASSI_FIN == "Inconclusivo" ~ "Inconclusive",
+    .default = CLASSI_FIN
+  )) |>
+  mutate(CRITERIO = case_match(
+    CRITERIO,
+    "Clínico epidemiológico" ~ "Clinical and epidemiological",
+    "Laboratório" ~ "Laboratorial",
+    "Em investigação" ~ "Being investigated",
+    .default = CRITERIO
+  ))
+```
+
+Let's see how many suspected cases falls on each condition.
+
+```{r}
+dengue_full |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+We may recode some of the cases, filter out exceptions and add a variable to retain the original information system name.
+
+```{r}
+dengue_full <- dengue_full|>
+  mutate(
+    CRITERIO = case_when(
+      CLASSI_FIN == "Inconclusive" & is.na(CRITERIO) ~ "Other reasons",
+      .default = CRITERIO
+    )
+  ) |>
+  filter(!is.na(CRITERIO)) |>
+  filter(!is.na(CLASSI_FIN)) |>
+  filter(!(CLASSI_FIN == "Discarded Dengue" & CRITERIO == "Being investigated")) |>
+  filter(!(CLASSI_FIN == "Inconclusive" & CRITERIO == "Being investigated")) |>
+  filter(!(CLASSI_FIN == "Positive Dengue" & CRITERIO == "Being investigated")) |>
+  mutate(case_source = "SINAN-Dengue")
+```
+
+```{r}
+dim(dengue_full)
+```
+
+```{r}
+dengue_full |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
 
 ### Chikungunya
+
+The same procedure executed on Dengue files is performed on Chikungunya reported suspected cases.
 
 -   Data prior to 2017 does not have patient symptoms and clinical conditions.
 
 ```{r}
 # Data sources
-files_list <- c(
+chik_files_list <- c(
   data_dir("chik_data/parquets/chik_2017.parquet"),
   data_dir("chik_data/parquets/chik_2018.parquet"),
   data_dir("chik_data/parquets/chik_2019.parquet"),
   data_dir("chik_data/parquets/chik_2020.parquet"),
   data_dir("chik_data/parquets/chik_2021.parquet")
 )
-
-# Independent variables
-x_vars <- c("FEBRE", "MIALGIA", "CEFALEIA", 
-            "EXANTEMA", "VOMITO", "NAUSEA", 
-            "DOR_COSTAS", "CONJUNTVIT", 
-            "ARTRITE", "ARTRALGIA", "PETEQUIA_N", 
-            "LEUCOPENIA", "LACO", "DOR_RETRO", 
-            "DIABETES", "HEMATOLOG", "HEPATOPAT", 
-            "HEPATOPAT", "RENAL", "HIPERTENSA",
-            "ACIDO_PEPT", "AUTO_IMUNE")
-
-# Prepare data
-chik <- arrow::open_dataset(sources = files_list) %>%
-  # Select variables
-  select(all_of(c("CLASSI_FIN", "COMUNINF", "IDADEanos", "DT_SIN_PRI", x_vars))) %>%
-  # Filter out "Inconclusivo" cases
-  filter(CLASSI_FIN != "Inconclusivo") %>%
-  # Collect data from parquet files
-  collect() %>%
-  # Prepare variables
-  mutate(CLASSI_FIN = case_when(
-    CLASSI_FIN != "Descartado" ~ "Chikungunya",
-    .default = "Discarded"
-  )) %>%
-  mutate(CLASSI_FIN = as.factor(CLASSI_FIN)) %>%
-  mutate(DT_SIN_PRI = as_date(DT_SIN_PRI)) %>%
-  mutate(COMUNINF = as.factor(COMUNINF)) %>%
-  mutate_at(.vars = x_vars, .funs = ~ . == "Sim") 
 ```
 
+```{r}
+# Prepare data
+chik_full <- arrow::open_dataset(sources = chik_files_list) |>
+  # Select variables
+  select(all_of(c("CLASSI_FIN", "CRITERIO", other_vars, x_vars))) |>
+  collect()
+```
 
+```{r}
+dim(chik_full)
+```
+
+```{r}
+chik_full <- chik_full |>
+  # Prepare variables
+  mutate(CLASSI_FIN = case_when(
+    str_detect(tolower(CLASSI_FIN), "chik") ~ "Positive Chikungunya",
+    CLASSI_FIN == "Descartado" ~ "Discarded Chikungunya",
+    CLASSI_FIN == "Inconclusivo" ~ "Inconclusive",
+    .default = CLASSI_FIN
+  )) |>
+  mutate(CRITERIO = case_match(
+    CRITERIO,
+    "Clínico epidemiológico" ~ "Clinical and epidemiological",
+    "Laboratório" ~ "Laboratorial",
+    "Em investigação" ~ "Being investigated",
+    .default = CRITERIO
+  ))
+```
+
+```{r}
+chik_full |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+```{r}
+chik_full <- chik_full|>
+  mutate(
+    CRITERIO = case_when(
+      CLASSI_FIN == "Inconclusive" & is.na(CRITERIO) ~ "Other reasons",
+      .default = CRITERIO
+    )
+  ) |>
+  filter(CLASSI_FIN %in% c("Discarded Chikungunya", "Inconclusive", "Positive Chikungunya")) |>
+  filter(CRITERIO %in% c("Clinical and epidemiological", "Laboratorial", "Other reasons")) |>
+  mutate(case_source = "SINAN-Chikungunya")
+```
+
+```{r}
+dim(chik_full)
+```
+
+```{r}
+chik_full |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+### Join datasets
+
+We will join both datasets, correct the date variable (DT_SIN_PRI) and remove invalid rows.
+
+```{r}
+dcdata <- bind_rows(dengue_full, chik_full) |>
+  mutate(DT_SIN_PRI = as_date(DT_SIN_PRI, format = "%Y-%m-%d")) |>
+  filter(year(DT_SIN_PRI) >= 2016 & year(DT_SIN_PRI) <= 2021)
+```
+
+```{r}
+dim(dcdata)
+```
+
+And remove no longer needed objects.
+
+```{r}
+rm(dengue_full, chik_full, chik_files_list, dengue_files_list)
+gc()
+```
+
+```{r}
+dcdata |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+Let's see in time how the case classification and used criteria evolves.
+
+```{r}
+dcdata |>
+  mutate(DT_SIN_PRI = ceiling_date(DT_SIN_PRI, "month")) |>
+  filter(CLASSI_FIN != "Inconclusive") |>
+  filter(CRITERIO != "Other reasons") |>
+  group_by(case_source, DT_SIN_PRI, CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  ggplot(aes(x = DT_SIN_PRI, y = count, fill = CRITERIO)) +
+  geom_area(stat = "identity") +
+  scale_y_continuous(labels = scales::unit_format(
+    unit = "k", 
+    scale = 1e-3,
+    accuracy = 1)
+  ) +
+  facet_wrap(~CLASSI_FIN + case_source, scales = "free_y") +
+  theme_bw() +
+  theme(legend.position = "bottom", legend.direction = "horizontal")
+  
+```
+
+## Reference dataset
+
+The reference dataset will contain only suspected cases that were assessed diagnosed by laboratory exams, to train and test a classification model. Cases with inconclusive classification will be discarded.
+
+```{r}
+dc_ref <- dcdata |>
+  filter(CRITERIO == "Laboratorial") |>
+  filter(CLASSI_FIN != "Inconclusive")
+```
+
+```{r}
+dim(dc_ref)
+```
+
+```{r}
+dc_ref |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+Also, a simplified version is created, aggregating the classification not considering the specific disease, with a more balanced dataset.
+
+```{r}
+dc_ref_simp <- dc_ref |>
+  mutate(CLASSI_FIN = case_match(
+    CLASSI_FIN,
+    "Discarded Chikungunya" ~ FALSE,
+    "Discarded Dengue" ~ FALSE,
+    "Positive Dengue" ~ TRUE,
+    "Positive Chikungunya" ~ TRUE
+  ))
+```
+
+```{r}
+dc_ref_simp |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+## Clinical dataset
+
+On this dataset, we will only include the cases that were classified by clinical and epidemiological criteria. Inconclusive cases will are discarded.
+
+```{r}
+dc_cli <- dcdata |>
+  filter(CRITERIO == "Clinical and epidemiological") |>
+  filter(CLASSI_FIN != "Inconclusive")
+```
+
+```{r}
+dim(dc_cli)
+```
+
+```{r}
+dc_cli |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+Also, a simplified version of this dataset is created.
+
+```{r}
+dc_cli_simp <- dc_cli |>
+  mutate(CLASSI_FIN = case_match(
+    CLASSI_FIN,
+    "Discarded Chikungunya" ~ FALSE,
+    "Discarded Dengue" ~ FALSE,
+    "Positive Dengue" ~ TRUE,
+    "Positive Chikungunya" ~ TRUE
+  ))
+```
+
+```{r}
+dim(dc_cli_simp)
+```
+
+```{r}
+dc_cli_simp |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+The joined data can be remove on this stage.
+
+```{r}
+rm(dcdata)
+gc()
+```
+
+## Training and testing dataset
+
+The training and testing dataset split is based on the reference dataset (cases classified by laboratorial exams).
+
+```{r}
+dc_ref_split <- initial_split(
+  data = dc_ref, 
+  prop = 3/4, 
+  strata = CLASSI_FIN
+)
+
+dc_ref_training <- training(dc_ref_split)
+dc_ref_testing <- testing(dc_ref_split)
+```
+
+```{r}
+dc_ref_simp_split <- initial_split(
+  data = dc_ref_simp, 
+  prop = 3/4, 
+  strata = CLASSI_FIN
+)
+
+dc_ref_simp_training <- training(dc_ref_simp_split)
+dc_ref_simp_testing <- testing(dc_ref_simp_split)
+```
+
+## Folding
+
+```{r}
+dc_ref_split_folds <- dc_ref_training |>
+  vfold_cv(v = 10, strata = CLASSI_FIN)
+
+dc_ref_simp_split_folds <- dc_ref_simp_training |>
+  vfold_cv(v = 10, strata = CLASSI_FIN)
+```
+
+## Model recipes
+
+Here, we will create a number of model recipe to be trained.
+
+```{r}
+# Reference dataset
+rec_ref_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_training) |>
+  step_rm(CRITERIO, case_source) |>
+  step_date(DT_SIN_PRI, features = c("month", "week", "semester", "quarter"), keep_original_cols = FALSE) |>
+  step_dummy(COMUNINF, one_hot = TRUE) |>
+  step_integer(all_of(x_vars)) |>
+  step_smote(CLASSI_FIN)
+```
+
+```{r}
+# Simplified reference dataset
+rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+  step_rm(CRITERIO, case_source) |>
+  step_date(DT_SIN_PRI, features = c("month", "week", "semester", "quarter"), keep_original_cols = FALSE) |>
+  step_dummy(COMUNINF, one_hot = TRUE) |>
+  step_integer(all_of(x_vars)) |>
+  step_smote(CLASSI_FIN)
+```
+
+## Learners
+
+Specification of model learners and tuning parameters.
+
+```{r}
+xgb_spec <-
+  boost_tree(
+    trees = tune(),
+    min_n = tune(),
+    mtry = tune()
+  ) |>
+  set_engine("xgboost") |>
+  set_mode("classification")
+```
+
+```{r}
+rf_spec <-
+  rand_forest(
+    trees = tune(),
+    min_n = tune()
+  ) |>
+  set_engine("ranger", respect.unordered.factors = TRUE) |>
+  set_mode("regression")
+```
+
+## Training workflow
+
+```{r}
+# Reference dataset
+ref_wf <- workflow_set(
+  preproc = list(rec_ref_1 = rec_ref_1), 
+  models = list(rf = rf_spec, xgb = xgb_spec), 
+  cross = TRUE
+)
+```
+
+```{r}
+# Simplified reference dataset
+ref_simp_wf <- workflow_set(
+  preproc = list(rec_ref_simp_1 = rec_ref_simp_1), 
+  models = list(rf = rf_spec, xgb = xgb_spec), 
+  cross = TRUE
+)
+```
+
+## Tuning
+
+```{r}
+doParallel::registerDoParallel()
+
+race_ctrl <- control_race(parallel_over = "everything", verbose = TRUE)
+```
+
+```{r}
+ref_tuning_results <- 
+  ref_wf |>
+  workflow_map(
+    "tune_race_anova",
+    seed = 345,
+    resamples = dc_ref_split_folds,
+    grid = 10,
+    control = race_ctrl
+  )
+```
+
+```{r}
+ref_simp_tuning_results <- 
+  ref_wf |>
+  workflow_map(
+    "tune_race_anova",
+    seed = 345,
+    resamples = dc_ref_split_folds,
+    grid = 10,
+    control = race_ctrl
+  )
+```
 
 ## Session info
 
