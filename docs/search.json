@@ -4,7 +4,7 @@
     "href": "presentations.html",
     "title": "Overview",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Author\n        \n     \n  \n\n\n\n\n  \n\n\n\n\nSpecialized AI Models for Predicting Dengue Disease\n\n\n\n\n\n\n\n\n\n\n\n\nSaldanha, Raphael et al\n\n\n\n\n\n\n  \n\n\n\n\nSpecialized AI Models for Predicting Dengue Disease\n\n\n[Short version]\n\n\n\n\n\n\n\n\n\nRaphael Saldanha et al.\n\n\n\n\n\n\n  \n\n\n\n\nA trajectory on health data and information\n\n\n\n\n\n\n\n\n\n\n\n\nRaphael Saldanha\n\n\n\n\n\n\nNo matching items\n\n Back to top"
+    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n\n\n\n\n  \n\n\n\n\nSpecialized AI Models for Predicting Dengue Disease\n\n\n[Short version]\n\n\n\n\n\n\n\n\n\nRaphael Saldanha et al.\n\n\n\n\n\n\n  \n\n\n\n\nSpecialized AI Models for Predicting Dengue Disease\n\n\n\n\n\n\n\n\n\n\n\n\nSaldanha, Raphael et al\n\n\n\n\n\n\n  \n\n\n\n\nA trajectory on health data and information\n\n\n\n\n\n\n\n\n\n\n\n\nRaphael Saldanha\n\n\n\n\n\n\n  \n\n\n\n\nSubset Modelling: A Domain Partitioning Strategy for Data-efficient Machine-Learning\n\n\nPaper project for SIGMOD2025 conference\n\n\n\n\n\n\n\n\n\nFebruary 6, 2024 | 00:00:00 +01:00\n\n\nRaphael Saldanha\n\n\n\n\n\n\nNo matching items\n\n Back to top"
   },
   {
     "objectID": "dengue-cluster/cluster_mun_year_epi_year.html",
@@ -1979,5 +1979,89 @@
     "title": "Raw files, chikungunya",
     "section": "Session info",
     "text": "Session info\n\nsessionInfo()\n\nR version 4.3.2 (2023-10-31)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.3 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0 \nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_CA.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_CA.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_CA.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_CA.UTF-8 LC_IDENTIFICATION=C       \n\ntime zone: Europe/Paris\ntzcode source: system (glibc)\n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] arrow_14.0.0.2     microdatasus_2.2.4 lubridate_1.9.3    forcats_1.0.0     \n [5] stringr_1.5.1      dplyr_1.1.4        purrr_1.0.2        readr_2.1.5       \n [9] tidyr_1.3.1        tibble_3.2.1       ggplot2_3.4.4      tidyverse_2.0.0   \n\nloaded via a namespace (and not attached):\n [1] bit_4.0.5         gtable_0.3.4      jsonlite_1.8.8    compiler_4.3.2   \n [5] tidyselect_1.2.0  assertthat_0.2.1  scales_1.3.0      yaml_2.3.8       \n [9] fastmap_1.1.1     R6_2.5.1          generics_0.1.3    knitr_1.45       \n[13] htmlwidgets_1.6.4 munsell_0.5.0     pillar_1.9.0      tzdb_0.4.0       \n[17] rlang_1.1.3       utf8_1.2.4        stringi_1.8.3     xfun_0.41        \n[21] bit64_4.0.5       timechange_0.3.0  cli_3.6.2         withr_3.0.0      \n[25] magrittr_2.0.3    digest_0.6.34     grid_4.3.2        rstudioapi_0.15.0\n[29] hms_1.1.3         lifecycle_1.0.4   vctrs_0.6.5       data.table_1.15.0\n[33] evaluate_0.23     glue_1.7.0        fansi_1.0.6       colorspace_2.1-0 \n[37] rmarkdown_2.25    tools_4.3.2       pkgconfig_2.0.3   htmltools_0.5.7"
+  },
+  {
+    "objectID": "presentations/sigmod2025_paper_project.html#introduction",
+    "href": "presentations/sigmod2025_paper_project.html#introduction",
+    "title": "Subset Modeling",
+    "section": "Introduction",
+    "text": "Introduction"
+  },
+  {
+    "objectID": "presentations/sigmod2025_paper_project.html#problem-definition",
+    "href": "presentations/sigmod2025_paper_project.html#problem-definition",
+    "title": "Subset Modeling",
+    "section": "Problem definition",
+    "text": "Problem definition"
+  },
+  {
+    "objectID": "presentations/sigmod2025_paper_project.html#method",
+    "href": "presentations/sigmod2025_paper_project.html#method",
+    "title": "Subset Modeling",
+    "section": "Method",
+    "text": "Method\n\nGiven a dataset \\(D\\), train a global ML model \\(G\\)\nIdentify a number of subsets \\(S\\) on \\(D\\)\nTrain ML models on each \\(S_i\\)\nFor inference, assign the incoming sample to the corresponding \\(S_k\\)\nCompare the performance observed on \\(G\\) and \\(S\\) models for each unit"
+  },
+  {
+    "objectID": "presentations/sigmod2025_paper_project.html#datasets",
+    "href": "presentations/sigmod2025_paper_project.html#datasets",
+    "title": "Subset Modeling",
+    "section": "Datasets",
+    "text": "Datasets\n\nDengue dataset. Contains 10 year time series of dengue cases incidence on Brazilian municipalities and related predictors, as temperature and rainfall.\n\nThe subsets models rendered a better performance on 116 out of 333 municipalities: a improvement of 34.83%.\n\nWe need another dataset to help generalize our findings."
+  },
+  {
+    "objectID": "presentations/sigmod2025_paper_project.html#expected-results",
+    "href": "presentations/sigmod2025_paper_project.html#expected-results",
+    "title": "Subset Modeling",
+    "section": "Expected results",
+    "text": "Expected results"
+  },
+  {
+    "objectID": "presentations/sigmod2025_paper_project.html#motivation",
+    "href": "presentations/sigmod2025_paper_project.html#motivation",
+    "title": "Subset Modeling",
+    "section": "Motivation",
+    "text": "Motivation\n\nComplex data may present internal diversity\nML systems may present a good overall performance\nBut it is not uniformly equal on all parts of the input"
+  },
+  {
+    "objectID": "presentations/sigmod2025_paper_project.html#objective",
+    "href": "presentations/sigmod2025_paper_project.html#objective",
+    "title": "Subset Modeling",
+    "section": "Objective",
+    "text": "Objective\n\nPropose a ML framework that accounts for shared characteristics and regional variations across a domain dataset"
+  },
+  {
+    "objectID": "presentations/sigmod2025_paper_project.html#method-1",
+    "href": "presentations/sigmod2025_paper_project.html#method-1",
+    "title": "Subset Modeling",
+    "section": "Method",
+    "text": "Method"
+  },
+  {
+    "objectID": "presentations/sigmod2025_paper_project.html#preliminary-results",
+    "href": "presentations/sigmod2025_paper_project.html#preliminary-results",
+    "title": "Subset Modeling",
+    "section": "Preliminary results",
+    "text": "Preliminary results"
+  },
+  {
+    "objectID": "presentations/sigmod2025_paper_project.html#method-2",
+    "href": "presentations/sigmod2025_paper_project.html#method-2",
+    "title": "Subset Modeling",
+    "section": "Method",
+    "text": "Method\n\n\n\n\nflowchart LR\nA[Domain data] --&gt; G[Global Model]\nA --&gt; C(Clustering)\nC --&gt; K1[Subset model 1]\nC --&gt; K2[Subset model 2]\nC --&gt; Kn[Subset model k]\nG --&gt; P1[Inference]\nK1 --&gt; P2[Inference]\nK2 --&gt; P2\nKn --&gt; P2\nP1 --&gt; AC[Accuracy comparison]\nP2 --&gt; AC"
+  },
+  {
+    "objectID": "presentations/sigmod2025_paper_project.html#method-3",
+    "href": "presentations/sigmod2025_paper_project.html#method-3",
+    "title": "Subset Modeling",
+    "section": "Method",
+    "text": "Method\n\nThe subset may have a priori definitions\nOr identified with data-driven methods, like clustering techniques"
+  },
+  {
+    "objectID": "presentations/sigmod2025_paper_project.html#geolifeclef-2023-competition",
+    "href": "presentations/sigmod2025_paper_project.html#geolifeclef-2023-competition",
+    "title": "Subset Modeling",
+    "section": "GeoLifeCLEF 2023 competition",
+    "text": "GeoLifeCLEF 2023 competition\n\nLarge-scale training dataset of 5M plant occurrences\nValidation set of 5K plots\nTest set with 20K plots\nBaseline model Spatial Random Forest (PA), trained with Presence-Absence data and longitude/latitude as covariates"
   }
 ]
