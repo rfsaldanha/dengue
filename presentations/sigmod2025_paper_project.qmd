@@ -23,7 +23,7 @@ revealjs-plugins:
 
 ## Motivation
 
--   Complex data may present internal diversity
+-   Complex data present internal diversity
 
 -   ML systems may present a good **overall** performance
 
@@ -37,7 +37,7 @@ revealjs-plugins:
 
 1.  Given a dataset $D$, **train** a global ML model $G$
 
-2.  **Identify** a number of subsets $S$ on $D$
+2.  **Identify** a number of subsets $S_k$ on $D$
 
 3.  **Train** ML models on each $S_k$
 
@@ -62,7 +62,7 @@ G --> P1[Inference]
 K1 --> P2[Inference]
 K2 --> P2
 Kn --> P2
-P1 --> AC[Accuracy comparison]
+P1 --> AC[Performance comparison]
 P2 --> AC
 ```
 
@@ -70,14 +70,21 @@ P2 --> AC
 
 -   The subset may have *a priori* definitions
 
--   Or may be identified with **data-driven methods**, like **clustering** techniques
+-   Identified with **data-driven methods**, like **clustering** techniques
 
 ## Preliminary results
 
--   **Dengue dataset**. A 10 year time series of dengue cases incidence on Brazilian municipalities and related predictors, as temperature and rainfall.
+-   **Dengue dataset**. A 10 year weekly time series of dengue cases incidence on Brazilian municipalities and related predictors, as temperature and rainfall.
     -   $k=5$ subsets were identified (multivariate DTW)
     -   The subsets models rendered a better performance on 116 out of 333 municipalities in comparison with the global model. An **improvement of 34.83%**.
--   We would like to test on **more datasets** to help generalize our findings.
+
+## For SIGMOD2025
+
+-   Increase the number of experiments, and include more municipalities
+
+<!-- -->
+
+-   We would like to test the approach on **another datasets** to help generalize our findings.
 
 ## GeoLifeCLEF 2023 competition
 

@@ -356,7 +356,7 @@ Raphael Saldanha
 <section id="motivation" class="slide level2">
 <h2>Motivation</h2>
 <ul>
-<li><p>Complex data may present internal diversity</p></li>
+<li><p>Complex data present internal diversity</p></li>
 <li><p>ML systems may present a good <strong>overall</strong> performance</p></li>
 <li><p>But it is not <strong>uniformly equal</strong> on all parts of the input</p></li>
 </ul>
@@ -371,7 +371,7 @@ Raphael Saldanha
 <h2>Method</h2>
 <ol type="1">
 <li><p>Given a dataset <span class="math inline">\(D\)</span>, <strong>train</strong> a global ML model <span class="math inline">\(G\)</span></p></li>
-<li><p><strong>Identify</strong> a number of subsets <span class="math inline">\(S\)</span> on <span class="math inline">\(D\)</span></p></li>
+<li><p><strong>Identify</strong> a number of subsets <span class="math inline">\(S_k\)</span> on <span class="math inline">\(D\)</span></p></li>
 <li><p><strong>Train</strong> ML models on each <span class="math inline">\(S_k\)</span></p></li>
 <li><p>For inference, <strong>assign</strong> the incoming sample to the corresponding <span class="math inline">\(S_k\)</span></p></li>
 <li><p><strong>Compare</strong> the performance observed on <span class="math inline">\(G\)</span> and <span class="math inline">\(S\)</span> models for each unit</p></li>
@@ -397,7 +397,7 @@ G --&gt; P1[Inference]
 K1 --&gt; P2[Inference]
 K2 --&gt; P2
 Kn --&gt; P2
-P1 --&gt; AC[Accuracy comparison]
+P1 --&gt; AC[Performance comparison]
 P2 --&gt; AC
 </pre>
 </div>
@@ -409,18 +409,27 @@ P2 --&gt; AC
 <h2>Subsets identification</h2>
 <ul>
 <li><p>The subset may have <em>a priori</em> definitions</p></li>
-<li><p>Or may be identified with <strong>data-driven methods</strong>, like <strong>clustering</strong> techniques</p></li>
+<li><p>Identified with <strong>data-driven methods</strong>, like <strong>clustering</strong> techniques</p></li>
 </ul>
 </section>
 <section id="preliminary-results" class="slide level2">
 <h2>Preliminary results</h2>
 <ul>
-<li><strong>Dengue dataset</strong>. A 10 year time series of dengue cases incidence on Brazilian municipalities and related predictors, as temperature and rainfall.
+<li><strong>Dengue dataset</strong>. A 10 year weekly time series of dengue cases incidence on Brazilian municipalities and related predictors, as temperature and rainfall.
 <ul>
 <li><span class="math inline">\(k=5\)</span> subsets were identified (multivariate DTW)</li>
 <li>The subsets models rendered a better performance on 116 out of 333 municipalities in comparison with the global model. An <strong>improvement of 34.83%</strong>.</li>
 </ul></li>
-<li>We would like to test on <strong>more datasets</strong> to help generalize our findings.</li>
+</ul>
+</section>
+<section id="for-sigmod2025" class="slide level2">
+<h2>For SIGMOD2025</h2>
+<ul>
+<li>Increase the number of experiments, and include more municipalities</li>
+</ul>
+<!-- -->
+<ul>
+<li>We would like to test the approach on <strong>another datasets</strong> to help generalize our findings.</li>
 </ul>
 </section>
 <section id="geolifeclef-2023-competition" class="slide level2">

@@ -1999,7 +1999,7 @@
     "href": "presentations/sigmod2025_paper_project.html#method",
     "title": "Subset Modeling",
     "section": "Method",
-    "text": "Method\n\nGiven a dataset \\(D\\), train a global ML model \\(G\\)\nIdentify a number of subsets \\(S\\) on \\(D\\)\nTrain ML models on each \\(S_k\\)\nFor inference, assign the incoming sample to the corresponding \\(S_k\\)\nCompare the performance observed on \\(G\\) and \\(S\\) models for each unit"
+    "text": "Method\n\nGiven a dataset \\(D\\), train a global ML model \\(G\\)\nIdentify a number of subsets \\(S_k\\) on \\(D\\)\nTrain ML models on each \\(S_k\\)\nFor inference, assign the incoming sample to the corresponding \\(S_k\\)\nCompare the performance observed on \\(G\\) and \\(S\\) models for each unit"
   },
   {
     "objectID": "presentations/sigmod2025_paper_project.html#datasets",
@@ -2020,7 +2020,7 @@
     "href": "presentations/sigmod2025_paper_project.html#motivation",
     "title": "Subset Modeling",
     "section": "Motivation",
-    "text": "Motivation\n\nComplex data may present internal diversity\nML systems may present a good overall performance\nBut it is not uniformly equal on all parts of the input"
+    "text": "Motivation\n\nComplex data present internal diversity\nML systems may present a good overall performance\nBut it is not uniformly equal on all parts of the input"
   },
   {
     "objectID": "presentations/sigmod2025_paper_project.html#objective",
@@ -2041,7 +2041,7 @@
     "href": "presentations/sigmod2025_paper_project.html#preliminary-results",
     "title": "Subset Modeling",
     "section": "Preliminary results",
-    "text": "Preliminary results\n\nDengue dataset. A 10 year time series of dengue cases incidence on Brazilian municipalities and related predictors, as temperature and rainfall.\n\n\\(k=5\\) subsets were identified (multivariate DTW)\nThe subsets models rendered a better performance on 116 out of 333 municipalities in comparison with the global model. An improvement of 34.83%.\n\nWe would like to test on more datasets to help generalize our findings."
+    "text": "Preliminary results\n\nDengue dataset. A 10 year weekly time series of dengue cases incidence on Brazilian municipalities and related predictors, as temperature and rainfall.\n\n\\(k=5\\) subsets were identified (multivariate DTW)\nThe subsets models rendered a better performance on 116 out of 333 municipalities in comparison with the global model. An improvement of 34.83%."
   },
   {
     "objectID": "presentations/sigmod2025_paper_project.html#method-2",
@@ -2069,14 +2069,14 @@
     "href": "presentations/sigmod2025_paper_project.html#workflow",
     "title": "Subset Modeling",
     "section": "Workflow",
-    "text": "Workflow\n\n\n\n\nflowchart LR\nA[Domain data] --&gt; G[Global Model]\nA --&gt; C(Clustering)\nC --&gt; K1[Subset model 1]\nC --&gt; K2[Subset model 2]\nC --&gt; Kn[Subset model k]\nG --&gt; P1[Inference]\nK1 --&gt; P2[Inference]\nK2 --&gt; P2\nKn --&gt; P2\nP1 --&gt; AC[Accuracy comparison]\nP2 --&gt; AC"
+    "text": "Workflow\n\n\n\n\nflowchart LR\nA[Domain data] --&gt; G[Global Model]\nA --&gt; C(Clustering)\nC --&gt; K1[Subset model 1]\nC --&gt; K2[Subset model 2]\nC --&gt; Kn[Subset model k]\nG --&gt; P1[Inference]\nK1 --&gt; P2[Inference]\nK2 --&gt; P2\nKn --&gt; P2\nP1 --&gt; AC[Performance comparison]\nP2 --&gt; AC"
   },
   {
     "objectID": "presentations/sigmod2025_paper_project.html#subsets-identification",
     "href": "presentations/sigmod2025_paper_project.html#subsets-identification",
     "title": "Subset Modeling",
     "section": "Subsets identification",
-    "text": "Subsets identification\n\nThe subset may have a priori definitions\nOr may be identified with data-driven methods, like clustering techniques"
+    "text": "Subsets identification\n\nThe subset may have a priori definitions\nIdentified with data-driven methods, like clustering techniques"
   },
   {
     "objectID": "dengue-model/dengue_classification_v2.html",
@@ -2105,5 +2105,12 @@
     "title": "Dengue case classification",
     "section": "Session info",
     "text": "Session info\n\nsessionInfo()\n\nR version 4.3.2 (2023-10-31)\nPlatform: x86_64-pc-linux-gnu (64-bit)\nRunning under: Ubuntu 22.04.3 LTS\n\nMatrix products: default\nBLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.10.0 \nLAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.10.0\n\nlocale:\n [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              \n [3] LC_TIME=en_CA.UTF-8        LC_COLLATE=en_US.UTF-8    \n [5] LC_MONETARY=en_CA.UTF-8    LC_MESSAGES=en_US.UTF-8   \n [7] LC_PAPER=en_CA.UTF-8       LC_NAME=C                 \n [9] LC_ADDRESS=C               LC_TELEPHONE=C            \n[11] LC_MEASUREMENT=en_CA.UTF-8 LC_IDENTIFICATION=C       \n\ntime zone: Europe/Paris\ntzcode source: system (glibc)\n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n [1] vip_0.4.1          tictoc_1.2         bonsai_0.2.1       finetune_1.1.0    \n [5] yardstick_1.3.0    workflowsets_1.0.1 workflows_1.1.3    tune_1.1.2        \n [9] rsample_1.2.0      recipes_1.0.9      parsnip_1.1.1      modeldata_1.3.0   \n[13] infer_1.0.6        dials_1.2.0        scales_1.3.0       broom_1.0.5       \n[17] tidymodels_1.1.1   knitr_1.45         arrow_14.0.0.2     lubridate_1.9.3   \n[21] forcats_1.0.0      stringr_1.5.1      dplyr_1.1.4        purrr_1.0.2       \n[25] readr_2.1.5        tidyr_1.3.1        tibble_3.2.1       ggplot2_3.4.4     \n[29] tidyverse_2.0.0   \n\nloaded via a namespace (and not attached):\n [1] tidyselect_1.2.0    timeDate_4032.109   fastmap_1.1.1      \n [4] digest_0.6.34       rpart_4.1.23        timechange_0.3.0   \n [7] lifecycle_1.0.4     survival_3.5-7      magrittr_2.0.3     \n[10] compiler_4.3.2      rlang_1.1.3         tools_4.3.2        \n[13] utf8_1.2.4          yaml_2.3.8          data.table_1.15.0  \n[16] htmlwidgets_1.6.4   bit_4.0.5           DiceDesign_1.10    \n[19] withr_3.0.0         nnet_7.3-19         grid_4.3.2         \n[22] fansi_1.0.6         colorspace_2.1-0    future_1.33.1      \n[25] iterators_1.0.14    globals_0.16.2      MASS_7.3-60        \n[28] cli_3.6.2           rmarkdown_2.25      generics_0.1.3     \n[31] rstudioapi_0.15.0   future.apply_1.11.1 tzdb_0.4.0         \n[34] splines_4.3.2       assertthat_0.2.1    parallel_4.3.2     \n[37] vctrs_0.6.5         hardhat_1.3.1       Matrix_1.6-3       \n[40] jsonlite_1.8.8      hms_1.1.3           bit64_4.0.5        \n[43] listenv_0.9.1       foreach_1.5.2       gower_1.0.1        \n[46] glue_1.7.0          parallelly_1.36.0   codetools_0.2-19   \n[49] stringi_1.8.3       gtable_0.3.4        GPfit_1.0-8        \n[52] munsell_0.5.0       pillar_1.9.0        furrr_0.3.1        \n[55] htmltools_0.5.7     ipred_0.9-14        lava_1.7.3         \n[58] R6_2.5.1            lhs_1.1.6           evaluate_0.23      \n[61] lattice_0.22-5      backports_1.4.1     class_7.3-22       \n[64] Rcpp_1.0.12         prodlim_2023.08.28  xfun_0.41          \n[67] pkgconfig_2.0.3"
+  },
+  {
+    "objectID": "presentations/sigmod2025_paper_project.html#for-sigmod2025",
+    "href": "presentations/sigmod2025_paper_project.html#for-sigmod2025",
+    "title": "Subset Modeling",
+    "section": "For SIGMOD2025",
+    "text": "For SIGMOD2025\n\nIncrease the number of experiments, and include more municipalities\n\n\n\nWe would like to test the approach on another datasets to help generalize our findings."
   }
 ]
