@@ -57,8 +57,8 @@ x_vars <- c("FEBRE", "MIALGIA", "CEFALEIA",
             "ARTRITE", "ARTRALGIA", "PETEQUIA_N", 
             "LEUCOPENIA", "LACO", "DOR_RETRO", 
             "DIABETES", "HEMATOLOG", "HEPATOPAT", 
-            "HEPATOPAT", "RENAL", "HIPERTENSA",
-            "ACIDO_PEPT", "AUTO_IMUNE")
+            "RENAL", "HIPERTENSA", "ACIDO_PEPT",
+            "AUTO_IMUNE")
 
 other_vars <- c("ID_MN_RESI", "IDADEanos", "DT_SIN_PRI")
 ```
