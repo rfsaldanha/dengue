@@ -22,6 +22,8 @@ library(bonsai)
 library(tictoc)
 library(vip)
 source("../functions.R")
+
+doParallel::registerDoParallel()
 ```
 
 ## Source Data
@@ -58,7 +60,7 @@ x_vars <- c("FEBRE", "MIALGIA", "CEFALEIA",
             "HEPATOPAT", "RENAL", "HIPERTENSA",
             "ACIDO_PEPT", "AUTO_IMUNE")
 
-other_vars <- c("COMUNINF", "IDADEanos", "DT_SIN_PRI")
+other_vars <- c("ID_MN_RESI", "IDADEanos", "DT_SIN_PRI")
 ```
 
 We will read the datasets and select the variables on interest.
@@ -224,6 +226,12 @@ We will join both datasets, correct the date variable (DT_SIN_PRI) and remove in
 ```{r}
 dcdata <- bind_rows(dengue_full, chik_full) |>
   mutate(DT_SIN_PRI = as_date(DT_SIN_PRI, format = "%Y-%m-%d")) |>
+  mutate(IDADEanos = as.numeric(IDADEanos)) |>
+  # mutate_at(.vars = x_vars, .funs = ~ . == "Sim") |>
+  mutate(across(all_of(x_vars), ~ . == "Sim")) |>
+  mutate(across(all_of(x_vars), as.integer)) |>
+  mutate(uf_res = substr(ID_MN_RESI, 0, 2)) |>
+  filter(!is.na(ID_MN_RESI)) |>
   filter(year(DT_SIN_PRI) >= 2016 & year(DT_SIN_PRI) <= 2021)
 ```
 
@@ -269,6 +277,16 @@ dcdata |>
   
 ```
 
+### Data removal
+
+::: callout-caution
+Only for tests.
+:::
+
+```{r}
+dcdata <- slice_sample(.data = dcdata, n = 200000)
+```
+
 ## Reference dataset
 
 The reference dataset will contain only suspected cases that were assessed diagnosed by laboratory exams, to train and test a classification model. Cases with inconclusive classification will be discarded.
@@ -297,10 +315,10 @@ Also, a simplified version is created, aggregating the classification not consid
 dc_ref_simp <- dc_ref |>
   mutate(CLASSI_FIN = case_match(
     CLASSI_FIN,
-    "Discarded Chikungunya" ~ FALSE,
-    "Discarded Dengue" ~ FALSE,
-    "Positive Dengue" ~ TRUE,
-    "Positive Chikungunya" ~ TRUE
+    "Discarded Chikungunya" ~ "Negative",
+    "Discarded Dengue" ~ "Negative",
+    "Positive Dengue" ~ "Positive",
+    "Positive Chikungunya" ~ "Positive"
   ))
 ```
 
@@ -340,10 +358,10 @@ Also, a simplified version of this dataset is created.
 dc_cli_simp <- dc_cli |>
   mutate(CLASSI_FIN = case_match(
     CLASSI_FIN,
-    "Discarded Chikungunya" ~ FALSE,
-    "Discarded Dengue" ~ FALSE,
-    "Positive Dengue" ~ TRUE,
-    "Positive Chikungunya" ~ TRUE
+    "Discarded Chikungunya" ~ "Negative",
+    "Discarded Dengue" ~ "Negative",
+    "Positive Dengue" ~ "Positive",
+    "Positive Chikungunya" ~ "Positive"
   ))
 ```
 
@@ -366,20 +384,9 @@ rm(dcdata)
 gc()
 ```
 
-## Training and testing dataset
+## Model simplified reference dataset
 
-The training and testing dataset split is based on the reference dataset (cases classified by laboratorial exams).
-
-```{r}
-dc_ref_split <- initial_split(
-  data = dc_ref, 
-  prop = 3/4, 
-  strata = CLASSI_FIN
-)
-
-dc_ref_training <- training(dc_ref_split)
-dc_ref_testing <- testing(dc_ref_split)
-```
+### Split
 
 ```{r}
 dc_ref_simp_split <- initial_split(
@@ -392,94 +399,189 @@ dc_ref_simp_training <- training(dc_ref_simp_split)
 dc_ref_simp_testing <- testing(dc_ref_simp_split)
 ```
 
-## Folding
+### Folding
 
 ```{r}
-dc_ref_split_folds <- dc_ref_training |>
-  vfold_cv(v = 10, strata = CLASSI_FIN)
-
 dc_ref_simp_split_folds <- dc_ref_simp_training |>
   vfold_cv(v = 10, strata = CLASSI_FIN)
 ```
 
-## Model recipes
-
-Here, we will create a number of model recipe to be trained.
+### Recipes
 
 ```{r}
-# Reference dataset
-rec_ref_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_training) |>
-  step_rm(CRITERIO, case_source) |>
-  step_date(DT_SIN_PRI, features = c("month", "week", "semester", "quarter"), keep_original_cols = FALSE) |>
-  step_dummy(COMUNINF, one_hot = TRUE) |>
-  step_integer(all_of(x_vars)) |>
-  step_smote(CLASSI_FIN)
-```
-
-```{r}
-# Simplified reference dataset
 rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
-  step_rm(CRITERIO, case_source) |>
-  step_date(DT_SIN_PRI, features = c("month", "week", "semester", "quarter"), keep_original_cols = FALSE) |>
-  step_dummy(COMUNINF, one_hot = TRUE) |>
-  step_integer(all_of(x_vars)) |>
-  step_smote(CLASSI_FIN)
+  step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI)
 ```
 
-## Learners
+```{r}
+rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+  step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res) |>
+  step_date(DT_SIN_PRI, features = c("dow", "month", "year"), label = FALSE, keep_original_cols = FALSE)
+```
 
-Specification of model learners and tuning parameters.
+```{r}
+rec_ref_simp_3 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+  step_rm(CRITERIO, case_source, ID_MN_RESI) |>
+  step_date(DT_SIN_PRI, features = c("dow", "month", "year"), label = FALSE, keep_original_cols = FALSE) |>
+  step_dummy(uf_res)
+```
+
+### Learners
 
 ```{r}
 xgb_spec <-
   boost_tree(
     trees = tune(),
+    tree_depth = tune(),
     min_n = tune(),
-    mtry = tune()
+    loss_reduction = tune(),
+    sample_size = tune(),
+    learn_rate = tune()
+  ) |>
+  set_engine("xgboost", event_level = "second") |>
+  set_mode("classification")
+```
+
+### Workflow
+
+```{r}
+ref_simp_wf <- workflow_set(
+  preproc = list(
+    rec_ref_simp_1 = rec_ref_simp_1,
+    rec_ref_simp_2 = rec_ref_simp_2,
+    rec_ref_simp_3 = rec_ref_simp_3
+  ), 
+  models = list(xgb = xgb_spec), 
+  cross = TRUE
+)
+```
+
+### Tuning
+
+```{r}
+race_ctrl <- control_race(parallel_over = "everything")
+
+ref_simp_tuning_results <- 
+  ref_simp_wf |>
+  workflow_map(
+    "tune_race_anova",
+    seed = 345,
+    resamples = dc_ref_simp_split_folds,
+    grid = 25,
+    control = race_ctrl, 
+    verbose = TRUE
+  )
+```
+
+```{r}
+ref_simp_tuning_ranking_results <- rank_results(ref_simp_tuning_results, rank_metric = "roc_auc")
+
+ref_simp_tuning_ranking_results
+```
+
+```{r}
+autoplot(ref_simp_tuning_results, metric = "roc_auc")
+```
+
+### Last fit
+
+```{r}
+ref_simp_selection <- ref_simp_tuning_ranking_results |>
+  arrange(-mean) |>
+  pull(wflow_id) |>
+  first()
+
+ref_simp_selection
+```
+
+```{r}
+ref_simp_best_results <- ref_simp_tuning_results |>
+  extract_workflow_set_result(ref_simp_selection) |>
+  select_best("roc_auc")
+
+ref_simp_best_results
+```
+
+```{r}
+ref_simp_last_fit <- ref_simp_tuning_results |>
+  extract_workflow(ref_simp_selection) |>
+  finalize_workflow(ref_simp_best_results) |>
+  last_fit(dc_ref_simp_split)
+```
+
+### Evaluation
+
+```{r}
+collect_metrics(ref_simp_last_fit)
+```
+
+```{r}
+collect_predictions(ref_simp_last_fit) %>%
+    conf_mat(CLASSI_FIN, .pred_class)
+```
+
+## Model reference dataset
+
+### Split
+
+```{r}
+dc_ref_split <- initial_split(
+  data = dc_ref, 
+  prop = 3/4, 
+  strata = CLASSI_FIN
+)
+
+dc_ref_training <- training(dc_ref_split)
+dc_ref_testing <- testing(dc_ref_split)
+```
+
+### Folding
+
+```{r}
+dc_ref_split_folds <- dc_ref_training |>
+  vfold_cv(v = 10, strata = CLASSI_FIN)
+```
+
+### Recipes
+
+Here, we will create a number of model recipe to be trained.
+
+```{r}
+rec_ref_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_training) |>
+  step_rm(CRITERIO, case_source) |>
+  step_date(DT_SIN_PRI, features = c("month", "year"), label = FALSE, keep_original_cols = FALSE) |>
+  step_dummy(ID_MN_RESI) |>
+  step_integer(all_of(x_vars)) |>
+  step_upsample(CLASSI_FIN)
+```
+
+### Learners
+
+```{r}
+xgb_spec <-
+  boost_tree(
+    trees = tune(),
+    min_n = tune()
   ) |>
   set_engine("xgboost") |>
   set_mode("classification")
 ```
 
-```{r}
-rf_spec <-
-  rand_forest(
-    trees = tune(),
-    min_n = tune()
-  ) |>
-  set_engine("ranger", respect.unordered.factors = TRUE) |>
-  set_mode("regression")
-```
-
-## Training workflow
+### Workflow
 
 ```{r}
-# Reference dataset
 ref_wf <- workflow_set(
   preproc = list(rec_ref_1 = rec_ref_1), 
-  models = list(rf = rf_spec, xgb = xgb_spec), 
+  models = list(xgb = xgb_spec), 
   cross = TRUE
 )
 ```
 
-```{r}
-# Simplified reference dataset
-ref_simp_wf <- workflow_set(
-  preproc = list(rec_ref_simp_1 = rec_ref_simp_1), 
-  models = list(rf = rf_spec, xgb = xgb_spec), 
-  cross = TRUE
-)
-```
-
-## Tuning
+### Tuning
 
 ```{r}
-doParallel::registerDoParallel()
-
 race_ctrl <- control_race(parallel_over = "everything", verbose = TRUE)
-```
 
-```{r}
 ref_tuning_results <- 
   ref_wf |>
   workflow_map(
@@ -492,15 +594,50 @@ ref_tuning_results <-
 ```
 
 ```{r}
-ref_simp_tuning_results <- 
-  ref_wf |>
-  workflow_map(
-    "tune_race_anova",
-    seed = 345,
-    resamples = dc_ref_split_folds,
-    grid = 10,
-    control = race_ctrl
-  )
+ref_tuning_ranking_results <- rank_results(ref_tuning_results, rank_metric = "roc_auc")
+
+ref_tuning_ranking_results
+```
+
+```{r}
+autoplot(ref_tuning_results, metric = "roc_auc")
+```
+
+### Last fit
+
+```{r}
+ref_selection <- ref_tuning_ranking_results |>
+  arrange(-mean) |>
+  pull(wflow_id) |>
+  first()
+
+ref_selection
+```
+
+```{r}
+ref_best_results <- ref_tuning_results |>
+  extract_workflow_set_result(ref_selection) |>
+  select_best("roc_auc")
+
+ref_best_results
+```
+
+```{r}
+ref_last_fit <- ref_tuning_results |>
+  extract_workflow(ref_selection) |>
+  finalize_workflow(ref_best_results) |>
+  last_fit(dc_ref_split)
+```
+
+### Evaluation
+
+```{r}
+collect_metrics(ref_last_fit)
+```
+
+```{r}
+collect_predictions(ref_last_fit) %>%
+    conf_mat(CLASSI_FIN, .pred_class)
 ```
 
 ## Session info
