@@ -1,0 +1,47 @@
+---
+title: "Exploratory Data Analysis"
+author: Raphael Saldanha
+date: last-modified
+---
+
+## Packages
+
+```{r}
+#| message: false
+library(tidyverse)
+library(arrow)
+library(qs)
+library(skimr)
+library(sessioninfo)
+source("../../functions.R")
+```
+
+## Data load
+
+```{r}
+dc_ref <- qread(file = "dc_ref.qs")
+```
+
+## Skimming
+
+### General
+
+```{r}
+skim(dc_ref)
+```
+
+### Per diagnosis
+
+```{r}
+dc_ref |> 
+  group_by(CLASSI_FIN) |>
+  skim()
+```
+
+### Per year
+
+```{r}
+dc_ref |> 
+  group_by(year(DT_SIN_PRI)) |>
+  skim()
+```

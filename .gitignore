@@ -7,3 +7,4 @@
 *.duckdb
 *.parquet
 *.zip
+*.qs
