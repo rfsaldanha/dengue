@@ -82,7 +82,11 @@ website:
         - section: "Modeling"
           contents: 
               - dengue_model.qmd
-              - dengue-model/dengue_weather_lag_class_v2.qmd
+              - section: "Dengue cases classification"
+                contents: 
+                    - dengue-model/classification/01_data.qmd
+                    - dengue-model/classification/02_eda.qmd
+                    - dengue-model/classification/03_model_ref_simp.qmd
               - dengue-model/dengue_classification_symptoms_conditions_multi.qmd
               - section: "Dengue time series modelling"
                 contents:
