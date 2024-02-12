@@ -125,16 +125,16 @@ rec_ref_simp_4 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
 ## Learners
 
 ```{r}
-xgb_spec <-
-  boost_tree(
-    trees = tune(),
-    tree_depth = tune(),
-    min_n = tune(),
-    loss_reduction = tune(),
-    learn_rate = tune()
-  ) |>
-  set_engine("xgboost", event_level = "second") |>
-  set_mode("classification")
+# xgb_spec <-
+#   boost_tree(
+#     trees = tune(),
+#     tree_depth = tune(),
+#     min_n = tune(),
+#     loss_reduction = tune(),
+#     learn_rate = tune()
+#   ) |>
+#   set_engine("xgboost", event_level = "second") |>
+#   set_mode("classification")
 ```
 
 ```{r}
@@ -160,7 +160,7 @@ ref_simp_wf <- workflow_set(
     rec_ref_simp_3 = rec_ref_simp_3,
     rec_ref_simp_4 = rec_ref_simp_4
   ), 
-  models = list(lgmb = lgbm_spec, xgb = xgb_spec), 
+  models = list(lgmb = lgbm_spec), 
   cross = TRUE
 )
 ```
