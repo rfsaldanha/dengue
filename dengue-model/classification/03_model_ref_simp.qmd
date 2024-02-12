@@ -71,24 +71,43 @@ symp_cond_vars <- c("FEBRE", "MIALGIA", "CEFALEIA",
                     "AUTO_IMUNE")
 ```
 
-### Simple recipe
+### Basic recipe
 
 -   Only case symptoms
+
+-   Symptoms with missing data
 
 -   Without date and municipality data
 
 ```{r}
 rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+  step_unknown(all_of(to_dummy)) |>
   step_dummy(all_of(to_dummy)) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI)
 ```
 
-### Simple recipe with treated missing
+### Basic recipe with missing data replacement
+
+-   Only case symptoms
+
+-   Symptoms without missing data
+
+-   Without date and municipality data
+
+```{r}
+rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+  step_unknown(all_of(to_dummy)) |>
+  step_dummy(all_of(to_dummy)) |>
+  step_mutate_at(all_of(symp_cond_vars), fn = ~replace_na(., 0)) |>
+  step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI)
+```
+
+### Replace missing recipe
 
 -   Simple recipe and replace symptons NAs with `No` values
 
 ```{r}
-rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+rec_ref_simp_3 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
   step_unknown(all_of(to_dummy)) |>
   step_dummy(all_of(to_dummy)) |>
   step_mutate_at(all_of(symp_cond_vars), fn = ~replace_na(., 0)) |>
@@ -102,9 +121,10 @@ rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
 -   Without UF
 
 ```{r}
-rec_ref_simp_3 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+rec_ref_simp_4 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
   step_unknown(all_of(to_dummy)) |>
   step_dummy(all_of(to_dummy)) |>
+  step_mutate_at(all_of(symp_cond_vars), fn = ~replace_na(., 0)) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res) |>
   step_date(DT_SIN_PRI, features = c("month"), label = FALSE, keep_original_cols = FALSE)
 ```
@@ -114,9 +134,10 @@ rec_ref_simp_3 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
 -   Case symptoms, date (month) and UF
 
 ```{r}
-rec_ref_simp_4 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+rec_ref_simp_5 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
   step_unknown(all_of(to_dummy)) |>
   step_dummy(all_of(to_dummy)) |>
+  step_mutate_at(all_of(symp_cond_vars), fn = ~replace_na(., 0)) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI) |>
   step_date(DT_SIN_PRI, features = c("month"), label = FALSE, keep_original_cols = FALSE) |>
   step_dummy(uf_res)
@@ -158,7 +179,8 @@ ref_simp_wf <- workflow_set(
     rec_ref_simp_1 = rec_ref_simp_1,
     rec_ref_simp_2 = rec_ref_simp_2,
     rec_ref_simp_3 = rec_ref_simp_3,
-    rec_ref_simp_4 = rec_ref_simp_4
+    rec_ref_simp_4 = rec_ref_simp_4,
+    rec_ref_simp_5 = rec_ref_simp_5
   ), 
   models = list(lgmb = lgbm_spec), 
   cross = TRUE
