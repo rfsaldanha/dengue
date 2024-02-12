@@ -54,9 +54,28 @@ dc_ref_simp_split_folds <- dc_ref_simp_training |>
 
 ## Recipes
 
+### Variable lists
+
 ```{r}
-to_dummy <- c('CS_SEXO', 'CS_GESTANT', 'CS_RACA', 'CS_ESCOL_N', 'ID_OCUPA_N', 'HOSPITALIZ', 'TPAUTOCTO')
+to_dummy <- c('CS_SEXO', 'CS_GESTANT', 'CS_RACA', 'CS_ESCOL_N', 'ID_OCUPA_N', 'HOSPITALIZ')
 ```
+
+```{r}
+symp_cond_vars <- c("FEBRE", "MIALGIA", "CEFALEIA", 
+                    "EXANTEMA", "VOMITO", "NAUSEA", 
+                    "DOR_COSTAS", "CONJUNTVIT", 
+                    "ARTRITE", "ARTRALGIA", "PETEQUIA_N", 
+                    "LEUCOPENIA", "LACO", "DOR_RETRO", 
+                    "DIABETES", "HEMATOLOG", "HEPATOPAT", 
+                    "RENAL", "HIPERTENSA", "ACIDO_PEPT",
+                    "AUTO_IMUNE")
+```
+
+### Simple recipe
+
+-   Only case symptoms
+
+-   Without date and municipality data
 
 ```{r}
 rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
@@ -64,15 +83,39 @@ rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI)
 ```
 
+### Simple recipe with treated missing
+
+-   Simple recipe and replace symptons NAs with `No` values
+
 ```{r}
 rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+  step_unknown(all_of(to_dummy)) |>
+  step_dummy(all_of(to_dummy)) |>
+  step_mutate_at(all_of(symp_cond_vars), fn = ~replace_na(., 0)) |>
+  step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI)
+```
+
+### Date recipe
+
+-   Case symptoms and date (month)
+
+-   Without UF
+
+```{r}
+rec_ref_simp_3 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+  step_unknown(all_of(to_dummy)) |>
   step_dummy(all_of(to_dummy)) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res) |>
   step_date(DT_SIN_PRI, features = c("month"), label = FALSE, keep_original_cols = FALSE)
 ```
 
+### Date and UF recipe
+
+-   Case symptoms, date (month) and UF
+
 ```{r}
-rec_ref_simp_3 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+rec_ref_simp_4 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+  step_unknown(all_of(to_dummy)) |>
   step_dummy(all_of(to_dummy)) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI) |>
   step_date(DT_SIN_PRI, features = c("month"), label = FALSE, keep_original_cols = FALSE) |>
@@ -88,10 +131,22 @@ xgb_spec <-
     tree_depth = tune(),
     min_n = tune(),
     loss_reduction = tune(),
-    sample_size = tune(),
     learn_rate = tune()
   ) |>
   set_engine("xgboost", event_level = "second") |>
+  set_mode("classification")
+```
+
+```{r}
+lgbm_spec <-
+  boost_tree(
+    trees = tune(),
+    tree_depth = tune(),
+    min_n = tune(),
+    loss_reduction = tune(),
+    learn_rate = tune()
+  ) |>
+  set_engine("lightgbm", event_level = "second") |>
   set_mode("classification")
 ```
 
@@ -102,9 +157,10 @@ ref_simp_wf <- workflow_set(
   preproc = list(
     rec_ref_simp_1 = rec_ref_simp_1,
     rec_ref_simp_2 = rec_ref_simp_2,
-    rec_ref_simp_3 = rec_ref_simp_3
+    rec_ref_simp_3 = rec_ref_simp_3,
+    rec_ref_simp_4 = rec_ref_simp_4
   ), 
-  models = list(xgb = xgb_spec), 
+  models = list(lgmb = lgbm_spec, xgb = xgb_spec), 
   cross = TRUE
 )
 ```
