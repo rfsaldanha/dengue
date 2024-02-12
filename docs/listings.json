@@ -28,8 +28,11 @@
   {
     "listing": "/summary.html",
     "items": [
-      "/dengue-data/raw_files_chik.html",
+      "/dengue-model/classification/01_data.html",
+      "/dengue-model/classification/03_model_ref_simp.html",
+      "/dengue-model/classification/02_eda.html",
       "/dengue-model/dengue_classification_v2.html",
+      "/dengue-data/raw_files_chik.html",
       "/dengue-data/raw_files_zika.html",
       "/dengue-cluster/cluster_multivariate_all.html",
       "/dengue-model/dengue_mts_all.html",
@@ -63,6 +66,9 @@
   {
     "listing": "/dengue_model.html",
     "items": [
+      "/dengue-model/classification/01_data.html",
+      "/dengue-model/classification/03_model_ref_simp.html",
+      "/dengue-model/classification/02_eda.html",
       "/dengue-model/dengue_classification_v2.html",
       "/dengue-model/dengue_mts_all.html",
       "/dengue-model/dengue_weather_lag_class_v2.html",
