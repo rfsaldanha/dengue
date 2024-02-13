@@ -35,11 +35,21 @@ dc_ref_simp <- qread(file = "dc_ref_simp.qs")
 ## Dataset split
 
 ```{r}
-dc_ref_simp_split <- initial_validation_split(dc_ref_simp, prop = c(0.6, 0.2), strata = CLASSI_FIN)
+dc_ref_simp_split <- initial_split(
+  data = dc_ref_simp, 
+  prop = 3/4, 
+  strata = CLASSI_FIN
+)
 
 dc_ref_simp_training <- training(dc_ref_simp_split)
 dc_ref_simp_testing <- testing(dc_ref_simp_split)
-dc_ref_simp_validating <- validation_set(dc_ref_simp_split)
+```
+
+### Folding
+
+```{r}
+dc_ref_simp_split_folds <- dc_ref_simp_training |>
+  vfold_cv(v = 5, strata = CLASSI_FIN)
 ```
 
 ## Recipes
@@ -80,7 +90,7 @@ rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
 rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI) |>
   step_date(DT_SIN_PRI, features = c("month"), keep_original_cols = FALSE) |>
-  step_dummy(DT_SIN_PRI_month, one_hot = TRUE) |>
+  step_dummy(DT_SIN_PRI, one_hot = TRUE) |>
   step_dummy(uf_res, one_hot = TRUE) |>
   step_integer(all_logical_predictors()) |>
   step_mutate_at(all_of(symp_cond_vars), fn = ~replace_na(., 0)) |>
@@ -126,7 +136,7 @@ ref_simp_tuning_results <-
   workflow_map(
     "tune_race_anova",
     seed = 345,
-    resamples = dc_ref_simp_validating,
+    resamples = dc_ref_simp_split_folds,
     grid = 10,
     metrics = metric_set(
       accuracy, 
