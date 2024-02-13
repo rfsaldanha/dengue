@@ -75,56 +75,34 @@ symp_cond_vars <- c("FEBRE", "MIALGIA", "CEFALEIA",
 
 ```{r}
 rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
-  step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI)
+  step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI) |>
+  step_integer(all_logical_predictors())
 ```
 
-### Date recipe
-
--   Case symptoms and date (month)
-
--   Without UF
-
-```{r}
-rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
-  step_date(DT_SIN_PRI, features = c("month"), keep_original_cols = FALSE) |>
-  step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res)
-```
-
-### Date and UF recipe
+### Month and UF recipe
 
 -   Case symptoms, date (month) and UF
 
 ```{r}
-rec_ref_simp_3 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
-  step_date(DT_SIN_PRI, features = c("month"), keep_original_cols = FALSE) |>
-  step_rm(CRITERIO, case_source, ID_MN_RESI)
+rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+  step_rm(CRITERIO, case_source, ID_MN_RESI) |>
+  step_date(DT_SIN_PRI, features = c("month"), label = FALSE, keep_original_cols = FALSE) |>
+  step_dummy(uf_res) |>
+  step_integer(all_logical_predictors())
 ```
 
 ## Learners
 
 ```{r}
-# xgb_spec <-
-#   boost_tree(
-#     trees = tune(),
-#     # tree_depth = tune(),
-#     min_n = tune(),
-#     # loss_reduction = tune(),
-#     learn_rate = tune()
-#   ) |>
-#   set_engine("xgboost", event_level = "second") |>
-#   set_mode("classification")
-```
-
-```{r}
-lgbm_spec <-
+xgb_spec <-
   boost_tree(
-    # trees = tune(),
-    # tree_depth = tune(),
-    # min_n = tune(),
-    # loss_reduction = tune(),
+    trees = tune(),
+    tree_depth = tune(),
+    min_n = tune(),
+    loss_reduction = tune(),
     learn_rate = tune()
   ) |>
-  set_engine("lightgbm") |>
+  set_engine("xgboost", event_level = "second") |>
   set_mode("classification")
 ```
 
@@ -134,10 +112,9 @@ lgbm_spec <-
 ref_simp_wf <- workflow_set(
   preproc = list(
     rec_ref_simp_1 = rec_ref_simp_1,
-    rec_ref_simp_2 = rec_ref_simp_2,
-    rec_ref_simp_3 = rec_ref_simp_3
+    rec_ref_simp_2 = rec_ref_simp_2
   ), 
-  models = list(lgbm = lgbm_spec), 
+  models = list(xgb = xgb_spec), 
   cross = TRUE
 )
 ```
@@ -145,8 +122,7 @@ ref_simp_wf <- workflow_set(
 ## Tuning
 
 ```{r}
-# race_ctrl <- control_race(parallel_over = "everything")
-race_ctrl <- control_race(parallel_over = "resamples")
+race_ctrl <- control_race(parallel_over = "everything")
 
 ref_simp_tuning_results <- 
   ref_simp_wf |>
