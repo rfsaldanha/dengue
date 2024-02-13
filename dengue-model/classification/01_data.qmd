@@ -249,7 +249,6 @@ dcdata <- bind_rows(dengue_full, chik_full) |>
   mutate(DT_SIN_PRI = as_date(DT_SIN_PRI, format = "%Y-%m-%d")) |>
   mutate(IDADEanos = as.numeric(IDADEanos)) |>
   mutate(across(all_of(c(symp_cond_vars)), ~ . == "Sim")) |>
-  mutate(across(all_of(c(symp_cond_vars)), as.integer)) |>
   mutate(uf_res = substr(ID_MN_RESI, 0, 2)) |>
   filter(!is.na(ID_MN_RESI)) |>
   filter(year(DT_SIN_PRI) >= 2016 & year(DT_SIN_PRI) <= 2021)
@@ -304,7 +303,7 @@ Only for tests.
 :::
 
 ```{r}
-dcdata <- slice_sample(.data = dcdata, n = 10000)
+dcdata <- slice_sample(.data = dcdata, n = 50000)
 ```
 
 ```{r}
