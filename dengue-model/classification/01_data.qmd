@@ -45,7 +45,7 @@ dengue_files_list <- c(
 ```{r}
 case_vars <- c("ID_MN_RESI", "IDADEanos", "DT_SIN_PRI",
                 "CS_SEXO", "CS_GESTANT", "CS_RACA",
-                "CS_ESCOL_N", "ID_OCUPA_N", "HOSPITALIZ")
+                "HOSPITALIZ")
 
 symp_cond_vars <- c("FEBRE", "MIALGIA", "CEFALEIA", 
                     "EXANTEMA", "VOMITO", "NAUSEA", 
