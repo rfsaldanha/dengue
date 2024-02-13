@@ -57,7 +57,7 @@ dc_ref_simp_split_folds <- dc_ref_simp_training |>
 ### Variable lists
 
 ```{r}
-to_dummy <- c('CS_SEXO', 'CS_GESTANT', 'CS_RACA')
+to_dummy <- c('CS_SEXO', 'CS_GESTANT')
 ```
 
 ```{r}
