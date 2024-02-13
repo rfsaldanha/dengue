@@ -110,24 +110,24 @@ rec_ref_simp_3 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
 ## Learners
 
 ```{r}
-xgb_spec <-
-  boost_tree(
-    trees = tune(),
-    # tree_depth = tune(),
-    min_n = tune(),
-    # loss_reduction = tune(),
-    learn_rate = tune()
-  ) |>
-  set_engine("xgboost", event_level = "second") |>
-  set_mode("classification")
+# xgb_spec <-
+#   boost_tree(
+#     trees = tune(),
+#     # tree_depth = tune(),
+#     min_n = tune(),
+#     # loss_reduction = tune(),
+#     learn_rate = tune()
+#   ) |>
+#   set_engine("xgboost", event_level = "second") |>
+#   set_mode("classification")
 ```
 
 ```{r}
 lgbm_spec <-
   boost_tree(
-    trees = tune(),
+    # trees = tune(),
     # tree_depth = tune(),
-    min_n = tune(),
+    # min_n = tune(),
     # loss_reduction = tune(),
     learn_rate = tune()
   ) |>
