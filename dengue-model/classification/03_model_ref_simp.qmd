@@ -152,7 +152,8 @@ ref_simp_wf <- workflow_set(
 ## Tuning
 
 ```{r}
-race_ctrl <- control_race(parallel_over = "everything")
+# race_ctrl <- control_race(parallel_over = "everything")
+race_ctrl <- control_race(parallel_over = "resamples")
 
 ref_simp_tuning_results <- 
   ref_simp_wf |>
