@@ -304,7 +304,7 @@ Only for tests.
 :::
 
 ```{r}
-dcdata <- slice_sample(.data = dcdata, n = 50000)
+dcdata <- slice_sample(.data = dcdata, n = 500000)
 ```
 
 ```{r}
