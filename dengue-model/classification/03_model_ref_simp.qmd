@@ -136,9 +136,9 @@ xgb_spec <-
 lgbm_spec <-
   boost_tree(
     trees = tune(),
-    tree_depth = tune(),
+    # tree_depth = tune(),
     min_n = tune(),
-    loss_reduction = tune(),
+    # loss_reduction = tune(),
     learn_rate = tune()
   ) |>
   set_engine("lightgbm") |>
