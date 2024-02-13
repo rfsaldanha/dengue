@@ -90,11 +90,11 @@ rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
 rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI) |>
   step_date(DT_SIN_PRI, features = c("month"), label = FALSE, keep_original_cols = FALSE) |>
-  step_dummy(uf_res) |>
+  step_dummy(uf_res, one_hot = TRUE) |>
   step_integer(all_logical_predictors()) |>
   step_mutate_at(all_of(symp_cond_vars), fn = ~replace_na(., 0)) |>
   step_other(CS_GESTANT) |>
-  step_dummy(CS_SEXO, CS_GESTANT)
+  step_dummy(CS_SEXO, CS_GESTANT, one_hot = TRUE)
 ```
 
 ## Learners
