@@ -43,8 +43,7 @@ dengue_files_list <- c(
 `other_vars` contains names of other variables of interest.
 
 ```{r}
-case_vars <- c("ID_MN_RESI", "IDADEanos", "DT_SIN_PRI",
-                "CS_SEXO", "CS_GESTANT")
+case_vars <- c("ID_MN_RESI", "IDADEanos", "DT_SIN_PRI")
 
 symp_cond_vars <- c("FEBRE", "MIALGIA", "CEFALEIA", 
                     "EXANTEMA", "VOMITO", "NAUSEA", 
@@ -305,7 +304,7 @@ Only for tests.
 :::
 
 ```{r}
-dcdata <- slice_sample(.data = dcdata, n = 50000)
+dcdata <- slice_sample(.data = dcdata, n = 10000)
 ```
 
 ```{r}
