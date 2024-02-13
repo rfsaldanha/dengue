@@ -199,7 +199,7 @@ ref_simp_tuning_results <-
     "tune_race_anova",
     seed = 345,
     resamples = dc_ref_simp_validation,
-    grid = 25,
+    grid = 10,
     control = race_ctrl, 
     verbose = TRUE
   )
