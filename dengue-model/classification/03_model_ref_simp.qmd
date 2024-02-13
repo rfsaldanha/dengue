@@ -79,10 +79,7 @@ symp_cond_vars <- c("FEBRE", "MIALGIA", "CEFALEIA",
 
 ```{r}
 rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
-  step_unknown(all_of(to_dummy)) |>
   step_other(CS_GESTANT) |>
-  step_dummy(all_of(to_dummy)) |>
-  step_mutate_at(all_of(symp_cond_vars), fn = ~replace_na(., 0)) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI)
 ```
 
@@ -94,12 +91,9 @@ rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
 
 ```{r}
 rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
-  step_unknown(all_of(to_dummy)) |>
   step_other(CS_GESTANT) |>
-  step_dummy(all_of(to_dummy)) |>
-  step_mutate_at(all_of(symp_cond_vars), fn = ~replace_na(., 0)) |>
-  step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res) |>
-  step_date(DT_SIN_PRI, features = c("month"), label = FALSE, keep_original_cols = FALSE)
+  step_date(DT_SIN_PRI, features = c("month"), keep_original_cols = FALSE) |>
+  step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res)
 ```
 
 ### Date and UF recipe
@@ -108,13 +102,9 @@ rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
 
 ```{r}
 rec_ref_simp_3 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
-  step_unknown(all_of(to_dummy)) |>
   step_other(CS_GESTANT) |>
-  step_dummy(all_of(to_dummy)) |>
-  step_mutate_at(all_of(symp_cond_vars), fn = ~replace_na(., 0)) |>
-  step_rm(CRITERIO, case_source, ID_MN_RESI) |>
-  step_date(DT_SIN_PRI, features = c("month"), label = FALSE, keep_original_cols = FALSE) |>
-  step_dummy(uf_res)
+  step_date(DT_SIN_PRI, features = c("month"), keep_original_cols = FALSE) |>
+  step_rm(CRITERIO, case_source, ID_MN_RESI)
 ```
 
 ## Learners
