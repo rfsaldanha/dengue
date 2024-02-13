@@ -82,6 +82,7 @@ symp_cond_vars <- c("FEBRE", "MIALGIA", "CEFALEIA",
 ```{r}
 rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
   step_unknown(all_of(to_dummy)) |>
+  step_other(CS_GESTANT) |>
   step_dummy(all_of(to_dummy)) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI)
 ```
@@ -97,6 +98,7 @@ rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
 ```{r}
 rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
   step_unknown(all_of(to_dummy)) |>
+  step_other(CS_GESTANT) |>
   step_dummy(all_of(to_dummy)) |>
   step_mutate_at(all_of(symp_cond_vars), fn = ~replace_na(., 0)) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI)
@@ -149,9 +151,9 @@ rec_ref_simp_5 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
 xgb_spec <-
   boost_tree(
     trees = tune(),
-    tree_depth = tune(),
+    # tree_depth = tune(),
     min_n = tune(),
-    loss_reduction = tune(),
+    # loss_reduction = tune(),
     learn_rate = tune()
   ) |>
   set_engine("xgboost", event_level = "second") |>
