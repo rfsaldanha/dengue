@@ -77,6 +77,7 @@ symp_cond_vars <- c("FEBRE", "MIALGIA", "CEFALEIA",
 rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI) |>
   step_integer(all_logical_predictors()) |>
+  step_other(CS_GESTANT) |>
   step_dummy(CS_SEXO, CS_GESTANT)
 ```
 
@@ -90,6 +91,7 @@ rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
   step_date(DT_SIN_PRI, features = c("month"), label = FALSE, keep_original_cols = FALSE) |>
   step_dummy(uf_res) |>
   step_integer(all_logical_predictors()) |>
+  step_other(CS_GESTANT) |>
   step_dummy(CS_SEXO, CS_GESTANT)
 ```
 
@@ -133,19 +135,26 @@ ref_simp_tuning_results <-
     seed = 345,
     resamples = dc_ref_simp_split_folds,
     grid = 10,
+    metrics = metric_set(
+      accuracy, 
+      roc_auc, 
+      sens,
+      spec,
+      f_meas
+    ),
     control = race_ctrl, 
     verbose = TRUE
   )
 ```
 
 ```{r}
-ref_simp_tuning_ranking_results <- rank_results(ref_simp_tuning_results, rank_metric = "roc_auc")
+ref_simp_tuning_ranking_results <- rank_results(ref_simp_tuning_results, rank_metric = "f_meas")
 
 ref_simp_tuning_ranking_results
 ```
 
 ```{r}
-autoplot(ref_simp_tuning_results, metric = "roc_auc")
+autoplot(ref_simp_tuning_results, metric = "f_meas")
 ```
 
 ## Model last fit
@@ -162,7 +171,7 @@ ref_simp_selection
 ```{r}
 ref_simp_best_results <- ref_simp_tuning_results |>
   extract_workflow_set_result(ref_simp_selection) |>
-  select_best("roc_auc")
+  select_best("f_meas")
 
 ref_simp_best_results
 ```
