@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Raphael Saldanha">
+
+<title>Dengue AI - Model simplified reference dataset</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../dengue-model/dengue_classification_symptoms_conditions_multi.html" rel="next">
+<link href="../../dengue-model/classification/02_eda.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZMP18L536K"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Dengue AI</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../../dengue_data.html" rel="" target="" aria-current="page">
+ <span class="menu-text">Data</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../cluster_analysis.html" rel="" target="">
+ <span class="menu-text">Cluster analysis</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../dengue_model.html" rel="" target="">
+ <span class="menu-text">Modeling</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../software.html" rel="" target="">
+ <span class="menu-text">Software</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../publications.html" rel="" target="">
+ <span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../export-data/exported_data.html" rel="" target="">
+ <span class="menu-text">Exported data</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../presentations.html" rel="" target="">
+ <span class="menu-text">Presentations</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../summary.html" rel="" target="">
+ <span class="menu-text">Summary</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+    <a href="https://github.com/rfsaldanha/dengue" rel="" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../dengue_model.html">Modeling</a></li><li class="breadcrumb-item"><a href="../../dengue-model/classification/01_data.html">Dengue cases classification</a></li><li class="breadcrumb-item"><a href="../../dengue-model/classification/03_model_ref_simp.html">Model simplified reference dataset</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+ <span class="menu-text">Data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text">Dengue data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-data/raw_files.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Raw files</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-data/case_classification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Case classification analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-data/missing_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Missing data analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-data/imputation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Imputation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-data/aggregated_database.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Export aggregated database</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../weather_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Weather data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../socioeconomic-data/socioeconomic_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Socio economic data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../bundled_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bundled data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+ <span class="menu-text">Cluster analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../cluster_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">Univariate</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+ <span class="menu-text">Long time series</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-cluster/cluster_long.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Raw cases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-cluster/cluster_long_cum.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Raw cases, cumulative</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-cluster/cluster_long_scaled.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scaled cases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-cluster/cluster_long_cum_scaled.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scaled cases, cumulative</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-cluster/sdtw_long_cum_scaled.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SDTW, cumulative and scaled long time series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-cluster/cluster_tsfeatures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Time series features</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-cluster/cluster_long_scaled_hier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hierarchical clustering</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+ <span class="menu-text">Municipality/year time series</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-cluster/cluster_mun_year.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Yearly time series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-cluster/cluster_mun_year_cumulative.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cumulative time series</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-cluster/cluster_mun_year_epi_year.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Epi year time series</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text">Multivariate</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-cluster/cluster_multivariate_all.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cases and climate variables multivariate clustering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-cluster/cluster_multivariate_clim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Climate variables multivariate clustering</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true">
+ <span class="menu-text">Modeling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="true">
+ <span class="menu-text">Dengue cases classification</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-model/classification/01_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Datasets</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-model/classification/02_eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exploratory Data Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-model/classification/03_model_ref_simp.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Model simplified reference dataset</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-model/dengue_classification_symptoms_conditions_multi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dengue case classification</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
+ <span class="menu-text">Dengue time series modelling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-model/dengue_ts_overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Global and subset models workflow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false">
+ <span class="menu-text">Univariate models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-model/dengue_ts_global_subset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SBD clustering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-model/dengue_ts_global_subset_tsfeatures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Time series features clustering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-model/dengue_ts_global_subset_tsfeatures_sparse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Time series features clustering, with robust sparse k-means</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false">
+ <span class="menu-text">Multivariate models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-model/dengue_mts_all.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Multivariate clustering, all data model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dengue-model/dengue_mts_climate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Multivariate clustering, climate model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../software.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Software</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../publications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Publications</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../export-data/exported_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Exported data</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false">
+ <span class="menu-text">Presentations</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../presentations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../presentations/project_presentation.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+ <span class="menu-text">Project presentation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../presentations/short_project_presentation.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+ <span class="menu-text">Project presentation, short version</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../presentations/trajectory_health_data_information.html" class="sidebar-item-text sidebar-link" target="&quot;_blank&quot;">
+ <span class="menu-text">A trajectory on health data and information</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../publications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Publications</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#packages" id="toc-packages" class="nav-link active" data-scroll-target="#packages">Packages</a></li>
+  <li><a href="#data-load" id="toc-data-load" class="nav-link" data-scroll-target="#data-load">Data load</a></li>
+  <li><a href="#dataset-split" id="toc-dataset-split" class="nav-link" data-scroll-target="#dataset-split">Dataset split</a></li>
+  <li><a href="#folding" id="toc-folding" class="nav-link" data-scroll-target="#folding">Folding</a></li>
+  <li><a href="#recipes" id="toc-recipes" class="nav-link" data-scroll-target="#recipes">Recipes</a>
+  <ul class="collapse">
+  <li><a href="#variable-lists" id="toc-variable-lists" class="nav-link" data-scroll-target="#variable-lists">Variable lists</a></li>
+  <li><a href="#basic-recipe" id="toc-basic-recipe" class="nav-link" data-scroll-target="#basic-recipe">Basic recipe</a></li>
+  <li><a href="#basic-recipe-with-missing-data-replacement" id="toc-basic-recipe-with-missing-data-replacement" class="nav-link" data-scroll-target="#basic-recipe-with-missing-data-replacement">Basic recipe with missing data replacement</a></li>
+  <li><a href="#replace-missing-recipe" id="toc-replace-missing-recipe" class="nav-link" data-scroll-target="#replace-missing-recipe">Replace missing recipe</a></li>
+  <li><a href="#date-recipe" id="toc-date-recipe" class="nav-link" data-scroll-target="#date-recipe">Date recipe</a></li>
+  <li><a href="#date-and-uf-recipe" id="toc-date-and-uf-recipe" class="nav-link" data-scroll-target="#date-and-uf-recipe">Date and UF recipe</a></li>
+  </ul></li>
+  <li><a href="#learners" id="toc-learners" class="nav-link" data-scroll-target="#learners">Learners</a></li>
+  <li><a href="#workflow" id="toc-workflow" class="nav-link" data-scroll-target="#workflow">Workflow</a></li>
+  <li><a href="#tuning" id="toc-tuning" class="nav-link" data-scroll-target="#tuning">Tuning</a></li>
+  <li><a href="#model-last-fit" id="toc-model-last-fit" class="nav-link" data-scroll-target="#model-last-fit">Model last fit</a></li>
+  <li><a href="#model-evaluation" id="toc-model-evaluation" class="nav-link" data-scroll-target="#model-evaluation">Model evaluation</a></li>
+  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info">Session info</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Model simplified reference dataset</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Raphael Saldanha </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Last modification</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 13, 2024 | 05:35:26 -03:00</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>On this notebook, models are trained and tested based on the <strong>simplified version</strong> of the reference dataset.</p>
+<section id="packages" class="level2">
+<h2 class="anchored" data-anchor-id="packages">Packages</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(qs)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(themis)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(finetune)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bonsai)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vip)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sessioninfo)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(doParallel)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"../../functions.R"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">registerDoParallel</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-load" class="level2">
+<h2 class="anchored" data-anchor-id="data-load">Data load</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dc_ref_simp <span class="ot">&lt;-</span> <span class="fu">qread</span>(<span class="at">file =</span> <span class="st">"dc_ref_simp.qs"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="dataset-split" class="level2">
+<h2 class="anchored" data-anchor-id="dataset-split">Dataset split</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dc_ref_simp_split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dc_ref_simp, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">prop =</span> <span class="dv">3</span><span class="sc">/</span><span class="dv">4</span>, </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strata =</span> CLASSI_FIN</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>dc_ref_simp_training <span class="ot">&lt;-</span> <span class="fu">training</span>(dc_ref_simp_split)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>dc_ref_simp_testing <span class="ot">&lt;-</span> <span class="fu">testing</span>(dc_ref_simp_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="folding" class="level2">
+<h2 class="anchored" data-anchor-id="folding">Folding</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dc_ref_simp_split_folds <span class="ot">&lt;-</span> dc_ref_simp_training <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vfold_cv</span>(<span class="at">v =</span> <span class="dv">10</span>, <span class="at">strata =</span> CLASSI_FIN)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="recipes" class="level2">
+<h2 class="anchored" data-anchor-id="recipes">Recipes</h2>
+<section id="variable-lists" class="level3">
+<h3 class="anchored" data-anchor-id="variable-lists">Variable lists</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>to_dummy <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'CS_SEXO'</span>, <span class="st">'CS_GESTANT'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>symp_cond_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"FEBRE"</span>, <span class="st">"MIALGIA"</span>, <span class="st">"CEFALEIA"</span>, </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"EXANTEMA"</span>, <span class="st">"VOMITO"</span>, <span class="st">"NAUSEA"</span>, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"DOR_COSTAS"</span>, <span class="st">"CONJUNTVIT"</span>, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"ARTRITE"</span>, <span class="st">"ARTRALGIA"</span>, <span class="st">"PETEQUIA_N"</span>, </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"LEUCOPENIA"</span>, <span class="st">"LACO"</span>, <span class="st">"DOR_RETRO"</span>, </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"DIABETES"</span>, <span class="st">"HEMATOLOG"</span>, <span class="st">"HEPATOPAT"</span>, </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"RENAL"</span>, <span class="st">"HIPERTENSA"</span>, <span class="st">"ACIDO_PEPT"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"AUTO_IMUNE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="basic-recipe" class="level3">
+<h3 class="anchored" data-anchor-id="basic-recipe">Basic recipe</h3>
+<ul>
+<li><p>Only case symptoms</p></li>
+<li><p>Symptoms with missing data</p></li>
+<li><p>Without date and municipality data</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>rec_ref_simp_1 <span class="ot">&lt;-</span> <span class="fu">recipe</span>(CLASSI_FIN <span class="sc">~</span> ., <span class="at">data =</span> dc_ref_simp_training) <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_unknown</span>(<span class="fu">all_of</span>(to_dummy)) <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_other</span>(CS_GESTANT) <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_of</span>(to_dummy)) <span class="sc">|&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="basic-recipe-with-missing-data-replacement" class="level3">
+<h3 class="anchored" data-anchor-id="basic-recipe-with-missing-data-replacement">Basic recipe with missing data replacement</h3>
+<ul>
+<li><p>Only case symptoms</p></li>
+<li><p>Symptoms without missing data</p></li>
+<li><p>Without date and municipality data</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>rec_ref_simp_2 <span class="ot">&lt;-</span> <span class="fu">recipe</span>(CLASSI_FIN <span class="sc">~</span> ., <span class="at">data =</span> dc_ref_simp_training) <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_unknown</span>(<span class="fu">all_of</span>(to_dummy)) <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_other</span>(CS_GESTANT) <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_of</span>(to_dummy)) <span class="sc">|&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_mutate_at</span>(<span class="fu">all_of</span>(symp_cond_vars), <span class="at">fn =</span> <span class="sc">~</span><span class="fu">replace_na</span>(., <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="replace-missing-recipe" class="level3">
+<h3 class="anchored" data-anchor-id="replace-missing-recipe">Replace missing recipe</h3>
+<ul>
+<li>Simple recipe and replace symptons NAs with <code>No</code> values</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>rec_ref_simp_3 <span class="ot">&lt;-</span> <span class="fu">recipe</span>(CLASSI_FIN <span class="sc">~</span> ., <span class="at">data =</span> dc_ref_simp_training) <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_unknown</span>(<span class="fu">all_of</span>(to_dummy)) <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_of</span>(to_dummy)) <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_mutate_at</span>(<span class="fu">all_of</span>(symp_cond_vars), <span class="at">fn =</span> <span class="sc">~</span><span class="fu">replace_na</span>(., <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="date-recipe" class="level3">
+<h3 class="anchored" data-anchor-id="date-recipe">Date recipe</h3>
+<ul>
+<li><p>Case symptoms and date (month)</p></li>
+<li><p>Without UF</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>rec_ref_simp_4 <span class="ot">&lt;-</span> <span class="fu">recipe</span>(CLASSI_FIN <span class="sc">~</span> ., <span class="at">data =</span> dc_ref_simp_training) <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_unknown</span>(<span class="fu">all_of</span>(to_dummy)) <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_of</span>(to_dummy)) <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_mutate_at</span>(<span class="fu">all_of</span>(symp_cond_vars), <span class="at">fn =</span> <span class="sc">~</span><span class="fu">replace_na</span>(., <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(CRITERIO, case_source, ID_MN_RESI, uf_res) <span class="sc">|&gt;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_date</span>(DT_SIN_PRI, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"month"</span>), <span class="at">label =</span> <span class="cn">FALSE</span>, <span class="at">keep_original_cols =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="date-and-uf-recipe" class="level3">
+<h3 class="anchored" data-anchor-id="date-and-uf-recipe">Date and UF recipe</h3>
+<ul>
+<li>Case symptoms, date (month) and UF</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>rec_ref_simp_5 <span class="ot">&lt;-</span> <span class="fu">recipe</span>(CLASSI_FIN <span class="sc">~</span> ., <span class="at">data =</span> dc_ref_simp_training) <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_unknown</span>(<span class="fu">all_of</span>(to_dummy)) <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(<span class="fu">all_of</span>(to_dummy)) <span class="sc">|&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_mutate_at</span>(<span class="fu">all_of</span>(symp_cond_vars), <span class="at">fn =</span> <span class="sc">~</span><span class="fu">replace_na</span>(., <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_rm</span>(CRITERIO, case_source, ID_MN_RESI) <span class="sc">|&gt;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_date</span>(DT_SIN_PRI, <span class="at">features =</span> <span class="fu">c</span>(<span class="st">"month"</span>), <span class="at">label =</span> <span class="cn">FALSE</span>, <span class="at">keep_original_cols =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_dummy</span>(uf_res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="learners" class="level2">
+<h2 class="anchored" data-anchor-id="learners">Learners</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>xgb_spec <span class="ot">&lt;-</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boost_tree</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">trees =</span> <span class="fu">tune</span>(),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># tree_depth = tune(),</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_n =</span> <span class="fu">tune</span>(),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># loss_reduction = tune(),</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">learn_rate =</span> <span class="fu">tune</span>()</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"xgboost"</span>, <span class="at">event_level =</span> <span class="st">"second"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"classification"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lgbm_spec &lt;-</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   boost_tree(</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#     trees = tune(),</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#     tree_depth = tune(),</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">#     min_n = tune(),</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#     loss_reduction = tune(),</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     learn_rate = tune()</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">#   ) |&gt;</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   set_engine("lightgbm") |&gt;</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   set_mode("classification")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="workflow" class="level2">
+<h2 class="anchored" data-anchor-id="workflow">Workflow</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>ref_simp_wf <span class="ot">&lt;-</span> <span class="fu">workflow_set</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">preproc =</span> <span class="fu">list</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">rec_ref_simp_1 =</span> rec_ref_simp_1,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">rec_ref_simp_2 =</span> rec_ref_simp_2</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">#rec_ref_simp_3 = rec_ref_simp_3,</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">#rec_ref_simp_4 = rec_ref_simp_4,</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">#rec_ref_simp_5 = rec_ref_simp_5</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  ), </span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">models =</span> <span class="fu">list</span>(<span class="at">xgb =</span> xgb_spec), </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">cross =</span> <span class="cn">TRUE</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="tuning" class="level2">
+<h2 class="anchored" data-anchor-id="tuning">Tuning</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>race_ctrl <span class="ot">&lt;-</span> <span class="fu">control_race</span>(<span class="at">parallel_over =</span> <span class="st">"everything"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>ref_simp_tuning_results <span class="ot">&lt;-</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  ref_simp_wf <span class="sc">|&gt;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">workflow_map</span>(</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"tune_race_anova"</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">345</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> dc_ref_simp_split_folds,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">grid =</span> <span class="dv">25</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">control =</span> race_ctrl, </span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>i 1 of 2 tuning:     rec_ref_simp_1_xgb</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ 1 of 2 tuning:     rec_ref_simp_1_xgb (9m 3.3s)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>i 2 of 2 tuning:     rec_ref_simp_2_xgb</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ 2 of 2 tuning:     rec_ref_simp_2_xgb (5m 38.3s)</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ref_simp_tuning_ranking_results <span class="ot">&lt;-</span> <span class="fu">rank_results</span>(ref_simp_tuning_results, <span class="at">rank_metric =</span> <span class="st">"roc_auc"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>ref_simp_tuning_ranking_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 9
+   wflow_id         .config .metric  mean std_err     n preprocessor model  rank
+   &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;        &lt;chr&gt; &lt;int&gt;
+ 1 rec_ref_simp_1_… Prepro… accura… 0.599 0.00328    10 recipe       boos…     1
+ 2 rec_ref_simp_1_… Prepro… roc_auc 0.633 0.00257    10 recipe       boos…     1
+ 3 rec_ref_simp_2_… Prepro… accura… 0.597 0.00251    10 recipe       boos…     2
+ 4 rec_ref_simp_2_… Prepro… roc_auc 0.633 0.00276    10 recipe       boos…     2
+ 5 rec_ref_simp_1_… Prepro… accura… 0.597 0.00259    10 recipe       boos…     3
+ 6 rec_ref_simp_1_… Prepro… roc_auc 0.632 0.00279    10 recipe       boos…     3
+ 7 rec_ref_simp_1_… Prepro… accura… 0.598 0.00287    10 recipe       boos…     4
+ 8 rec_ref_simp_1_… Prepro… roc_auc 0.632 0.00289    10 recipe       boos…     4
+ 9 rec_ref_simp_2_… Prepro… accura… 0.599 0.00215    10 recipe       boos…     5
+10 rec_ref_simp_2_… Prepro… roc_auc 0.632 0.00254    10 recipe       boos…     5</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(ref_simp_tuning_results, <span class="at">metric =</span> <span class="st">"roc_auc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="03_model_ref_simp_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="model-last-fit" class="level2">
+<h2 class="anchored" data-anchor-id="model-last-fit">Model last fit</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>ref_simp_selection <span class="ot">&lt;-</span> ref_simp_tuning_ranking_results <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>mean) <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(wflow_id) <span class="sc">|&gt;</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">first</span>()</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>ref_simp_selection</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "rec_ref_simp_1_xgb"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ref_simp_best_results <span class="ot">&lt;-</span> ref_simp_tuning_results <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow_set_result</span>(ref_simp_selection) <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_best</span>(<span class="st">"roc_auc"</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>ref_simp_best_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  trees min_n learn_rate .config              
+  &lt;int&gt; &lt;int&gt;      &lt;dbl&gt; &lt;chr&gt;                
+1   151    36     0.0328 Preprocessor1_Model23</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>ref_simp_last_fit <span class="ot">&lt;-</span> ref_simp_tuning_results <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_workflow</span>(ref_simp_selection) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">finalize_workflow</span>(ref_simp_best_results) <span class="sc">|&gt;</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">last_fit</span>(dc_ref_simp_split)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="model-evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="model-evaluation">Model evaluation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(ref_simp_last_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  .metric  .estimator .estimate .config             
+  &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+1 accuracy binary         0.604 Preprocessor1_Model1
+2 roc_auc  binary         0.633 Preprocessor1_Model1</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_predictions</span>(ref_simp_last_fit) <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">conf_mat</span>(CLASSI_FIN, .pred_class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          Truth
+Prediction Negative Positive
+  Negative     1692     1130
+  Positive      725     1140</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>ref_simp_last_fit <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_fit_engine</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">vip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="03_model_ref_simp_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="session-info" class="level2">
+<h2 class="anchored" data-anchor-id="session-info">Session info</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">session_info</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>─ Session info ───────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.3.2 (2023-10-31)
+ os       CentOS Linux 7 (Core)
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  pt_BR.UTF-8
+ ctype    pt_BR.UTF-8
+ tz       America/Sao_Paulo
+ date     2024-02-13
+ pandoc   3.1.1 @ /home/raphaelfs/miniconda3/envs/quarto/bin/ (via rmarkdown)
+
+─ Packages ───────────────────────────────────────────────────────────────────
+ package       * version    date (UTC) lib source
+ arrow         * 14.0.1     2023-11-14 [2] local
+ assertthat      0.2.1      2019-03-21 [1] CRAN (R 4.2.2)
+ backports       1.4.1      2021-12-13 [1] CRAN (R 4.2.2)
+ bit             4.0.5      2022-11-15 [1] CRAN (R 4.2.2)
+ bit64           4.0.5      2020-08-30 [1] CRAN (R 4.2.2)
+ bonsai        * 0.2.1      2022-11-29 [2] CRAN (R 4.3.0)
+ boot            1.3-28.1   2022-11-22 [1] CRAN (R 4.2.2)
+ broom         * 1.0.4      2023-03-11 [1] CRAN (R 4.2.0)
+ class           7.3-22     2023-05-03 [1] CRAN (R 4.2.0)
+ cli             3.6.1      2023-03-23 [1] CRAN (R 4.2.0)
+ clock           0.7.0      2023-05-15 [1] CRAN (R 4.2.0)
+ codetools       0.2-19     2023-02-01 [1] CRAN (R 4.2.0)
+ colorspace      2.1-0      2023-01-23 [1] CRAN (R 4.2.2)
+ data.table      1.14.8     2023-02-17 [1] CRAN (R 4.2.2)
+ dials         * 1.2.0      2023-04-03 [1] CRAN (R 4.2.0)
+ DiceDesign      1.9        2021-02-13 [1] CRAN (R 4.2.2)
+ digest          0.6.31     2022-12-11 [1] CRAN (R 4.2.2)
+ doParallel    * 1.0.17     2022-02-07 [1] CRAN (R 4.2.2)
+ dplyr         * 1.1.2      2023-04-20 [1] CRAN (R 4.2.0)
+ ellipsis        0.3.2      2021-04-29 [1] CRAN (R 4.2.2)
+ evaluate        0.21       2023-05-05 [1] CRAN (R 4.2.0)
+ fansi           1.0.4      2023-01-22 [1] CRAN (R 4.2.2)
+ farver          2.1.1      2022-07-06 [1] CRAN (R 4.2.2)
+ fastmap         1.1.1      2023-02-24 [1] CRAN (R 4.2.2)
+ finetune      * 1.1.0      2023-04-19 [2] CRAN (R 4.3.0)
+ forcats       * 1.0.0      2023-01-29 [1] CRAN (R 4.2.2)
+ foreach       * 1.5.2      2022-02-02 [1] CRAN (R 4.2.2)
+ furrr           0.3.1      2022-08-15 [1] CRAN (R 4.2.2)
+ future          1.32.0     2023-03-07 [1] CRAN (R 4.2.0)
+ future.apply    1.11.0     2023-05-21 [1] CRAN (R 4.2.0)
+ generics        0.1.3      2022-07-05 [1] CRAN (R 4.2.2)
+ ggplot2       * 3.4.2      2023-04-03 [1] CRAN (R 4.2.0)
+ globals         0.16.2     2022-11-21 [1] CRAN (R 4.2.2)
+ glue            1.6.2      2022-02-24 [1] CRAN (R 4.2.2)
+ gower           1.0.1      2022-12-22 [1] CRAN (R 4.2.2)
+ GPfit           1.0-8      2019-02-08 [1] CRAN (R 4.2.2)
+ gtable          0.3.3      2023-03-21 [1] CRAN (R 4.2.0)
+ hardhat         1.3.0      2023-03-30 [1] CRAN (R 4.2.0)
+ hms             1.1.3      2023-03-21 [1] CRAN (R 4.2.0)
+ htmltools       0.5.5      2023-03-23 [1] CRAN (R 4.2.0)
+ htmlwidgets     1.6.2      2023-03-17 [1] CRAN (R 4.2.0)
+ infer         * 1.0.4      2022-12-02 [1] CRAN (R 4.2.2)
+ ipred           0.9-13     2022-06-02 [1] CRAN (R 4.2.2)
+ iterators     * 1.0.14     2022-02-05 [1] CRAN (R 4.2.2)
+ jsonlite        1.8.5      2023-06-05 [1] CRAN (R 4.2.0)
+ knitr           1.43       2023-05-25 [1] CRAN (R 4.2.0)
+ labeling        0.4.2      2020-10-20 [1] CRAN (R 4.2.2)
+ lattice         0.21-8     2023-04-05 [1] CRAN (R 4.2.0)
+ lava            1.7.2.1    2023-02-27 [1] CRAN (R 4.2.2)
+ lhs             1.1.6      2022-12-17 [1] CRAN (R 4.2.2)
+ lifecycle       1.0.3      2022-10-07 [1] CRAN (R 4.2.2)
+ listenv         0.9.0      2022-12-16 [1] CRAN (R 4.2.2)
+ lme4            1.1-35.1   2023-11-05 [2] CRAN (R 4.3.2)
+ lubridate     * 1.9.2      2023-02-10 [1] CRAN (R 4.2.2)
+ magrittr        2.0.3      2022-03-30 [1] CRAN (R 4.2.2)
+ MASS            7.3-60     2023-05-04 [1] CRAN (R 4.2.0)
+ Matrix          1.5-4.1    2023-05-18 [1] CRAN (R 4.2.0)
+ minqa           1.2.6      2023-09-11 [2] CRAN (R 4.3.1)
+ modeldata     * 1.1.0      2023-01-25 [1] CRAN (R 4.2.2)
+ munsell         0.5.0      2018-06-12 [1] CRAN (R 4.2.2)
+ nlme            3.1-162    2023-01-31 [1] CRAN (R 4.2.2)
+ nloptr          2.0.3      2022-05-26 [2] CRAN (R 4.3.0)
+ nnet            7.3-19     2023-05-03 [1] CRAN (R 4.2.0)
+ parallelly      1.36.0     2023-05-26 [1] CRAN (R 4.2.0)
+ parsnip       * 1.1.0      2023-04-12 [1] CRAN (R 4.2.0)
+ pillar          1.9.0      2023-03-22 [1] CRAN (R 4.2.0)
+ pkgconfig       2.0.3      2019-09-22 [1] CRAN (R 4.2.2)
+ prettyunits     1.1.1      2020-01-24 [1] CRAN (R 4.2.2)
+ prodlim         2019.11.13 2019-11-17 [1] CRAN (R 4.2.2)
+ purrr         * 1.0.1      2023-01-10 [1] CRAN (R 4.2.2)
+ qs            * 0.25.5     2023-02-22 [1] CRAN (R 4.2.3)
+ R6              2.5.1      2021-08-19 [1] CRAN (R 4.2.2)
+ RApiSerialize   0.1.2      2022-08-25 [1] CRAN (R 4.2.3)
+ Rcpp            1.0.10     2023-01-22 [1] CRAN (R 4.2.2)
+ RcppParallel    5.1.7      2023-02-27 [1] CRAN (R 4.2.2)
+ readr         * 2.1.4      2023-02-10 [1] CRAN (R 4.2.2)
+ recipes       * 1.0.6      2023-04-25 [1] CRAN (R 4.2.0)
+ rlang         * 1.1.1      2023-04-28 [1] CRAN (R 4.2.0)
+ rmarkdown       2.22       2023-06-01 [1] CRAN (R 4.2.0)
+ ROSE            0.0-4      2021-06-14 [2] CRAN (R 4.3.0)
+ rpart           4.1.19     2022-10-21 [1] CRAN (R 4.2.0)
+ rsample       * 1.2.0      2023-08-23 [1] CRAN (R 4.3.2)
+ rstudioapi      0.14       2022-08-22 [1] CRAN (R 4.2.2)
+ scales        * 1.2.1      2022-08-20 [1] CRAN (R 4.2.2)
+ sessioninfo   * 1.2.2      2021-12-06 [1] CRAN (R 4.2.1)
+ stringfish      0.15.8     2023-05-30 [1] CRAN (R 4.2.3)
+ stringi         1.7.12     2023-01-11 [1] CRAN (R 4.2.2)
+ stringr       * 1.5.0      2022-12-02 [1] CRAN (R 4.2.2)
+ survival        3.5-5      2023-03-12 [1] CRAN (R 4.2.0)
+ themis        * 1.0.2      2023-08-14 [2] CRAN (R 4.3.1)
+ tibble        * 3.2.1      2023-03-20 [1] CRAN (R 4.2.0)
+ tictoc        * 1.2        2023-04-23 [1] CRAN (R 4.2.0)
+ tidymodels    * 1.0.0      2022-07-13 [1] CRAN (R 4.2.2)
+ tidyr         * 1.3.0      2023-01-24 [1] CRAN (R 4.2.2)
+ tidyselect      1.2.0      2022-10-10 [1] CRAN (R 4.2.2)
+ tidyverse     * 2.0.0      2023-02-22 [2] CRAN (R 4.3.0)
+ timechange      0.2.0      2023-01-11 [1] CRAN (R 4.2.1)
+ timeDate        4022.108   2023-01-07 [1] CRAN (R 4.2.2)
+ tune          * 1.1.2      2023-08-23 [1] CRAN (R 4.3.2)
+ tzdb            0.4.0      2023-05-12 [1] CRAN (R 4.2.0)
+ utf8            1.2.3      2023-01-31 [1] CRAN (R 4.2.2)
+ vctrs           0.6.3      2023-06-14 [1] CRAN (R 4.2.3)
+ vip           * 0.4.1      2023-08-21 [2] CRAN (R 4.3.1)
+ withr           2.5.0      2022-03-03 [1] CRAN (R 4.2.2)
+ workflows     * 1.1.3      2023-02-22 [1] CRAN (R 4.2.2)
+ workflowsets  * 1.0.0      2022-07-12 [1] CRAN (R 4.2.2)
+ xfun            0.39       2023-04-20 [1] CRAN (R 4.2.0)
+ xgboost       * 1.7.5.1    2023-03-30 [1] CRAN (R 4.2.0)
+ yaml            2.3.7      2023-01-23 [1] CRAN (R 4.2.2)
+ yardstick     * 1.2.0      2023-04-21 [1] CRAN (R 4.2.0)
+
+ [1] /home/raphaelfs/rlibs
+ [2] /home/raphaelfs/miniconda3/envs/quarto/lib/R/library
+
+──────────────────────────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../dengue-model/classification/02_eda.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Exploratory Data Analysis</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../dengue-model/dengue_classification_symptoms_conditions_multi.html" class="pagination-link">
+        <span class="nav-page-text">Dengue case classification</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Website made with <a href="https://quarto.org/">Quarto</a>, by Raphael Saldanha.</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">Inria | LNCC | PCDaS</div>
+  </div>
+</footer>
+
+
+
+</body></html>
