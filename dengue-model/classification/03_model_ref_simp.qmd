@@ -104,9 +104,9 @@ rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
 xgb_spec <-
   boost_tree(
     trees = tune(),
-    # tree_depth = tune(),
+    tree_depth = tune(),
     min_n = tune(),
-    # loss_reduction = tune(),
+    loss_reduction = tune(),
     learn_rate = tune()
   ) |>
   set_engine("xgboost", event_level = "second") |>
@@ -114,15 +114,43 @@ xgb_spec <-
 ```
 
 ```{r}
-lgbm_spec <-
-  boost_tree(
+rf_spec <- 
+  rand_forest(
     trees = tune(),
-    # tree_depth = tune(),
-    min_n = tune(),
-    # loss_reduction = tune(),
-    learn_rate = tune()
+    min_n = tune()
   ) |>
-  set_engine("lightgbm") |>
+  set_engine("ranger") |>
+  set_mode("classification")
+```
+
+```{r}
+knn_spec <-
+  nearest_neighbor(
+    neighbors = tune(),
+    dist_power = tune()
+  ) |>
+  set_engine("kknn") |>
+  set_mode("classification")
+```
+
+```{r}
+svml_spec <-
+  svm_linear(
+    cost = tune(),
+    margin = tune()
+  ) |>
+  set_engine("kernlab") |>
+  set_mode("classification")
+```
+
+```{r}
+mlp_spec <-
+  mlp(
+    hidden_units = tune(),
+    penalty = tune(),
+    epochs = tune()
+  ) |>
+  set_engine("nnet") |>
   set_mode("classification")
 ```
 
@@ -134,7 +162,11 @@ ref_simp_wf <- workflow_set(
     rec_ref_simp_1 = rec_ref_simp_1,
     rec_ref_simp_2 = rec_ref_simp_2
   ), 
-  models = list(lgbm = lgbm_spec), 
+  models = list(xgb = xgb_spec,
+                rf = rf_spec,
+                knn = knn_spec,
+                svml = svml_spec,
+                mlp = mlp_spec), 
   cross = TRUE
 )
 ```
@@ -150,7 +182,7 @@ ref_simp_tuning_results <-
     "tune_race_anova",
     seed = 345,
     resamples = dc_ref_simp_split_folds,
-    grid = 10,
+    grid = 25,
     metrics = metric_set(
       accuracy, 
       roc_auc, 
@@ -161,6 +193,10 @@ ref_simp_tuning_results <-
     control = race_ctrl, 
     verbose = TRUE
   )
+```
+
+```{r}
+qsave(x = ref_simp_tuning_results, file = "ref_simp_tuning_results.qs")
 ```
 
 ```{r}
