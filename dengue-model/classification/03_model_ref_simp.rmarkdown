@@ -1,0 +1,250 @@
+---
+title: "Model simplified reference dataset"
+author: Raphael Saldanha
+date: last-modified
+---
+
+
+On this notebook, models are trained and tested based on the **simplified version** of the reference dataset.
+
+## Packages
+
+
+```{r}
+#| message: false
+library(tidyverse)
+library(arrow)
+library(qs)
+library(tidymodels)
+library(themis)
+library(finetune)
+library(bonsai)
+library(tictoc)
+library(vip)
+library(sessioninfo)
+library(doParallel)
+source("../../functions.R")
+
+registerDoParallel()
+```
+
+
+## Data load
+
+
+```{r}
+dc_ref_simp <- qread(file = "dc_ref_simp.qs")
+```
+
+
+## Dataset split
+
+
+```{r}
+dc_ref_simp_split <- initial_split(
+  data = dc_ref_simp, 
+  prop = 3/4, 
+  strata = CLASSI_FIN
+)
+
+dc_ref_simp_training <- training(dc_ref_simp_split)
+dc_ref_simp_testing <- testing(dc_ref_simp_split)
+```
+
+
+### Folding
+
+
+```{r}
+dc_ref_simp_split_folds <- dc_ref_simp_training |>
+  vfold_cv(v = 5, strata = CLASSI_FIN)
+```
+
+
+## Recipes
+
+### Variable lists
+
+
+```{r}
+symp_cond_vars <- c("FEBRE", "MIALGIA", "CEFALEIA", 
+                    "EXANTEMA", "VOMITO", "NAUSEA", 
+                    "DOR_COSTAS", "CONJUNTVIT", 
+                    "ARTRITE", "ARTRALGIA", "PETEQUIA_N", 
+                    "LEUCOPENIA", "LACO", "DOR_RETRO", 
+                    "DIABETES", "HEMATOLOG", "HEPATOPAT", 
+                    "RENAL", "HIPERTENSA", "ACIDO_PEPT",
+                    "AUTO_IMUNE")
+```
+
+
+### Basic recipe
+
+-   Only case symptoms and clinical conditions
+
+-   Without date and municipality data
+
+
+```{r}
+rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+  step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI) |>
+  step_integer(all_logical_predictors()) |>
+  step_unknown(CS_SEXO, CS_GESTANT) |>
+  step_other(CS_GESTANT) |>
+  step_dummy(CS_SEXO, CS_GESTANT)
+```
+
+
+### Month and UF recipe
+
+-   Case symptoms, date (month) and UF
+
+
+```{r}
+rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
+  step_rm(CRITERIO, case_source, ID_MN_RESI) |>
+  step_date(DT_SIN_PRI, features = c("month"), keep_original_cols = FALSE) |>
+  step_dummy(DT_SIN_PRI_month) |>
+  step_dummy(uf_res) |>
+  step_integer(all_logical_predictors()) |>
+  step_unknown(CS_SEXO, CS_GESTANT) |>
+  step_other(CS_GESTANT) |>
+  step_dummy(CS_SEXO, CS_GESTANT)
+```
+
+
+## Learners
+
+
+```{r}
+xgb_spec <-
+  boost_tree(
+    trees = tune(),
+    # tree_depth = tune(),
+    min_n = tune(),
+    # loss_reduction = tune(),
+    learn_rate = tune()
+  ) |>
+  set_engine("xgboost", event_level = "second") |>
+  set_mode("classification")
+```
+
+```{r}
+lgbm_spec <-
+  boost_tree(
+    trees = tune(),
+    # tree_depth = tune(),
+    min_n = tune(),
+    # loss_reduction = tune(),
+    learn_rate = tune()
+  ) |>
+  set_engine("lightgbm") |>
+  set_mode("classification")
+```
+
+
+## Workflow
+
+
+```{r}
+ref_simp_wf <- workflow_set(
+  preproc = list(
+    rec_ref_simp_1 = rec_ref_simp_1,
+    rec_ref_simp_2 = rec_ref_simp_2
+  ), 
+  models = list(lgbm = lgbm_spec), 
+  cross = TRUE
+)
+```
+
+
+## Tuning
+
+
+```{r}
+race_ctrl <- control_race(parallel_over = "everything")
+
+ref_simp_tuning_results <- 
+  ref_simp_wf |>
+  workflow_map(
+    "tune_race_anova",
+    seed = 345,
+    resamples = dc_ref_simp_split_folds,
+    grid = 10,
+    metrics = metric_set(
+      accuracy, 
+      roc_auc, 
+      sens,
+      spec,
+      f_meas
+    ),
+    control = race_ctrl, 
+    verbose = TRUE
+  )
+```
+
+```{r}
+ref_simp_tuning_ranking_results <- rank_results(ref_simp_tuning_results, rank_metric = "f_meas")
+
+ref_simp_tuning_ranking_results
+```
+
+```{r}
+autoplot(ref_simp_tuning_results, metric = "f_meas")
+```
+
+
+## Model last fit
+
+
+```{r}
+ref_simp_selection <- ref_simp_tuning_ranking_results |>
+  arrange(-mean) |>
+  pull(wflow_id) |>
+  first()
+
+ref_simp_selection
+```
+
+```{r}
+ref_simp_best_results <- ref_simp_tuning_results |>
+  extract_workflow_set_result(ref_simp_selection) |>
+  select_best("f_meas")
+
+ref_simp_best_results
+```
+
+```{r}
+ref_simp_last_fit <- ref_simp_tuning_results |>
+  extract_workflow(ref_simp_selection) |>
+  finalize_workflow(ref_simp_best_results) |>
+  last_fit(dc_ref_simp_split)
+```
+
+
+## Model evaluation
+
+
+```{r}
+collect_metrics(ref_simp_last_fit)
+```
+
+```{r}
+collect_predictions(ref_simp_last_fit) %>%
+    conf_mat(CLASSI_FIN, .pred_class)
+```
+
+```{r}
+ref_simp_last_fit %>%
+  extract_fit_engine() %>%
+  vip()
+```
+
+
+## Session info
+
+
+```{r}
+session_info()
+```
+
