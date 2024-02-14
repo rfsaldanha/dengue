@@ -77,6 +77,7 @@ symp_cond_vars <- c("FEBRE", "MIALGIA", "CEFALEIA",
 rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI, uf_res, DT_SIN_PRI) |>
   step_integer(all_logical_predictors()) |>
+  step_unknown(CS_SEXO, CS_GESTANT) |>
   step_other(CS_GESTANT) |>
   step_dummy(CS_SEXO, CS_GESTANT)
 ```
@@ -89,9 +90,10 @@ rec_ref_simp_1 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
 rec_ref_simp_2 <- recipe(CLASSI_FIN ~ ., data = dc_ref_simp_training) |>
   step_rm(CRITERIO, case_source, ID_MN_RESI) |>
   step_date(DT_SIN_PRI, features = c("month"), keep_original_cols = FALSE) |>
-  step_dummy(DT_SIN_PRI) |>
+  step_dummy(DT_SIN_PRI_month) |>
   step_dummy(uf_res) |>
   step_integer(all_logical_predictors()) |>
+  step_unknown(CS_SEXO, CS_GESTANT) |>
   step_other(CS_GESTANT) |>
   step_dummy(CS_SEXO, CS_GESTANT)
 ```
