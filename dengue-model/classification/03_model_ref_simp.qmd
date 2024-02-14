@@ -113,6 +113,19 @@ xgb_spec <-
   set_mode("classification")
 ```
 
+```{r}
+lgbm_spec <-
+  boost_tree(
+    trees = tune(),
+    # tree_depth = tune(),
+    min_n = tune(),
+    # loss_reduction = tune(),
+    learn_rate = tune()
+  ) |>
+  set_engine("lightgbm") |>
+  set_mode("classification")
+```
+
 ## Workflow
 
 ```{r}
@@ -121,7 +134,7 @@ ref_simp_wf <- workflow_set(
     rec_ref_simp_1 = rec_ref_simp_1,
     rec_ref_simp_2 = rec_ref_simp_2
   ), 
-  models = list(xgb = xgb_spec), 
+  models = list(lgbm = lgbm_spec), 
   cross = TRUE
 )
 ```
