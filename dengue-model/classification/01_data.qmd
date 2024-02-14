@@ -246,13 +246,7 @@ qsave(x = chik_full, file = "chik_full.qs")
 We will join both datasets, correct the date variable (DT_SIN_PRI) and remove invalid rows.
 
 ```{r}
-dcdata <- bind_rows(dengue_full, chik_full) |>
-  mutate(DT_SIN_PRI = as_date(DT_SIN_PRI, format = "%Y-%m-%d")) |>
-  mutate(IDADEanos = as.numeric(IDADEanos)) |>
-  mutate(across(all_of(c(symp_cond_vars)), ~ . == "Sim")) |>
-  mutate(uf_res = substr(ID_MN_RESI, 0, 2)) |>
-  filter(!is.na(ID_MN_RESI)) |>
-  filter(year(DT_SIN_PRI) >= 2016 & year(DT_SIN_PRI) <= 2021)
+dcdata <- bind_rows(dengue_full, chik_full)
 ```
 
 ```{r}
@@ -272,6 +266,19 @@ dcdata |>
   summarise(count = n()) |>
   ungroup() |>
   gt::gt()
+```
+
+### Data preparation
+
+```{r}
+dcdata <- dcdata |>
+  mutate(DT_SIN_PRI = as_date(DT_SIN_PRI, format = "%Y-%m-%d")) |>
+  mutate(IDADEanos = as.numeric(IDADEanos)) |>
+  mutate(across(all_of(c(symp_cond_vars)), ~ . == "Sim")) |>
+  mutate(across(all_of(c(symp_cond_vars)), ~ replace_na(., 0))) |>
+  mutate(uf_res = substr(ID_MN_RESI, 0, 2)) |>
+  filter(year(DT_SIN_PRI) >= 2016 & year(DT_SIN_PRI) <= 2021) |>
+  na.omit()
 ```
 
 Let's see in time how the case classification and used criteria evolves.
@@ -294,7 +301,6 @@ dcdata |>
   facet_wrap(~CLASSI_FIN + case_source, scales = "free_y") +
   theme_bw() +
   theme(legend.position = "bottom", legend.direction = "horizontal")
-  
 ```
 
 ### Data removal
