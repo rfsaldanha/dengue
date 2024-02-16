@@ -134,16 +134,6 @@ knn_spec <-
 ```
 
 ```{r}
-svml_spec <-
-  svm_linear(
-    cost = tune(),
-    margin = tune()
-  ) |>
-  set_engine("kernlab") |>
-  set_mode("classification")
-```
-
-```{r}
 mlp_spec <-
   mlp(
     hidden_units = tune(),
@@ -165,7 +155,6 @@ ref_simp_wf <- workflow_set(
   models = list(xgb = xgb_spec,
                 rf = rf_spec,
                 knn = knn_spec,
-                svml = svml_spec,
                 mlp = mlp_spec), 
   cross = TRUE
 )

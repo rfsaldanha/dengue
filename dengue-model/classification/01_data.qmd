@@ -22,7 +22,7 @@ Datasets from SINAN Dengue and Chikungunya were previously downloaded from the B
 ### Dengue
 
 -   Data prior to 2016 does not have patient symptoms and clinical conditions
--   Data from 2016 to 2021 is being considered
+-   Data from 2016 to 2023 is being considered
 
 ```{r}
 # Data sources
@@ -32,7 +32,9 @@ dengue_files_list <- c(
   data_dir("dengue_data/parquets/dengue_2018.parquet"),
   data_dir("dengue_data/parquets/dengue_2019.parquet"),
   data_dir("dengue_data/parquets/dengue_2020.parquet"),
-  data_dir("dengue_data/parquets/dengue_2021.parquet")
+  data_dir("dengue_data/parquets/dengue_2021.parquet"),
+  data_dir("dengue_data/parquets/dengue_2022.parquet"),
+  data_dir("dengue_data/parquets/dengue_2023.parquet")
 )
 ```
 
@@ -166,7 +168,9 @@ chik_files_list <- c(
   data_dir("chik_data/parquets/chik_2018.parquet"),
   data_dir("chik_data/parquets/chik_2019.parquet"),
   data_dir("chik_data/parquets/chik_2020.parquet"),
-  data_dir("chik_data/parquets/chik_2021.parquet")
+  data_dir("chik_data/parquets/chik_2021.parquet"),
+  data_dir("chik_data/parquets/chik_2022.parquet"),
+  data_dir("chik_data/parquets/chik_2023.parquet")
 )
 ```
 
@@ -277,7 +281,7 @@ dcdata <- dcdata |>
   mutate(across(all_of(c(symp_cond_vars)), ~ . == "Sim")) |>
   mutate(across(all_of(c(symp_cond_vars)), ~ replace_na(., 0))) |>
   mutate(uf_res = substr(ID_MN_RESI, 0, 2)) |>
-  filter(year(DT_SIN_PRI) >= 2016 & year(DT_SIN_PRI) <= 2021) |>
+  filter(year(DT_SIN_PRI) >= 2016 & year(DT_SIN_PRI) <= 2023) |>
   na.omit()
 ```
 
