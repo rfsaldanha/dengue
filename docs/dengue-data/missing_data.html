@@ -621,7 +621,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 19, 2024 | 09:42:41 +01:00</p>
+      <p class="date">February 19, 2024 | 10:02:22 +01:00</p>
     </div>
   </div>
   
@@ -665,18 +665,23 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"DT_OBITO"</span>, <span class="st">"HOSPITALIZ"</span>, <span class="st">"DT_INTERNA"</span>)</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>dengue_files_list <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2016.parquet"</span>),</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2017.parquet"</span>),</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2018.parquet"</span>),</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2019.parquet"</span>),</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2020.parquet"</span>),</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2021.parquet"</span>),</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2022.parquet"</span>)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> dengue_files_list) <span class="sc">%&gt;%</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(important_vars)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2011.parquet"</span>),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2012.parquet"</span>),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2013.parquet"</span>),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2014.parquet"</span>),</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2015.parquet"</span>),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2016.parquet"</span>),</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2017.parquet"</span>),</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2018.parquet"</span>),</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2019.parquet"</span>),</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2020.parquet"</span>),</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2021.parquet"</span>),</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2022.parquet"</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> dengue_files_list) <span class="sc">%&gt;%</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(important_vars)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="overall" class="level2">
@@ -700,98 +705,98 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">DT_OBITO</td>
-<td style="text-align: right;">9.441.823</td>
-<td style="text-align: right;">99,8499473</td>
+<td style="text-align: right;">16.931.460</td>
+<td style="text-align: right;">99,8552666</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">SOROTIPO</td>
-<td style="text-align: right;">9.405.485</td>
-<td style="text-align: right;">99,4656627</td>
+<td style="text-align: right;">16.882.644</td>
+<td style="text-align: right;">99,5673685</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">DT_INTERNA</td>
-<td style="text-align: right;">9.185.387</td>
-<td style="text-align: right;">97,1380641</td>
+<td style="text-align: right;">16.483.024</td>
+<td style="text-align: right;">97,2105628</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">DT_SORO</td>
-<td style="text-align: right;">6.954.524</td>
-<td style="text-align: right;">73,5460573</td>
+<td style="text-align: right;">12.097.609</td>
+<td style="text-align: right;">71,3470647</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">COMUNINF</td>
-<td style="text-align: right;">6.413.205</td>
-<td style="text-align: right;">67,8214558</td>
+<td style="text-align: right;">10.641.748</td>
+<td style="text-align: right;">62,7609541</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">COUFINF</td>
-<td style="text-align: right;">6.395.902</td>
-<td style="text-align: right;">67,6384717</td>
+<td style="text-align: right;">10.610.594</td>
+<td style="text-align: right;">62,5772197</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">RESUL_SORO</td>
-<td style="text-align: right;">3.343.920</td>
-<td style="text-align: right;">35,3628993</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">HOSPITALIZ</td>
-<td style="text-align: right;">3.128.900</td>
-<td style="text-align: right;">33,0890020</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">EVOLUCAO</td>
-<td style="text-align: right;">1.780.118</td>
-<td style="text-align: right;">18,8252511</td>
+<td style="text-align: right;">6.615.736</td>
+<td style="text-align: right;">39,0170772</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">RESUL_SORO</td>
+<td style="text-align: right;">5.276.629</td>
+<td style="text-align: right;">31,1195370</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">CS_ESCOL_N</td>
-<td style="text-align: right;">1.776.289</td>
-<td style="text-align: right;">18,7847583</td>
+<td style="text-align: right;">3.613.638</td>
+<td style="text-align: right;">21,3118530</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EVOLUCAO</td>
+<td style="text-align: right;">3.242.780</td>
+<td style="text-align: right;">19,1246745</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">CRITERIO</td>
-<td style="text-align: right;">1.170.201</td>
-<td style="text-align: right;">12,3752064</td>
+<td style="text-align: right;">2.129.285</td>
+<td style="text-align: right;">12,5577074</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">CS_RACA</td>
-<td style="text-align: right;">201.389</td>
-<td style="text-align: right;">2,1297456</td>
+<td style="text-align: right;">1.291.206</td>
+<td style="text-align: right;">7,6150385</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ID_OCUPA_N</td>
-<td style="text-align: right;">84.700</td>
-<td style="text-align: right;">0,8957264</td>
+<td style="text-align: right;">94.322</td>
+<td style="text-align: right;">0,5562750</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">CLASSI_FIN</td>
-<td style="text-align: right;">34.231</td>
-<td style="text-align: right;">0,3620025</td>
+<td style="text-align: right;">71.348</td>
+<td style="text-align: right;">0,4207832</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">CS_GESTANT</td>
-<td style="text-align: right;">3.244</td>
-<td style="text-align: right;">0,0343062</td>
+<td style="text-align: right;">4.694</td>
+<td style="text-align: right;">0,0276834</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ID_MN_RESI</td>
-<td style="text-align: right;">1.311</td>
-<td style="text-align: right;">0,0138642</td>
+<td style="text-align: right;">2.319</td>
+<td style="text-align: right;">0,0136766</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ID_UNIDADE</td>
-<td style="text-align: right;">1.025</td>
-<td style="text-align: right;">0,0108397</td>
+<td style="text-align: right;">1.817</td>
+<td style="text-align: right;">0,0107160</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">CS_SEXO</td>
-<td style="text-align: right;">300</td>
-<td style="text-align: right;">0,0031726</td>
+<td style="text-align: right;">777</td>
+<td style="text-align: right;">0,0045824</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">DT_SIN_PRI</td>
-<td style="text-align: right;">180</td>
-<td style="text-align: right;">0,0019036</td>
+<td style="text-align: right;">224</td>
+<td style="text-align: right;">0,0013211</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ID_AGRAVO</td>
@@ -840,11 +845,11 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td style="text-align: left;">TRUE</td>
-<td style="text-align: right;">9.454.697</td>
+<td style="text-align: right;">16.953.678</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">NA</td>
-<td style="text-align: right;">1.311</td>
+<td style="text-align: right;">2.319</td>
 </tr>
 </tbody>
 </table>
@@ -873,44 +878,48 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Dengue</td>
-<td style="text-align: right;">5.139.563</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Dengue clássico</td>
-<td style="text-align: right;">36.368</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Dengue com complicações</td>
-<td style="text-align: right;">54</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Dengue com sinais de alarme</td>
-<td style="text-align: right;">70.445</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Dengue grave</td>
-<td style="text-align: right;">6.310</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Descartado</td>
-<td style="text-align: right;">2.978.804</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Febre hemorrágica do dengue</td>
-<td style="text-align: right;">13</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Inconclusivo</td>
-<td style="text-align: right;">1.190.221</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Síndrome do choque do dengue</td>
+<td style="text-align: left;">6</td>
 <td style="text-align: right;">3</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">Dengue</td>
+<td style="text-align: right;">6.888.189</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dengue clássico</td>
+<td style="text-align: right;">2.346.272</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dengue com complicações</td>
+<td style="text-align: right;">18.969</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dengue com sinais de alarme</td>
+<td style="text-align: right;">101.062</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dengue grave</td>
+<td style="text-align: right;">8.931</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Descartado</td>
+<td style="text-align: right;">5.364.096</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Febre hemorrágica do dengue</td>
+<td style="text-align: right;">5.307</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Inconclusivo</td>
+<td style="text-align: right;">2.151.527</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Síndrome do choque do dengue</td>
+<td style="text-align: right;">297</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">NA</td>
-<td style="text-align: right;">34.231</td>
+<td style="text-align: right;">71.348</td>
 </tr>
 </tbody>
 </table>
@@ -945,15 +954,15 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">12.221</td>
+<td style="text-align: right;">25.826</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">TRUE</td>
-<td style="text-align: right;">9.443.611</td>
+<td style="text-align: right;">16.929.951</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">NA</td>
-<td style="text-align: right;">180</td>
+<td style="text-align: right;">224</td>
 </tr>
 </tbody>
 </table>
