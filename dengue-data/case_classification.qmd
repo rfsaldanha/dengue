@@ -28,7 +28,7 @@ node_name()
 ```{r}
 important_vars <- c("DT_SIN_PRI", "RESUL_SORO", "SOROTIPO", "CLASSI_FIN", "CRITERIO")
 
-valid_interval <- interval(ymd("2011-01-01"), ymd("2021-12-31"))
+valid_interval <- interval(ymd("2011-01-01"), ymd("2023-12-31"))
 
 dengue <- open_dataset(sources = data_dir("dengue_data/parquets")) %>%
   select(all_of(important_vars)) %>%

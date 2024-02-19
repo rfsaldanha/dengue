@@ -28,8 +28,10 @@
   {
     "listing": "/summary.html",
     "items": [
+      "/dengue-data/case_classification.html",
       "/dengue-model/classification/01_data.html",
       "/dengue-model/classification/03_model_ref_simp.html",
+      "/dengue-model/classification/01_data article.html",
       "/dengue-model/classification/02_eda.html",
       "/dengue-model/dengue_classification_v2.html",
       "/dengue-data/raw_files_chik.html",
@@ -40,7 +42,6 @@
       "/dengue-data/imputation.html",
       "/dengue-data/missing_data.html",
       "/dengue-data/raw_files.html",
-      "/dengue-data/case_classification.html",
       "/dengue-data/aggregated_database.html",
       "/dengue-cluster/cluster_tsfeatures.html",
       "/dengue-cluster/cluster_long_scaled.html",
