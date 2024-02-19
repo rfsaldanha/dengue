@@ -26,20 +26,20 @@ node_name()
 ## Data download
 
 ```{r}
-# for(a in 2016:2021){
-#   tmp <- fetch_datasus(
-#     year_start = a, year_end = a,
-#     information_system = "SINAN-ZIKA"
-#   )
-# 
-#   write_parquet(x = tmp, sink = paste0(data_dir("zika_data/parquets_raw/raw_zika_"),a, ".parquet"))
-# 
-#   tmp <- process_sinan_zika(data = tmp)
-# 
-#   write_parquet(x = tmp, sink = paste0(data_dir("zika_data/parquets/zika_"), a, ".parquet"))
-# 
-#   rm(tmp)
-# }
+for(a in 2022:2023){
+  tmp <- fetch_datasus(
+    year_start = a, year_end = a,
+    information_system = "SINAN-ZIKA"
+  )
+
+  write_parquet(x = tmp, sink = paste0(data_dir("zika_data/parquets_raw/raw_zika_"),a, ".parquet"))
+
+  tmp <- process_sinan_zika(data = tmp)
+
+  write_parquet(x = tmp, sink = paste0(data_dir("zika_data/parquets/zika_"), a, ".parquet"))
+
+  rm(tmp)
+}
 ```
 
 ::: callout-warning
