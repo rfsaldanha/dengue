@@ -42,8 +42,7 @@ dengue_files_list <- c(
   data_dir("dengue_data/parquets/dengue_2019.parquet"),
   data_dir("dengue_data/parquets/dengue_2020.parquet"),
   data_dir("dengue_data/parquets/dengue_2021.parquet"),
-  data_dir("dengue_data/parquets/dengue_2022.parquet"),
-  data_dir("dengue_data/parquets/dengue_2023.parquet")
+  data_dir("dengue_data/parquets/dengue_2022.parquet")
 )
 
 dengue <- open_dataset(sources = dengue_files_list) %>%
