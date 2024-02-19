@@ -39,7 +39,7 @@ tally(dengue)
 ## Filter valid dates
 
 ```{r}
-valid_interval <- interval(ymd("2011-01-01"), ymd("2023-12-31"))
+valid_interval <- interval(ymd("2011-01-01"), ymd("2022-12-31"))
 
 dengue <- dengue %>%
   mutate(DT_SIN_PRI = ymd(DT_SIN_PRI)) %>%
