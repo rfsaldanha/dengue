@@ -26,20 +26,20 @@ node_name()
 ## Data download
 
 ```{r}
-for(a in 2008:2023){
-  tmp <- fetch_datasus(
-    year_start = a, year_end = a, timeout = 1000,
-    information_system = "SINAN-DENGUE"
-  )
-  
-  write_parquet(x = tmp, sink = paste0(data_dir("dengue_data/parquets_raw/dengue_chik_"),a, ".parquet"))
-
-  tmp <- process_sinan_dengue(data = tmp)
-  
-  write_parquet(x = tmp, sink = paste0(data_dir("dengue_data/parquets/dengue_"), a, ".parquet"))
-
-  rm(tmp)
-}
+# for(a in 2009:2023){
+#   tmp <- fetch_datasus(
+#     year_start = a, year_end = a, timeout = 1000,
+#     information_system = "SINAN-DENGUE"
+#   )
+#   
+#   write_parquet(x = tmp, sink = paste0(data_dir("dengue_data/parquets_raw/raw_dengue_"),a, ".parquet"))
+# 
+#   tmp <- process_sinan_dengue(data = tmp)
+#   
+#   write_parquet(x = tmp, sink = paste0(data_dir("dengue_data/parquets/dengue_"), a, ".parquet"))
+# 
+#   rm(tmp)
+# }
 ```
 
 ::: callout-warning

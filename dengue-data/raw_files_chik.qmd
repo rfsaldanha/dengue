@@ -26,7 +26,7 @@ node_name()
 ## Data download
 
 ```{r}
-# for(a in 2016:2021){
+# for(a in 2024:2024){
 #   tmp <- fetch_datasus(
 #     year_start = a, year_end = a,
 #     information_system = "SINAN-CHIKUNGUNYA"
