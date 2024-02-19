@@ -28,6 +28,7 @@
   {
     "listing": "/summary.html",
     "items": [
+      "/dengue-data/imputation.html",
       "/dengue-data/missing_data.html",
       "/dengue-data/case_classification.html",
       "/dengue-model/classification/01_data.html",
@@ -40,7 +41,6 @@
       "/dengue-cluster/cluster_multivariate_all.html",
       "/dengue-model/dengue_mts_all.html",
       "/dengue-model/dengue_weather_lag_class_v2.html",
-      "/dengue-data/imputation.html",
       "/dengue-data/raw_files.html",
       "/dengue-data/aggregated_database.html",
       "/dengue-cluster/cluster_tsfeatures.html",

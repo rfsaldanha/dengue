@@ -63,7 +63,7 @@ dengue <- dengue %>%
   select(-ID_MN_RESI_check, -COMUNINF_check)
 ```
 
-#### Check improval
+#### Check improvement
 
 ```{r}
 dengue %>%
@@ -89,7 +89,7 @@ Task: If DT_SIN_PRI is invalid or missing, imputate with valid DT_NOTIFIC inform
 #### Imputation
 
 ```{r}
-valid_interval <- interval(ymd("2011-01-01"), ymd("2021-12-31"))
+valid_interval <- interval(ymd("2011-01-01"), ymd("2023-12-31"))
 
 dengue <- dengue %>%
   mutate(
@@ -104,10 +104,10 @@ dengue <- dengue %>%
   select(-DT_SIN_PRI_check, -DT_NOTIFIC_check)
 ```
 
-#### Check improval
+#### Check improvement
 
 ```{r}
-valid_interval <- interval(ymd("2011-01-01"), ymd("2021-12-31"))
+valid_interval <- interval(ymd("2011-01-01"), ymd("2023-12-31"))
 
 dengue %>%
   mutate(
