@@ -34,7 +34,17 @@ important_vars <- c("ID_AGRAVO", "DT_NOTIFIC", "ID_UNIDADE",
                     "CLASSI_FIN", "CRITERIO", "EVOLUCAO",
                     "DT_OBITO", "HOSPITALIZ", "DT_INTERNA")
 
-dengue <- open_dataset(sources = data_dir("dengue_data/parquets")) %>%
+dengue_files_list <- c(
+  data_dir("dengue_data/parquets/dengue_2016.parquet"),
+  data_dir("dengue_data/parquets/dengue_2017.parquet"),
+  data_dir("dengue_data/parquets/dengue_2018.parquet"),
+  data_dir("dengue_data/parquets/dengue_2019.parquet"),
+  data_dir("dengue_data/parquets/dengue_2020.parquet"),
+  data_dir("dengue_data/parquets/dengue_2021.parquet"),
+  data_dir("dengue_data/parquets/dengue_2022.parquet")
+)
+
+dengue <- open_dataset(sources = dengue_files_list) %>%
   select(all_of(important_vars)) %>%
   collect()
 ```
@@ -89,7 +99,7 @@ Task: If DT_SIN_PRI is invalid or missing, imputate with valid DT_NOTIFIC inform
 #### Imputation
 
 ```{r}
-valid_interval <- interval(ymd("2011-01-01"), ymd("2023-12-31"))
+valid_interval <- interval(ymd("2011-01-01"), ymd("2022-12-31"))
 
 dengue <- dengue %>%
   mutate(
@@ -107,7 +117,7 @@ dengue <- dengue %>%
 #### Check improvement
 
 ```{r}
-valid_interval <- interval(ymd("2011-01-01"), ymd("2023-12-31"))
+valid_interval <- interval(ymd("2011-01-01"), ymd("2022-12-31"))
 
 dengue %>%
   mutate(
