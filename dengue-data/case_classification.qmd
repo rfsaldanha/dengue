@@ -28,9 +28,19 @@ node_name()
 ```{r}
 important_vars <- c("DT_SIN_PRI", "RESUL_SORO", "SOROTIPO", "CLASSI_FIN", "CRITERIO")
 
-valid_interval <- interval(ymd("2011-01-01"), ymd("2023-12-31"))
+valid_interval <- interval(ymd("2011-01-01"), ymd("2022-12-31"))
 
-dengue <- open_dataset(sources = data_dir("dengue_data/parquets")) %>%
+dengue_files_list <- c(
+  data_dir("dengue_data/parquets/dengue_2016.parquet"),
+  data_dir("dengue_data/parquets/dengue_2017.parquet"),
+  data_dir("dengue_data/parquets/dengue_2018.parquet"),
+  data_dir("dengue_data/parquets/dengue_2019.parquet"),
+  data_dir("dengue_data/parquets/dengue_2020.parquet"),
+  data_dir("dengue_data/parquets/dengue_2021.parquet"),
+  data_dir("dengue_data/parquets/dengue_2022.parquet")
+)
+
+dengue <- open_dataset(sources = dengue_files_list) %>%
   select(all_of(important_vars)) %>%
   collect() %>%
   mutate(DT_SIN_PRI = ymd(DT_SIN_PRI)) %>%
