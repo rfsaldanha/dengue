@@ -1,0 +1,451 @@
+---
+title: "Datasets"
+author: Raphael Saldanha
+date: last-modified
+---
+
+## Packages
+
+```{r}
+#| message: false
+library(tidyverse)
+library(arrow)
+library(qs)
+library(sessioninfo)
+source("../../functions.R")
+```
+
+## Data source
+
+Datasets from SINAN Dengue and Chikungunya were previously downloaded from the Brazilian Health Ministry in DBC format, pre-processed (variables labels) and converted to the parquet format.
+
+### Dengue
+
+-   Data prior to 2016 does not have patient symptoms and clinical conditions
+-   Data from 2016 to 2021 is being considered
+
+```{r}
+# Data sources
+dengue_files_list <- c(
+  data_dir("dengue_data/parquets/dengue_2016.parquet"),
+  data_dir("dengue_data/parquets/dengue_2017.parquet"),
+  data_dir("dengue_data/parquets/dengue_2018.parquet"),
+  data_dir("dengue_data/parquets/dengue_2019.parquet"),
+  data_dir("dengue_data/parquets/dengue_2020.parquet"),
+  data_dir("dengue_data/parquets/dengue_2021.parquet"),
+  data_dir("dengue_data/parquets/dengue_2022.parquet"),
+  data_dir("dengue_data/parquets/dengue_2023.parquet")
+)
+```
+
+`symp_cond_vars` contains a list of variables regarding symptoms and clinical conditions.
+
+`grave_cases_vars` contains a list of clinical symptoms specifically for grave cases.
+
+`other_vars` contains names of other variables of interest.
+
+```{r}
+case_vars <- c("ID_MN_RESI", "IDADEanos", "DT_SIN_PRI",
+               "CS_SEXO", "CS_GESTANT")
+
+symp_cond_vars <- c("FEBRE", "MIALGIA", "CEFALEIA", 
+                    "EXANTEMA", "VOMITO", "NAUSEA", 
+                    "DOR_COSTAS", "CONJUNTVIT", 
+                    "ARTRITE", "ARTRALGIA", "PETEQUIA_N", 
+                    "LEUCOPENIA", "LACO", "DOR_RETRO", 
+                    "DIABETES", "HEMATOLOG", "HEPATOPAT", 
+                    "RENAL", "HIPERTENSA", "ACIDO_PEPT",
+                    "AUTO_IMUNE")
+
+# grave_cases_vars <- c("ALRM_HIPOT", "ALRM_PLAQ", "ALRM_VOM",
+#                       "ALRM_SANG", "ALRM_HEMAT", "ALRM_ABDOM", 
+#                       "ALRM_LETAR", "ALRM_HEPAT", "ALRM_LIQ",
+#                       "GRAV_PULSO", "GRAV_CONV", "GRAV_ENCH",
+#                       "GRAV_INSUF", "GRAV_TAQUI", "GRAV_EXTRE",
+#                       "GRAV_HIPOT", "GRAV_HEMAT", "GRAV_MELEN",
+#                       "GRAV_METRO", "GRAV_SANG", "GRAV_AST",
+#                       "GRAV_MIOC", "GRAV_CONSC", "GRAV_ORGAO",
+#                       "MANI_HEMOR", "EPISTAXE", "GENGIVO", 
+#                       "METRO", "PETEQUIAS", "HEMATURA",
+#                       "SANGRAM", "LACO_N", "PLASMATICO",
+#                       "PLAQ_MENOR", "CON_FHD", "COMPLICA")
+```
+
+We will read the datasets and select the variables on interest.
+
+```{r}
+# Prepare data
+dengue_full <- arrow::open_dataset(sources = dengue_files_list) |>
+  # Select variables
+  select(all_of(c(
+    "CLASSI_FIN", "CRITERIO",
+    case_vars, 
+    symp_cond_vars
+  ))) |>
+  collect()
+```
+
+The full dengue dataset present the following dimensions
+
+```{r}
+dim(dengue_full)
+```
+
+The variable `CLASSI_FIN` present the case's diagnoses and \`CRITERIO\` present the method used to determine the diagnose.
+
+```{r}
+dengue_full <- dengue_full |>
+  # Prepare variables
+  mutate(CLASSI_FIN = case_when(
+    str_detect(tolower(CLASSI_FIN), "dengue") ~ "Positive Dengue",
+    CLASSI_FIN == "Descartado" ~ "Discarded Dengue",
+    CLASSI_FIN == "Inconclusivo" ~ "Inconclusive",
+    .default = CLASSI_FIN
+  )) |>
+  mutate(CRITERIO = case_match(
+    CRITERIO,
+    "Clínico epidemiológico" ~ "Clinical and epidemiological",
+    "Laboratório" ~ "Laboratorial",
+    "Em investigação" ~ "Being investigated",
+    .default = CRITERIO
+  ))
+```
+
+Let's see how many suspected cases falls on each condition.
+
+```{r}
+dengue_full |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+We may recode some of the cases, filter out exceptions and add a variable to retain the original information system name.
+
+```{r}
+dengue_full <- dengue_full|>
+  mutate(
+    CRITERIO = case_when(
+      CLASSI_FIN == "Inconclusive" & is.na(CRITERIO) ~ "Other reasons",
+      .default = CRITERIO
+    )
+  ) |>
+  filter(!is.na(CRITERIO)) |>
+  filter(!is.na(CLASSI_FIN)) |>
+  filter(!(CLASSI_FIN == "Discarded Dengue" & CRITERIO == "Being investigated")) |>
+  filter(!(CLASSI_FIN == "Inconclusive" & CRITERIO == "Being investigated")) |>
+  filter(!(CLASSI_FIN == "Positive Dengue" & CRITERIO == "Being investigated")) |>
+  mutate(case_source = "SINAN-Dengue")
+```
+
+```{r}
+dim(dengue_full)
+```
+
+```{r}
+dengue_full |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+```{r}
+qsave(x = dengue_full, file = "dengue_full.qs")
+```
+
+### Chikungunya
+
+The same procedure executed on Dengue files is performed on Chikungunya reported suspected cases.
+
+-   Data prior to 2017 does not have patient symptoms and clinical conditions.
+
+```{r}
+# Data sources
+chik_files_list <- c(
+  data_dir("chik_data/parquets/chik_2017.parquet"),
+  data_dir("chik_data/parquets/chik_2018.parquet"),
+  data_dir("chik_data/parquets/chik_2019.parquet"),
+  data_dir("chik_data/parquets/chik_2020.parquet"),
+  data_dir("chik_data/parquets/chik_2021.parquet"),
+  data_dir("chik_data/parquets/chik_2022.parquet"),
+  data_dir("chik_data/parquets/chik_2023.parquet")
+)
+```
+
+```{r}
+# Prepare data
+chik_full <- arrow::open_dataset(sources = chik_files_list) |>
+  # Select variables
+  select(all_of(c(
+    "CLASSI_FIN", "CRITERIO",
+    case_vars, 
+    symp_cond_vars
+  ))) |>
+  collect()
+```
+
+```{r}
+dim(chik_full)
+```
+
+```{r}
+chik_full <- chik_full |>
+  # Prepare variables
+  mutate(CLASSI_FIN = case_when(
+    str_detect(tolower(CLASSI_FIN), "chik") ~ "Positive Chikungunya",
+    CLASSI_FIN == "Descartado" ~ "Discarded Chikungunya",
+    CLASSI_FIN == "Inconclusivo" ~ "Inconclusive",
+    .default = CLASSI_FIN
+  )) |>
+  mutate(CRITERIO = case_match(
+    CRITERIO,
+    "Clínico epidemiológico" ~ "Clinical and epidemiological",
+    "Laboratório" ~ "Laboratorial",
+    "Em investigação" ~ "Being investigated",
+    .default = CRITERIO
+  ))
+```
+
+```{r}
+chik_full |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+```{r}
+chik_full <- chik_full|>
+  mutate(
+    CRITERIO = case_when(
+      CLASSI_FIN == "Inconclusive" & is.na(CRITERIO) ~ "Other reasons",
+      .default = CRITERIO
+    )
+  ) |>
+  filter(CLASSI_FIN %in% c("Discarded Chikungunya", "Inconclusive", "Positive Chikungunya")) |>
+  filter(CRITERIO %in% c("Clinical and epidemiological", "Laboratorial", "Other reasons")) |>
+  mutate(case_source = "SINAN-Chikungunya")
+```
+
+```{r}
+dim(chik_full)
+```
+
+```{r}
+chik_full |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+```{r}
+qsave(x = chik_full, file = "chik_full.qs")
+```
+
+### Join datasets
+
+We will join both datasets, correct the date variable (DT_SIN_PRI) and remove invalid rows.
+
+```{r}
+dcdata <- bind_rows(dengue_full, chik_full)
+```
+
+```{r}
+dim(dcdata)
+```
+
+And remove no longer needed objects.
+
+```{r}
+rm(dengue_full, chik_full, chik_files_list, dengue_files_list)
+gc()
+```
+
+```{r}
+dcdata |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+### Data preparation
+
+```{r}
+dcdata <- dcdata |>
+  mutate(DT_SIN_PRI = as_date(DT_SIN_PRI, format = "%Y-%m-%d")) |>
+  mutate(IDADEanos = as.numeric(IDADEanos)) |>
+  mutate(across(all_of(c(symp_cond_vars)), ~ . == "Sim")) |>
+  mutate(across(all_of(c(symp_cond_vars)), ~ replace_na(., 0))) |>
+  mutate(uf_res = substr(ID_MN_RESI, 0, 2)) |>
+  filter(year(DT_SIN_PRI) >= 2016 & year(DT_SIN_PRI) <= 2023) |>
+  na.omit()
+```
+
+Let's see in time how the case classification and used criteria evolves.
+
+```{r}
+dcdata |>
+  mutate(DT_SIN_PRI = ceiling_date(DT_SIN_PRI, "month")) |>
+  filter(CLASSI_FIN != "Inconclusive") |>
+  filter(CRITERIO != "Other reasons") |>
+  mutate(CLASSI_FIN = case_match(
+    CLASSI_FIN,
+    "Discarded Dengue" ~ "Discarded",
+    "Discarded Chikungunya" ~ "Discarded",
+    .default = CLASSI_FIN
+  )) |>
+  group_by(DT_SIN_PRI, CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  ggplot(aes(x = DT_SIN_PRI, y = count, fill = CRITERIO)) +
+  geom_area(stat = "identity") +
+  scale_y_continuous(labels = scales::unit_format(
+    unit = "k", 
+    scale = 1e-3,
+    accuracy = 1)
+  ) +
+  facet_wrap(~CLASSI_FIN) +
+  theme_bw() +
+  theme(legend.position = "bottom", legend.direction = "horizontal") +
+  labs(fill = "Diagnosis' criteria", x = "Date of first symtoms' onset", y = "Cases count")
+
+ggsave("cases_time.png", width = 25, height = 15, units = "cm")
+```
+
+### Data removal
+
+::: callout-caution
+Only for tests.
+:::
+
+```{r}
+# dcdata <- slice_sample(.data = dcdata, n = 500000)
+```
+
+```{r}
+qsave(x = dcdata, file = "dcdata.qs")
+```
+
+## Reference dataset
+
+The reference dataset will contain only suspected cases that were assessed diagnosed by laboratory exams, to train and test a classification model. Cases with inconclusive classification will be discarded.
+
+```{r}
+dc_ref <- dcdata |>
+  filter(CRITERIO == "Laboratorial") |>
+  filter(CLASSI_FIN != "Inconclusive") |>
+  mutate(CLASSI_FIN = case_match(
+    CLASSI_FIN,
+    "Discarded Dengue" ~ "Discarded",
+    "Discarded Chikungunya" ~ "Discarded",
+    .default = CLASSI_FIN
+  ))
+```
+
+```{r}
+dim(dc_ref)
+```
+
+```{r}
+dc_ref |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+```{r}
+qsave(x = dc_ref, file = "dc_ref.qs")
+```
+
+Also, a simplified version is created, aggregating the classification not considering the specific disease, with a more balanced dataset.
+
+```{r}
+dc_ref_simp <- dc_ref |>
+  mutate(CLASSI_FIN = case_match(
+    CLASSI_FIN,
+    "Discarded" ~ "Negative",
+    "Positive Dengue" ~ "Positive",
+    "Positive Chikungunya" ~ "Positive"
+  ))
+```
+
+```{r}
+dc_ref_simp |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+```{r}
+qsave(x = dc_ref_simp, file = "dc_ref_simp.qs")
+```
+
+## Clinical dataset
+
+On this dataset, we will only include the cases that were classified by clinical and epidemiological criteria. Inconclusive cases will are discarded.
+
+```{r}
+dc_cli <- dcdata |>
+  filter(CRITERIO == "Clinical and epidemiological") |>
+  filter(CLASSI_FIN != "Inconclusive")
+```
+
+```{r}
+dim(dc_cli)
+```
+
+```{r}
+dc_cli |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+Also, a simplified version of this dataset is created.
+
+```{r}
+dc_cli_simp <- dc_cli |>
+  mutate(CLASSI_FIN = case_match(
+    CLASSI_FIN,
+    "Discarded Chikungunya" ~ "Negative",
+    "Discarded Dengue" ~ "Negative",
+    "Positive Dengue" ~ "Positive",
+    "Positive Chikungunya" ~ "Positive"
+  ))
+```
+
+```{r}
+dim(dc_cli_simp)
+```
+
+```{r}
+dc_cli_simp |>
+  group_by(CLASSI_FIN, CRITERIO) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  gt::gt()
+```
+
+```{r}
+qsave(x = dc_cli_simp, file = "dc_cli_simp.qs")
+```
+
+The joined data can be remove on this stage.
+
+```{r}
+rm(dcdata)
+gc()
+```
+
+## Session info
+
+```{r}
+session_info()
+```
