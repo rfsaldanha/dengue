@@ -175,12 +175,12 @@ tdengue <- tdengue %>%
 
 ### Lag and rolling lag variables
 
-Creates lagged variables from standardized dengue cases and weather variables, from 1 to 6 weeks.
+Creates lagged variables from standardized dengue cases and weather variables, from 1 to 24 weeks (6 months).
 
 ```{r}
 tdengue <- tdengue %>%
   group_by(mun) %>%
-  tk_augment_lags(.value = c(cases, prec, tmax, tmin), .lags = 1:6) %>%
+  tk_augment_lags(.value = c(cases, prec, tmax, tmin), .lags = 1:24) %>%
   # tk_augment_slidify(
   #   .value = contains("_lag"), 
   #   .period = c(2, 4, 6), 
