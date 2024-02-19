@@ -619,7 +619,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 19, 2024 | 09:42:18 +01:00</p>
+      <p class="date">February 19, 2024 | 10:00:33 +01:00</p>
     </div>
   </div>
   
@@ -657,33 +657,45 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>valid_interval <span class="ot">&lt;-</span> <span class="fu">interval</span>(<span class="fu">ymd</span>(<span class="st">"2011-01-01"</span>), <span class="fu">ymd</span>(<span class="st">"2022-12-31"</span>))</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>dengue_files_list <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2016.parquet"</span>),</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2017.parquet"</span>),</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2018.parquet"</span>),</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2019.parquet"</span>),</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2020.parquet"</span>),</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2021.parquet"</span>),</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2022.parquet"</span>)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> dengue_files_list) <span class="sc">%&gt;%</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(important_vars)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DT_SIN_PRI =</span> <span class="fu">ymd</span>(DT_SIN_PRI)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(DT_SIN_PRI <span class="sc">%within%</span> valid_interval) <span class="sc">%&gt;%</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CLASSI_FIN <span class="sc">!=</span> <span class="st">"6"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2011.parquet"</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2012.parquet"</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2013.parquet"</span>),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2014.parquet"</span>),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2015.parquet"</span>),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2016.parquet"</span>),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2017.parquet"</span>),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2018.parquet"</span>),</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2019.parquet"</span>),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2020.parquet"</span>),</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2021.parquet"</span>),</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2022.parquet"</span>),</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2023.parquet"</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> dengue_files_list) <span class="sc">%&gt;%</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(important_vars)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DT_SIN_PRI =</span> <span class="fu">ymd</span>(DT_SIN_PRI)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(DT_SIN_PRI <span class="sc">%within%</span> valid_interval) <span class="sc">%&gt;%</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CLASSI_FIN <span class="sc">!=</span> <span class="st">"6"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There was 1 warning in `mutate()`.
+ℹ In argument: `DT_SIN_PRI = ymd(DT_SIN_PRI)`.
+Caused by warning:
+!  1 failed to parse.</code></pre>
+</div>
 </div>
 </section>
 <section id="final-classification-and-criteria" class="level2">
 <h2 class="anchored" data-anchor-id="final-classification-and-criteria">Final classification and criteria</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dengue <span class="sc">%&gt;%</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(CLASSI_FIN, CRITERIO) <span class="sc">%&gt;%</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">freq =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">"."</span>, <span class="at">decimal.mark =</span> <span class="st">","</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dengue <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(CLASSI_FIN, CRITERIO) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">freq =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">"."</span>, <span class="at">decimal.mark =</span> <span class="st">","</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'CLASSI_FIN'. You can override using the
 `.groups` argument.</code></pre>
@@ -701,187 +713,202 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Dengue</td>
 <td style="text-align: left;">Clínico epidemiológico</td>
-<td style="text-align: right;">3.140.308</td>
+<td style="text-align: right;">4.177.315</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Dengue</td>
 <td style="text-align: left;">Em investigação</td>
-<td style="text-align: right;">51.404</td>
+<td style="text-align: right;">69.140</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Dengue</td>
 <td style="text-align: left;">Laboratório</td>
-<td style="text-align: right;">1.941.005</td>
+<td style="text-align: right;">2.636.698</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Dengue</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: right;">23</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Dengue clássico</td>
-<td style="text-align: left;">Clínico epidemiológico</td>
-<td style="text-align: right;">22.852</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Dengue clássico</td>
-<td style="text-align: left;">Em investigação</td>
-<td style="text-align: right;">511</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Dengue clássico</td>
-<td style="text-align: left;">Laboratório</td>
-<td style="text-align: right;">12.890</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Dengue com complicações</td>
-<td style="text-align: left;">Clínico epidemiológico</td>
-<td style="text-align: right;">14</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Dengue com complicações</td>
-<td style="text-align: left;">Em investigação</td>
-<td style="text-align: right;">7</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Dengue com complicações</td>
-<td style="text-align: left;">Laboratório</td>
-<td style="text-align: right;">33</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Dengue com sinais de alarme</td>
-<td style="text-align: left;">Clínico epidemiológico</td>
-<td style="text-align: right;">34.232</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Dengue com sinais de alarme</td>
-<td style="text-align: left;">Em investigação</td>
-<td style="text-align: right;">2.208</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Dengue com sinais de alarme</td>
-<td style="text-align: left;">Laboratório</td>
-<td style="text-align: right;">33.927</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Dengue grave</td>
-<td style="text-align: left;">Clínico epidemiológico</td>
-<td style="text-align: right;">1.334</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Dengue grave</td>
-<td style="text-align: left;">Em investigação</td>
-<td style="text-align: right;">385</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Dengue grave</td>
-<td style="text-align: left;">Laboratório</td>
-<td style="text-align: right;">4.585</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Descartado</td>
-<td style="text-align: left;">Clínico epidemiológico</td>
-<td style="text-align: right;">1.419.131</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Descartado</td>
-<td style="text-align: left;">Em investigação</td>
-<td style="text-align: right;">4.618</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Descartado</td>
-<td style="text-align: left;">Laboratório</td>
-<td style="text-align: right;">1.550.081</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Descartado</td>
 <td style="text-align: left;">NA</td>
 <td style="text-align: right;">24</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">Dengue clássico</td>
+<td style="text-align: left;">Clínico epidemiológico</td>
+<td style="text-align: right;">1.439.136</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dengue clássico</td>
+<td style="text-align: left;">Em investigação</td>
+<td style="text-align: right;">16.796</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dengue clássico</td>
+<td style="text-align: left;">Laboratório</td>
+<td style="text-align: right;">880.966</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dengue clássico</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dengue com complicações</td>
+<td style="text-align: left;">Clínico epidemiológico</td>
+<td style="text-align: right;">8.249</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dengue com complicações</td>
+<td style="text-align: left;">Em investigação</td>
+<td style="text-align: right;">595</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dengue com complicações</td>
+<td style="text-align: left;">Laboratório</td>
+<td style="text-align: right;">9.973</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dengue com sinais de alarme</td>
+<td style="text-align: left;">Clínico epidemiológico</td>
+<td style="text-align: right;">50.785</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dengue com sinais de alarme</td>
+<td style="text-align: left;">Em investigação</td>
+<td style="text-align: right;">2.555</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dengue com sinais de alarme</td>
+<td style="text-align: left;">Laboratório</td>
+<td style="text-align: right;">47.710</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dengue grave</td>
+<td style="text-align: left;">Clínico epidemiológico</td>
+<td style="text-align: right;">1.776</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Dengue grave</td>
+<td style="text-align: left;">Em investigação</td>
+<td style="text-align: right;">488</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dengue grave</td>
+<td style="text-align: left;">Laboratório</td>
+<td style="text-align: right;">6.672</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Descartado</td>
+<td style="text-align: left;">Clínico epidemiológico</td>
+<td style="text-align: right;">2.498.546</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Descartado</td>
+<td style="text-align: left;">Em investigação</td>
+<td style="text-align: right;">9.386</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Descartado</td>
+<td style="text-align: left;">Laboratório</td>
+<td style="text-align: right;">2.850.290</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Descartado</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">26</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Febre hemorrágica do dengue</td>
+<td style="text-align: left;">Clínico epidemiológico</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">Febre hemorrágica do dengue</td>
 <td style="text-align: left;">Em investigação</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: right;">230</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Febre hemorrágica do dengue</td>
 <td style="text-align: left;">Laboratório</td>
-<td style="text-align: right;">12</td>
+<td style="text-align: right;">5.041</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Inconclusivo</td>
 <td style="text-align: left;">Clínico epidemiológico</td>
-<td style="text-align: right;">13.865</td>
+<td style="text-align: right;">19.693</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Inconclusivo</td>
 <td style="text-align: left;">Em investigação</td>
-<td style="text-align: right;">33.175</td>
+<td style="text-align: right;">63.011</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Inconclusivo</td>
 <td style="text-align: left;">Laboratório</td>
-<td style="text-align: right;">5.655</td>
+<td style="text-align: right;">8.658</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Inconclusivo</td>
 <td style="text-align: left;">NA</td>
-<td style="text-align: right;">1.133.858</td>
+<td style="text-align: right;">2.053.618</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Síndrome do choque do dengue</td>
-<td style="text-align: left;">Em investigação</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: left;">Clínico epidemiológico</td>
+<td style="text-align: right;">5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Síndrome do choque do dengue</td>
+<td style="text-align: left;">Em investigação</td>
+<td style="text-align: right;">17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Síndrome do choque do dengue</td>
 <td style="text-align: left;">Laboratório</td>
-<td style="text-align: right;">2</td>
+<td style="text-align: right;">273</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dengue_classifications <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Febre hemorrágica do dengue"</span>, <span class="st">"Síndrome do choque do dengue"</span>, <span class="st">"Dengue com sinais de alarme"</span>,</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Dengue clássico"</span>, <span class="st">"Dengue com complicações"</span>, <span class="st">"Dengue"</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Dengue grave"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dengue_classifications <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Febre hemorrágica do dengue"</span>, <span class="st">"Síndrome do choque do dengue"</span>, <span class="st">"Dengue com sinais de alarme"</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Dengue clássico"</span>, <span class="st">"Dengue com complicações"</span>, <span class="st">"Dengue"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Dengue grave"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dengue_cases_classification <span class="ot">&lt;-</span> dengue <span class="sc">%&gt;%</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">CLASSI_FIN =</span> <span class="fu">case_when</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    CLASSI_FIN <span class="sc">%in%</span> dengue_classifications <span class="sc">~</span> <span class="st">"Confirmed"</span>,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    CLASSI_FIN <span class="sc">==</span> <span class="st">"Descartado"</span> <span class="sc">~</span> <span class="st">"Discarded"</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    CLASSI_FIN <span class="sc">==</span> <span class="st">"Inconclusivo"</span> <span class="sc">~</span> <span class="st">"Inconclusive"</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    CLASSI_FIN <span class="sc">==</span> <span class="dv">6</span> <span class="sc">~</span> <span class="st">"Invalid"</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">is.na</span>(CLASSI_FIN) <span class="sc">~</span> <span class="st">"Missing"</span>,</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">.default =</span> CLASSI_FIN</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DT_SIN_PRI =</span> lubridate<span class="sc">::</span><span class="fu">ceiling_date</span>(<span class="at">x =</span> DT_SIN_PRI, <span class="at">unit =</span> <span class="st">"month"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(DT_SIN_PRI, CLASSI_FIN) <span class="sc">%&gt;%</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">freq =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dengue_cases_classification <span class="ot">&lt;-</span> dengue <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">CLASSI_FIN =</span> <span class="fu">case_when</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    CLASSI_FIN <span class="sc">%in%</span> dengue_classifications <span class="sc">~</span> <span class="st">"Confirmed"</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    CLASSI_FIN <span class="sc">==</span> <span class="st">"Descartado"</span> <span class="sc">~</span> <span class="st">"Discarded"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    CLASSI_FIN <span class="sc">==</span> <span class="st">"Inconclusivo"</span> <span class="sc">~</span> <span class="st">"Inconclusive"</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    CLASSI_FIN <span class="sc">==</span> <span class="dv">6</span> <span class="sc">~</span> <span class="st">"Invalid"</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">is.na</span>(CLASSI_FIN) <span class="sc">~</span> <span class="st">"Missing"</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">.default =</span> CLASSI_FIN</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DT_SIN_PRI =</span> lubridate<span class="sc">::</span><span class="fu">ceiling_date</span>(<span class="at">x =</span> DT_SIN_PRI, <span class="at">unit =</span> <span class="st">"month"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(DT_SIN_PRI, CLASSI_FIN) <span class="sc">%&gt;%</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">freq =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'DT_SIN_PRI'. You can override using the
 `.groups` argument.</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_parquet</span>(<span class="at">x =</span> dengue_cases_classification, <span class="at">sink =</span> <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquet_classification/dengue_cases_classification.parquet"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_parquet</span>(<span class="at">x =</span> dengue_cases_classification, <span class="at">sink =</span> <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquet_classification/dengue_cases_classification.parquet"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span>  dengue_cases_classification, <span class="fu">aes</span>(<span class="at">x =</span> DT_SIN_PRI, <span class="at">weight =</span> freq, <span class="at">fill =</span> CLASSI_FIN)) <span class="sc">+</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_hue</span>(<span class="at">direction =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>comma) <span class="sc">+</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Classificação"</span>) <span class="sc">+</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Month of first symptom's onset"</span>, <span class="at">y =</span> <span class="st">"Records"</span>, <span class="at">fill =</span> <span class="st">"Classification"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span>  dengue_cases_classification, <span class="fu">aes</span>(<span class="at">x =</span> DT_SIN_PRI, <span class="at">weight =</span> freq, <span class="at">fill =</span> CLASSI_FIN)) <span class="sc">+</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_hue</span>(<span class="at">direction =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>comma) <span class="sc">+</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Classificação"</span>) <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Month of first symptom's onset"</span>, <span class="at">y =</span> <span class="st">"Records"</span>, <span class="at">fill =</span> <span class="st">"Classification"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="case_classification_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">"dengue_cases_classification.pdf"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="st">"dengue_cases_classification.pdf"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Saving 7 x 5 in image</code></pre>
 </div>
@@ -890,27 +917,27 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <section id="sorological-examination" class="level2">
 <h2 class="anchored" data-anchor-id="sorological-examination">Sorological examination</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dengue <span class="sc">%&gt;%</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CLASSI_FIN <span class="sc">%in%</span> dengue_classifications) <span class="sc">%&gt;%</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(SOROTIPO) <span class="sc">%&gt;%</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">freq =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>dengue <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CLASSI_FIN <span class="sc">%in%</span> dengue_classifications) <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(SOROTIPO) <span class="sc">%&gt;%</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">freq =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 2
   SOROTIPO    freq
   &lt;chr&gt;      &lt;int&gt;
-1 DEN 1      31021
-2 DEN 2      18098
-3 DEN 3         73
-4 DEN 4        627
-5 &lt;NA&gt;     5195915</code></pre>
+1 DEN 1      46808
+2 DEN 2      18904
+3 DEN 3        213
+4 DEN 4       6141
+5 &lt;NA&gt;     9282387</code></pre>
 </div>
 </div>
 </section>
 <section id="session-info" class="level2">
 <h2 class="anchored" data-anchor-id="session-info">Session info</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.3.2 (2023-10-31)
 Platform: x86_64-pc-linux-gnu (64-bit)
