@@ -622,7 +622,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Last modification</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 19, 2024 | 09:43:19 +01:00</p>
+      <p class="date">February 19, 2024 | 10:03:25 +01:00</p>
     </div>
   </div>
   
@@ -664,18 +664,23 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"DT_OBITO"</span>, <span class="st">"HOSPITALIZ"</span>, <span class="st">"DT_INTERNA"</span>)</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>dengue_files_list <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2016.parquet"</span>),</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2017.parquet"</span>),</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2018.parquet"</span>),</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2019.parquet"</span>),</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2020.parquet"</span>),</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2021.parquet"</span>),</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2022.parquet"</span>)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> dengue_files_list) <span class="sc">%&gt;%</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(important_vars)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2011.parquet"</span>),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2012.parquet"</span>),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2013.parquet"</span>),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2014.parquet"</span>),</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2015.parquet"</span>),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2016.parquet"</span>),</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2017.parquet"</span>),</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2018.parquet"</span>),</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2019.parquet"</span>),</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2020.parquet"</span>),</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2021.parquet"</span>),</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_dir</span>(<span class="st">"dengue_data/parquets/dengue_2022.parquet"</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>dengue <span class="ot">&lt;-</span> <span class="fu">open_dataset</span>(<span class="at">sources =</span> dengue_files_list) <span class="sc">%&gt;%</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(important_vars)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="residence-municipality-id_mn_resi" class="level3">
 <h3 class="anchored" data-anchor-id="residence-municipality-id_mn_resi">Residence municipality: ID_MN_RESI</h3>
@@ -730,11 +735,11 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td style="text-align: left;">TRUE</td>
-<td style="text-align: right;">9.454.739</td>
+<td style="text-align: right;">16.953.774</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">NA</td>
-<td style="text-align: right;">1.269</td>
+<td style="text-align: right;">2.223</td>
 </tr>
 </tbody>
 </table>
@@ -790,7 +795,7 @@ gtag('config', 'G-ZMP18L536K', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">TRUE</td>
-<td style="text-align: right;">9.456.012</td>
+<td style="text-align: right;">16.956.001</td>
 </tr>
 </tbody>
 </table>

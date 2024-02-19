@@ -35,6 +35,11 @@ important_vars <- c("ID_AGRAVO", "DT_NOTIFIC", "ID_UNIDADE",
                     "DT_OBITO", "HOSPITALIZ", "DT_INTERNA")
 
 dengue_files_list <- c(
+  data_dir("dengue_data/parquets/dengue_2011.parquet"),
+  data_dir("dengue_data/parquets/dengue_2012.parquet"),
+  data_dir("dengue_data/parquets/dengue_2013.parquet"),
+  data_dir("dengue_data/parquets/dengue_2014.parquet"),
+  data_dir("dengue_data/parquets/dengue_2015.parquet"),
   data_dir("dengue_data/parquets/dengue_2016.parquet"),
   data_dir("dengue_data/parquets/dengue_2017.parquet"),
   data_dir("dengue_data/parquets/dengue_2018.parquet"),
