@@ -77,7 +77,7 @@ dengue %>%
 
 ```
 
-15.559.994 records on the database meets the criteria. 4 records have invalid municipalty codes and this information is missing for 2.126 records. Inputation from COMUNINF is a possibility.
+42.658.908 records on the database meets the criteria. 8 records have invalid municipalty codes and this information is missing for 5.361 records. Inputation from COMUNINF is a possibility.
 
 #### Final classification of the notification: CLASSI_FIN
 
@@ -93,14 +93,14 @@ dengue %>%
   )
 ```
 
-3 records have an invalid label and 69.866 are missing. This missing data may be from two causes: (1) the notification is being evaluated or (2) a real missing.
+Several records have invalid labels and 4.841.110 are missing. This missing data may be from two causes: (1) the notification is being evaluated or (2) a real missing.
 
 #### Date of the first symptons onset: DT_SIN_PRI
 
 This is the date most near to the infection date and more relevant to epidemiological analysis.
 
 ```{r}
-valid_interval <- interval(ymd("2001-01-01"), ymd("2021-12-31"))
+valid_interval <- interval(ymd("2001-01-01"), ymd("2023-12-31"))
 
 dengue %>%
   mutate(
@@ -114,22 +114,7 @@ dengue %>%
   )
 ```
 
-This variable is missing for 173 records. For 26.018 records, we have invalid dates (outside the period 2001-2021). It is possible to imputate with DT_NOTIFIC (date of notification), if valid.
-
-## Positive cases
-
-```{r}
-dengue_classifications <- c("Febre hemorrágica do dengue", "Síndrome do choque do dengue", "Dengue com sinais de alarme",
-  "Dengue clássico", "Dengue com complicações", "Dengue",
-  "Dengue grave")
-
-dengue %>% 
-  filter(CLASSI_FIN %in% dengue_classifications) %>%
-  miss_var_summary() %>%
-  kable(
-    format.args = list(big.mark = ".", decimal.mark = ",")
-  )
-```
+This variable is missing for 228 records. For 38.197 records, we have invalid dates (outside the period 2001-2023). It is possible to imputate with DT_NOTIFIC (date of notification), if valid.
 
 ## Session info
 
